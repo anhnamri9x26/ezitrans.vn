@@ -1,0 +1,39 @@
+{
+  "id": "contact-widget",
+  "name": "Lexi Contact plugin",
+  "nameEn": "Lexi Contact plugin",
+  "description": "Tự động kích hoạt hiển thị thanh nút liên hệ nhanh gồm gọi điện thoại hotline, chat Zalo, Facebook Messenger và các mạng xã hội khác trực quan ở góc dưới màn hình. Cho phép thay đổi màu sắc và quản lý đường dẫn từ admin.",
+  "version": "1.0.0",
+  "author": "DeepMind Team",
+  "icon": "message-circle",
+  "iconColor": "#ec4899",
+  "settingKey": "plugin_contact_enabled",
+  "category": "engagement",
+  "requires": [],
+  "adminRoute": "/settings/contact",
+  "entry": "index.ts",
+  "componentPath": "@/plugins/contact-widget",
+  "files": [
+    "index.ts",
+    "manifest.json",
+    "components/FloatingContactButtons.tsx",
+    "admin/ContactSettingsPage.tsx"
+  ],
+  "capabilities": [
+    "floating-buttons",
+    "hotline-bar",
+    "social-links",
+    "custom-colors"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-20",
+      "changes": [
+        "Hotline, Zalo, Messenger, WhatsApp, Viber",
+        "Thanh gọi điện nhanh tùy chỉnh",
+        "Hỗ trợ tùy biến màu sắc từ admin"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1102 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Brand Primary: #2B6FEE */
+  --color-brand-50: #eff4fe;
+  --color-brand-100: #dce7fc;
+  --color-brand-200: #bdcff9;
+  --color-brand-300: #93b1f5;
+  --color-brand-400: #648bed;
+  --color-brand-500: #2b6fee;
+  --color-brand-600: #2b57de;
+  --color-brand-700: #2345b9;
+  --color-brand-800: #203a96;
+  --color-brand-900: #1d3478;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    color: #0f172a;
+    background: #ffffff;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.02);
+  }
+
+  .hover-lift {
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 45px -24px rgba(43, 111, 238, 0.38);
+  }
+
+  /* Premium Micro-Animations for Modals */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-scale-up {
+    animation: scaleUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .animate-spin-hover {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .animate-spin-hover:hover {
+    transform: rotate(360deg);
+  }
+}
+
+/* Premium Modern Quill Editor Custom Theme */
+.ql-toolbar.ql-snow {
+  border: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-radius: 0 !important;
+  background-color: #f8fafc !important;
+  padding: 10px 14px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 4px 6px !important;
+}
+
+/* Formats Group Wrapper */
+.ql-toolbar.ql-snow .ql-formats {
+  margin-right: 2px !important;
+  margin-bottom: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 2px !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
+  transition: all 0.15s ease !important;
+}
+
+.ql-toolbar.ql-snow .ql-formats:hover {
+  border-color: #cbd5e1 !important;
+}
+
+/* Toolbar Buttons */
+.ql-toolbar.ql-snow button {
+  width: 28px !important;
+  height: 28px !important;
+  padding: 5px !important;
+  border-radius: 6px !important;
+  color: #475569 !important;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 1px !important;
+  cursor: pointer !important;
+}
+
+/* Button Hover State */
+.ql-toolbar.ql-snow button:hover {
+  background-color: #eff4fe !important;
+  color: #2b6fee !important;
+}
+
+.ql-toolbar.ql-snow button:hover .ql-stroke {
+  stroke: #2b6fee !important;
+}
+
+.ql-toolbar.ql-snow button:hover .ql-fill {
+  fill: #2b6fee !important;
+}
+
+/* Button Active/Selected State */
+.ql-toolbar.ql-snow button.ql-active {
+  background-color: #eff4fe !important;
+  color: #2b6fee !important;
+}
+
+.ql-toolbar.ql-snow button.ql-active .ql-stroke {
+  stroke: #2b6fee !important;
+  stroke-width: 2.5px !important;
+}
+
+.ql-toolbar.ql-snow button.ql-active .ql-fill {
+  fill: #2b6fee !important;
+}
+
+/* Style SVG Icons to be cleaner */
+.ql-toolbar.ql-snow button svg {
+  width: 16px !important;
+  height: 16px !important;
+  transition: all 0.15s ease !important;
+}
+
+.ql-toolbar .ql-stroke,
+.ql-container .ql-stroke {
+  stroke: #475569 !important;
+  stroke-width: 2px !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.ql-toolbar .ql-fill,
+.ql-container .ql-fill {
+  fill: #475569 !important;
+}
+
+.ql-toolbar .ql-thin,
+.ql-container .ql-thin {
+  stroke-width: 1.5px !important;
+}
+
+/* Text and Pickers (Dropdowns) */
+.ql-toolbar.ql-snow .ql-picker {
+  height: 28px !important;
+  line-height: 28px !important;
+  color: #475569 !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  margin: 0 2px !important;
+  border-radius: 6px !important;
+  transition: all 0.15s ease !important;
+}
+
+.ql-toolbar.ql-snow .ql-picker-label {
+  padding-left: 8px !important;
+  padding-right: 20px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  width: 100% !important;
+  position: relative !important;
+  color: #475569 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.ql-toolbar.ql-snow .ql-picker-label:hover {
+  background-color: #f1f5f9 !important;
+  color: #2b6fee !important;
+}
+
+.ql-toolbar.ql-snow .ql-picker-label:hover .ql-stroke {
+  stroke: #2b6fee !important;
+}
+
+/* Active expanded state */
+.ql-toolbar.ql-snow .ql-picker.ql-expanded {
+  z-index: 100 !important;
+}
+
+.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-label {
+  background-color: #f1f5f9 !important;
+  color: #2b6fee !important;
+}
+
+/* Pickers options dropdown list */
+.ql-toolbar.ql-snow .ql-picker-options {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+  background-color: #ffffff !important;
+  padding: 6px !important;
+  margin-top: 4px !important;
+}
+
+/* Dropdown list items */
+.ql-toolbar.ql-snow .ql-picker-options .ql-picker-item {
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  color: #475569 !important;
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+}
+
+.ql-toolbar.ql-snow .ql-picker-options .ql-picker-item:hover,
+.ql-toolbar.ql-snow .ql-picker-options .ql-picker-item.ql-selected {
+  background-color: #eff4fe !important;
+  color: #2b6fee !important;
+}
+
+/* Color & Background grid pickers */
+.ql-snow .ql-picker.ql-color-picker .ql-picker-label {
+  padding: 4px !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Alignment picker (Icon-only picker) */
+.ql-snow .ql-picker.ql-align {
+  width: 28px !important;
+}
+
+.ql-snow .ql-picker.ql-align .ql-picker-label {
+  padding: 0 !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* SVGs inside Icon-only pickers (Color, Background, and Alignment) */
+.ql-snow .ql-picker.ql-color-picker .ql-picker-label svg,
+.ql-snow .ql-picker.ql-align .ql-picker-label svg {
+  position: static !important;
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+}
+
+.ql-snow .ql-picker.ql-color-picker .ql-picker-options {
+  display: none;
+  width: 162px !important;
+  padding: 8px !important;
+  background-color: #ffffff !important;
+  border-radius: 10px !important;
+}
+
+.ql-snow .ql-picker.ql-color-picker.ql-expanded .ql-picker-options {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+}
+
+.ql-snow .ql-picker.ql-color-picker .ql-picker-options span.ql-picker-item {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  transition: transform 0.1s ease !important;
+  cursor: pointer !important;
+}
+
+.ql-snow .ql-picker.ql-color-picker .ql-picker-options span.ql-picker-item:hover {
+  transform: scale(1.25) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
+  z-index: 2;
+}
+
+/* Editor Container & Editing Area */
+.ql-container.ql-snow {
+  border: none !important;
+  border-radius: 0 !important;
+  font-family: var(--font-sans) !important;
+  background-color: #ffffff;
+}
+
+.ql-editor {
+  line-height: 1.75 !important;
+  font-size: 14.5px !important;
+  color: #334155 !important;
+  padding: 24px !important;
+  min-height: 380px !important;
+}
+
+/* Main editor: fixed frame, fixed toolbar, independently scrollable content. */
+.rich-text-editor .quill {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100% !important;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.rich-text-editor .ql-toolbar.ql-snow {
+  flex: 0 0 auto;
+}
+
+.rich-text-editor .ql-container.ql-snow {
+  flex: 1 1 auto;
+  min-height: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+.rich-text-editor .ql-editor {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.ql-editor p {
+  margin-bottom: 1.25rem !important;
+}
+
+.ql-editor h1, 
+.ql-editor h2, 
+.ql-editor h3, 
+.ql-editor h4 {
+  margin-top: 1.75rem !important;
+  margin-bottom: 0.75rem !important;
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+}
+
+.ql-editor h1 { font-size: 1.8em !important; }
+.ql-editor h2 { font-size: 1.4em !important; }
+.ql-editor h3 { font-size: 1.25em !important; }
+
+.ql-editor ul, 
+.ql-editor ol {
+  margin-bottom: 1.25rem !important;
+  padding-left: 1.5rem !important;
+}
+
+.ql-editor li {
+  margin-bottom: 0.5rem !important;
+  line-height: 1.75 !important;
+}
+
+.ql-editor.ql-blank::before {
+  left: 24px !important;
+  right: 24px !important;
+  color: #94a3b8 !important;
+  font-style: normal !important;
+  font-size: 14.5px !important;
+}
+
+/* ==========================================
+   Craft Visual Builder Elementor-grade Theme
+   ========================================== */
+
+/* 1. Elementor-grade Hover Outline Mechanism */
+[contenteditable="true"] {
+  outline: none !important;
+}
+
+.editor-element-hovered {
+  position: relative !important;
+  box-shadow: none !important;
+}
+.editor-element-hovered::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.2px dashed rgba(168, 85, 247, 0.8) !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  box-sizing: border-box !important;
+}
+
+.editor-element-selected {
+  position: relative !important;
+  box-shadow: none !important;
+}
+.editor-element-selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid #a855f7 !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  box-sizing: border-box !important;
+}
+
+.editor-element-hover-selected {
+  position: relative !important;
+  box-shadow: none !important;
+}
+.editor-element-hover-selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid #a855f7 !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  box-sizing: border-box !important;
+}
+
+/* Section Container (top-level) — Indigo accent like Elementor */
+.editor-section-hovered {
+  position: relative !important;
+  box-shadow: none !important;
+}
+.editor-section-hovered::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.5px dashed rgba(99, 102, 241, 0.8) !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  box-sizing: border-box !important;
+}
+
+.editor-section-selected {
+  position: relative !important;
+  box-shadow: none !important;
+}
+.editor-section-selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid #6366f1 !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  box-sizing: border-box !important;
+}
+
+/* Inner Container — Grey/lighter accent */
+.editor-inner-hovered {
+  position: relative !important;
+  box-shadow: none !important;
+}
+.editor-inner-hovered::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.2px dashed rgba(148, 163, 184, 0.8) !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  box-sizing: border-box !important;
+}
+
+.editor-inner-selected {
+  position: relative !important;
+  box-shadow: none !important;
+}
+.editor-inner-selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid #94a3b8 !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+  box-sizing: border-box !important;
+}
+
+/* Disable transitions globally during drag-resizing to prevent lag and jitter */
+.builder-resizing * {
+  transition: none !important;
+}
+
+/* Disable pointer events during drag-resizing to avoid hover glitches, flicker, and lag */
+.builder-resizing [data-is-container="true"],
+.builder-resizing [data-is-container="true"] *,
+.builder-resizing [data-empty-container-placeholder="true"],
+.builder-resizing [data-empty-container-placeholder="true"] * {
+  pointer-events: none !important;
+}
+
+/* Ensure only the active resize handle retains pointer events */
+.builder-resizing .cursor-col-resize {
+  pointer-events: auto !important;
+}
+
+/* Keep hover label badges readable even with short/tight element bounds */
+.editor-hover-badge {
+  min-width: max-content;
+  max-width: none;
+  white-space: nowrap;
+  overflow: visible;
+  line-height: 1.2;
+}
+
+/* 2. Elementor-style Range Sliders */
+input[type="range"].elementor-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  outline: none;
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+input[type="range"].elementor-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: all 0.1s ease;
+}
+
+input[type="range"].elementor-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  border-color: #2b6fee;
+  box-shadow: 0 2px 4px rgba(43, 111, 238, 0.2);
+}
+
+input[type="range"].elementor-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: all 0.1s ease;
+}
+
+input[type="range"].elementor-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  border-color: #2b6fee;
+  box-shadow: 0 2px 4px rgba(43, 111, 238, 0.2);
+}
+
+.elementor-number-input {
+  padding-left: 6px !important;
+  padding-right: 18px !important;
+}
+
+.elementor-number-stepper {
+  position: relative;
+}
+
+.elementor-number-input::-webkit-outer-spin-button,
+.elementor-number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.elementor-number-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.elementor-stepper-buttons {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  bottom: 1px;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  width: 16px;
+  overflow: hidden;
+  border-left: 1px solid #e2e8f0;
+  border-radius: 0 4px 4px 0;
+  background: #f8fafc;
+  opacity: 0.6;
+  transition: opacity 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.elementor-number-stepper:focus-within .elementor-stepper-buttons,
+.elementor-number-stepper:hover .elementor-stepper-buttons {
+  opacity: 1;
+  border-left-color: #cbd5e1;
+  background: #f1f5f9;
+}
+
+.elementor-stepper-buttons button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: background-color 0.12s ease;
+}
+
+.elementor-stepper-buttons button:first-child {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.elementor-stepper-buttons button:hover {
+  background: #e2e8f0;
+}
+
+.elementor-stepper-buttons button:active {
+  background: #cbd5e1;
+}
+
+.elementor-stepper-buttons button svg {
+  transition: color 0.12s ease, transform 0.1s ease;
+}
+
+.elementor-stepper-buttons button:active svg {
+  transform: scale(0.85);
+}
+/* ==========================================================
+   3. Elementor-grade Craft.js Layers Tree Custom Styles
+   ========================================================== */
+.craft-layers-wrapper {
+  margin-top: 4px;
+}
+
+/* Base layer container */
+.craft-layers-wrapper > div {
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Outer layout of each layer node (represents a row) */
+.craft-layers-wrapper div[class*="LayerNode"],
+.craft-layers-wrapper .craft-layer-node {
+  margin-bottom: 1px !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+  transition: background-color 0.1s ease !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+
+/* Inner row styling */
+.craft-layers-wrapper .craft-layer-row {
+  min-width: 0 !important;
+  width: 100% !important;
+  background-color: transparent !important;
+}
+
+.craft-layers-wrapper .craft-layer-row:hover {
+  background-color: transparent !important;
+}
+
+.craft-layers-wrapper .craft-layer-actions {
+  margin-left: auto !important;
+}
+
+.craft-layers-wrapper .craft-layer-node:has(.craft-layer-actions button[title^="Mở khóa"]) .craft-layer-actions,
+.craft-layers-wrapper .craft-layer-node:has(button[title="Hiện thành phần"]) .craft-layer-actions {
+  opacity: 1 !important;
+}
+
+/* Hover State for Unselected Layers: no background, only subtle text contrast */
+.craft-layers-wrapper .craft-layer-node:not(.selected) > .craft-layer-row:hover span {
+  color: #0f172a !important;
+}
+
+/* Selected Layer (Active) - compact blue left rail only */
+.craft-layers-wrapper .craft-layer-node.selected > .craft-layer-row {
+  background-color: transparent !important;
+  box-shadow: inset 2px 0 0 #3b82f6 !important;
+}
+
+.craft-layers-wrapper .craft-layer-node.selected span,
+.craft-layers-wrapper .craft-layer-node.selected svg {
+  color: #2563eb !important;
+  font-weight: 600 !important;
+}
+
+/* Text label styling */
+.craft-layers-wrapper div[class*="LayerNode"] span,
+.craft-layers-wrapper .craft-layer-node span {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: #475569 !important;
+  letter-spacing: 0 !important;
+  transition: color 0.1s ease !important;
+}
+
+/* Indicator & action icon styling */
+.craft-layers-wrapper div[class*="LayerNode"] svg,
+.craft-layers-wrapper .craft-layer-node svg {
+  width: 14px !important;
+  height: 14px !important;
+  color: currentColor !important;
+  transition: color 0.1s ease !important;
+  cursor: pointer !important;
+}
+
+.craft-layer-search:focus-within {
+  border-color: #bfdbfe !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08) !important;
+}
+
+/* Sidebar Quill Editor Styling */
+.sidebar-quill .ql-toolbar.ql-snow {
+  border-color: #cbd5e1 !important;
+  border-top: none !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  background: #f8fafc !important;
+  padding: 4px 6px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 2px !important;
+}
+
+.sidebar-quill .ql-container.ql-snow {
+  border-color: #cbd5e1 !important;
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+  background: #ffffff !important;
+  height: 140px;
+  min-height: 100px !important;
+  resize: vertical !important;
+  overflow: hidden !important;
+}
+
+.sidebar-quill .ql-editor {
+  padding: 8px !important;
+  font-size: 13px !important;
+  font-family: inherit !important;
+  line-height: 1.5 !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+}
+
+/* Premium Drop Cap (Chữ viết hoa đầu dòng) */
+.editor-drop-cap::first-letter {
+  font-size: var(--dropcap-size, 3.2em);
+  line-height: 0.85;
+  float: left;
+  margin-top: 4px;
+  margin-right: var(--dropcap-space, 8px);
+  font-weight: var(--dropcap-weight, 800);
+  font-family: var(--dropcap-font, inherit);
+  color: var(--dropcap-color, inherit);
+  background-color: var(--dropcap-bg, transparent);
+  border: var(--dropcap-border, none);
+  border-radius: var(--dropcap-radius, 0);
+  padding: var(--dropcap-padding, 0);
+  text-shadow: var(--dropcap-shadow, none);
+}
+
+/* Custom properties support for Text Color (normal/hover), Link Color (normal/hover), and Paragraph Spacing */
+.editor-text-block, .editor-heading-block {
+  color: var(--text-color) !important;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+.editor-text-block {
+  -webkit-column-count: var(--column-count, auto);
+  -moz-column-count: var(--column-count, auto);
+  column-count: var(--column-count, auto);
+  -webkit-column-gap: var(--column-gap, normal);
+  -moz-column-gap: var(--column-gap, normal);
+  column-gap: var(--column-gap, normal);
+}
+.editor-text-block:hover, .editor-heading-block:hover {
+  color: var(--text-color-hover) !important;
+}
+
+.editor-text-block p {
+  margin-top: 0 !important;
+  margin-bottom: var(--paragraph-spacing, 16px) !important;
+}
+.editor-text-block p:last-child {
+  margin-bottom: 0 !important;
+}
+
+.editor-text-block a, .editor-heading-block a {
+  color: var(--link-color) !important;
+  transition: color 0.3s ease;
+}
+.editor-text-block a:hover, .editor-heading-block a:hover {
+  color: var(--link-color-hover) !important;
+}
+
+/* Reset default browser margins for heading elements within the editor */
+.editor-heading-block {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Craft Element Hover Effects */
+.craft-hover-effect {
+  transition: background-color 0.3s ease, background-image 0.3s ease, border-color 0.3s ease, border-radius 0.3s ease, box-shadow 0.3s ease;
+}
+.craft-hover-effect:hover {
+  background-color: var(--hover-bg-color, inherit) !important;
+  background-image: var(--hover-bg-image, inherit) !important;
+  border-color: var(--hover-border-color, inherit) !important;
+  border-top-left-radius: var(--hover-border-radius-tl, inherit) !important;
+  border-top-right-radius: var(--hover-border-radius-tr, inherit) !important;
+  border-bottom-right-radius: var(--hover-border-radius-br, inherit) !important;
+  border-bottom-left-radius: var(--hover-border-radius-bl, inherit) !important;
+  box-shadow: var(--hover-box-shadow, inherit) !important;
+}
+
+/* Elementor Classic Custom Editor Overrides & Styling */
+#quill-sidebar-toolbar.ql-toolbar.ql-snow {
+  border-color: #cbd5e1 !important;
+  border-top: none !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  background: #f8fafc !important;
+  padding: 4px 6px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+}
+
+#quill-sidebar-toolbar button {
+  float: none !important;
+  height: 20px !important;
+  width: 20px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #64748b !important;
+  border-radius: 4px !important;
+  transition: all 0.15s ease !important;
+}
+
+#quill-sidebar-toolbar button:hover {
+  background-color: #eaeaea !important;
+  color: #1e293b !important;
+}
+
+#quill-sidebar-toolbar button.ql-active {
+  background-color: #e2e8f0 !important;
+  color: #2563eb !important;
+}
+
+#quill-sidebar-toolbar button svg {
+  width: 11px !important;
+  height: 11px !important;
+  stroke: currentColor !important;
+}
+
+#quill-sidebar-toolbar .ql-formats {
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Format select picker styling */
+#quill-sidebar-toolbar .ql-picker {
+  height: 20px !important;
+  font-size: 10px !important;
+}
+
+#quill-sidebar-toolbar .ql-picker-label {
+  padding-left: 6px !important;
+  padding-right: 14px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 4px !important;
+  background: white !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 20px !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+}
+
+#quill-sidebar-toolbar .ql-picker-label::before {
+  line-height: 18px !important;
+}
+
+#quill-sidebar-toolbar .ql-picker-options {
+  font-size: 10px !important;
+  border-radius: 6px !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  padding: 4px !important;
+}
+
+#quill-sidebar-toolbar .ql-picker-item {
+  padding: 3px 6px !important;
+  border-radius: 4px !important;
+}
+
+/* Color and background pickers */
+#quill-sidebar-toolbar .ql-color.ql-picker, 
+#quill-sidebar-toolbar .ql-background.ql-picker {
+  width: 24px !important;
+}
+
+#quill-sidebar-toolbar .ql-color.ql-picker .ql-picker-label, 
+#quill-sidebar-toolbar .ql-background.ql-picker .ql-picker-label {
+  width: 24px !important;
+  padding: 0 !important;
+  justify-content: center !important;
+}
+
+#quill-sidebar-toolbar .ql-color.ql-picker .ql-picker-label svg, 
+#quill-sidebar-toolbar .ql-background.ql-picker .ql-picker-label svg {
+  width: 11px !important;
+  height: 11px !important;
+}
+
+/* Fullscreen overlay mode */
+.fixed.z-\[99999\] {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.fixed.z-\[99999\] .sidebar-quill {
+  flex: 1 !important;
+  height: 100% !important;
+}
+
+.fixed.z-\[99999\] .ql-container.ql-snow {
+  height: calc(100vh - 120px) !important;
+  flex: 1 !important;
+  border-bottom-left-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
+  resize: none !important;
+}
+
+.fixed.z-\[99999\] .ql-editor {
+  padding: 16px !important;
+  font-size: 14px !important;
+}
+
+.fixed.z-\[99999\] textarea {
+  height: calc(100vh - 80px) !important;
+  flex: 1 !important;
+  resize: none !important;
+  padding: 16px !important;
+  font-size: 13px !important;
+}
+
+/* Modals animations */
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.backdrop-blur-xs {
+  backdrop-filter: blur(2px) !important;
+}
+/* Craft Elementor-like animation runtime */
+@keyframes fadeInDown { from { opacity: 0; transform: translate3d(0, -32px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes fadeInLeft { from { opacity: 0; transform: translate3d(-32px, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes fadeInRight { from { opacity: 0; transform: translate3d(32px, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translate3d(0, 32px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes zoomIn { from { opacity: 0; transform: scale3d(0.82, 0.82, 0.82); } 50% { opacity: 1; } to { opacity: 1; transform: scale3d(1, 1, 1); } }
+@keyframes zoomInDown { from { opacity: 0; transform: scale3d(0.82, 0.82, 0.82) translate3d(0, -42px, 0); } to { opacity: 1; transform: scale3d(1, 1, 1) translate3d(0, 0, 0); } }
+@keyframes zoomInLeft { from { opacity: 0; transform: scale3d(0.82, 0.82, 0.82) translate3d(-42px, 0, 0); } to { opacity: 1; transform: scale3d(1, 1, 1) translate3d(0, 0, 0); } }
+@keyframes zoomInRight { from { opacity: 0; transform: scale3d(0.82, 0.82, 0.82) translate3d(42px, 0, 0); } to { opacity: 1; transform: scale3d(1, 1, 1) translate3d(0, 0, 0); } }
+@keyframes zoomInUp { from { opacity: 0; transform: scale3d(0.82, 0.82, 0.82) translate3d(0, 42px, 0); } to { opacity: 1; transform: scale3d(1, 1, 1) translate3d(0, 0, 0); } }
+@keyframes bounceIn { 0%, 20%, 40%, 60%, 80%, 100% { animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); } 0% { opacity: 0; transform: scale3d(0.3, 0.3, 0.3); } 20% { transform: scale3d(1.1, 1.1, 1.1); } 40% { transform: scale3d(0.9, 0.9, 0.9); } 60% { opacity: 1; transform: scale3d(1.03, 1.03, 1.03); } 80% { transform: scale3d(0.97, 0.97, 0.97); } 100% { opacity: 1; transform: scale3d(1, 1, 1); } }
+@keyframes bounceInDown { from { opacity: 0; transform: translate3d(0, -70px, 0); } 60% { opacity: 1; transform: translate3d(0, 14px, 0); } 75% { transform: translate3d(0, -7px, 0); } 90% { transform: translate3d(0, 3px, 0); } to { transform: translate3d(0, 0, 0); } }
+@keyframes bounceInLeft { from { opacity: 0; transform: translate3d(-70px, 0, 0); } 60% { opacity: 1; transform: translate3d(14px, 0, 0); } 75% { transform: translate3d(-7px, 0, 0); } 90% { transform: translate3d(3px, 0, 0); } to { transform: translate3d(0, 0, 0); } }
+@keyframes bounceInRight { from { opacity: 0; transform: translate3d(70px, 0, 0); } 60% { opacity: 1; transform: translate3d(-14px, 0, 0); } 75% { transform: translate3d(7px, 0, 0); } 90% { transform: translate3d(-3px, 0, 0); } to { transform: translate3d(0, 0, 0); } }
+@keyframes bounceInUp { from { opacity: 0; transform: translate3d(0, 70px, 0); } 60% { opacity: 1; transform: translate3d(0, -14px, 0); } 75% { transform: translate3d(0, 7px, 0); } 90% { transform: translate3d(0, -3px, 0); } to { transform: translate3d(0, 0, 0); } }
+@keyframes slideInUp { from { opacity: 0; transform: translate3d(0, 72px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes slideInDown { from { opacity: 0; transform: translate3d(0, -72px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes slideInLeft { from { opacity: 0; transform: translate3d(-72px, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes slideInRight { from { opacity: 0; transform: translate3d(72px, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes zoomOut { from { opacity: 0; transform: scale3d(1.18, 1.18, 1.18); } to { opacity: 1; transform: scale3d(1, 1, 1); } }
+@keyframes craftScaleUp { from { opacity: 0; transform: scale3d(0.86, 0.86, 0.86); } to { opacity: 1; transform: scale3d(1, 1, 1); } }
+@keyframes scaleDown { from { opacity: 0; transform: scale3d(1.14, 1.14, 1.14); } to { opacity: 1; transform: scale3d(1, 1, 1); } }
+@keyframes rotateIn { from { opacity: 0; transform: rotate3d(0, 0, 1, -90deg); transform-origin: center; } to { opacity: 1; transform: translate3d(0, 0, 0); transform-origin: center; } }
+@keyframes rotateOut { from { opacity: 0; transform: rotate3d(0, 0, 1, 90deg) scale(0.92); transform-origin: center; } to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); transform-origin: center; } }
+
+.craft-animation-on-hover:hover {
+  animation-name: var(--craft-hover-animation-name);
+  animation-duration: inherit;
+  animation-delay: inherit;
+  animation-fill-mode: both;
+}
+
+
+/* ================================================================
+   Page Builder Content — Undo Tailwind Preflight
+   These rules are intentionally OUTSIDE @layer so they beat
+   Preflight's @layer base specificity.
+   ================================================================ */
+.page-builder-content {
+  width: 100%;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #334155;
+}
+.page-builder-content,
+.page-builder-content * {
+  box-sizing: border-box;
+}
+.page-builder-content .lexi-section { width: 100%; }
+.page-builder-content .lexi-container { width: 100%; }
+.page-builder-content > .lexi-container,
+.page-builder-content > div > .lexi-container,
+.page-builder-content .lexi-section > .lexi-container {
+  max-width: var(--site-layout-content-width, 1200px);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--site-layout-container-gap, 20px);
+  padding-right: var(--site-layout-container-gap, 20px);
+}
+
+.page-builder-content h1 { font-size: 2em; font-weight: bold; margin: 0.67em 0; }
+.page-builder-content h2 { font-size: 1.5em; font-weight: bold; margin: 0.83em 0; }
+.page-builder-content h3 { font-size: 1.17em; font-weight: bold; margin: 1em 0; }
+.page-builder-content h4 { font-size: 1em; font-weight: bold; margin: 1.33em 0; }
+.page-builder-content h5 { font-size: 0.83em; font-weight: bold; margin: 1.67em 0; }
+.page-builder-content h6 { font-size: 0.67em; font-weight: bold; margin: 2.33em 0; }
+.page-builder-content p { margin: 0 0 1rem; }
+.page-builder-content ul,
+.page-builder-content ol { padding-left: 2rem; margin: 1em 0; }
+.page-builder-content ul { list-style-type: disc; }
+.page-builder-content ol { list-style-type: decimal; }
+.page-builder-content li { display: list-item; margin: 0.25em 0; }
+.page-builder-content a { color: inherit; text-decoration: underline; }
+.page-builder-content strong,
+.page-builder-content b { font-weight: bold; }
+.page-builder-content em,
+.page-builder-content i { font-style: italic; }
+.page-builder-content blockquote { margin: 1em 2.5em; padding: 0; border: none; }
+.page-builder-content hr { border: none; border-top: 1px solid #d1d5db; margin: 1.5em 0; }
+.page-builder-content table { border-collapse: collapse; }
+.page-builder-content th,
+.page-builder-content td { padding: 0.5em; text-align: left; }
+.page-builder-content img,
+.page-builder-content video,
+.page-builder-content iframe { max-width: 100%; height: auto; }
+.page-builder-content img { display: inline-block; }
+.page-builder-content button,
+.page-builder-content input,
+.page-builder-content textarea,
+.page-builder-content select { font-family: inherit; font-size: 100%; line-height: 1.15; margin: 0; }
+.page-builder-content button { cursor: pointer; }
+.page-builder-content pre { font-family: monospace; white-space: pre-wrap; margin: 1em 0; }
+.page-builder-content code { font-family: monospace; }
+.page-builder-content sub { vertical-align: sub; font-size: smaller; }
+.page-builder-content sup { vertical-align: super; font-size: smaller; }
+

@@ -1,0 +1,595 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  username  String    @unique
+  password  String
+  name      String?
+  role      Role      @default(SUBSCRIBER)
+  emailVerified            Boolean         @default(false)
+  emailVerifyToken         String?
+  emailVerifyTokenExpiresAt DateTime?
+  
+  // 2FA & Login Security
+  twoFactorEnabled         Boolean         @default(false)
+  twoFactorSecret          String?
+  twoFactorRecoveryCodes   String?         @db.Text
+  lastLoginAt              DateTime?
+  lastLoginIp              String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[]
+  media     Media[]
+  posts     Post[]
+  pageRevisions PageRevision[]
+  aiUsageLogs   AiUsageLog[]
+  sessions                 UserSession[]
+  passwordResets           PasswordReset[]
+  pageAutosaves            PageAutosave[]
+}
+
+model UserSession {
+  id        String   @id @default(uuid())
+  userId    Int
+  token     String   @unique        // Random 64-char hex token
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String   @unique        // Random 64-char hex token
+  expiresAt DateTime                // 1 hour expiry
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+}
+
+model Post {
+  id              Int        @id @default(autoincrement())
+  title           String
+  slug            String     @unique
+  content         String?
+  excerpt         String?
+  status          PostStatus @default(DRAFT)
+  type            PostType   @default(POST)
+  seoTitle        String?
+  seoDescription  String?
+  seoKeywords     String?
+  authorId        Int
+  parentId        Int?
+  featuredImageId Int?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  publishedAt     DateTime   @default(now())
+  visibility      String     @default("PUBLIC")
+  legacyId        Int?       @unique
+  builderData     String?
+  pageLayout      PageLayout   @default(THEME_DEFAULT)
+  contentWidth    ContentWidth @default(BOXED)
+  contentMaxWidth String       @default("1200px")
+  comments        Comment[]
+  author          User       @relation(fields: [authorId], references: [id])
+  featuredImage   Media?     @relation("PostFeaturedImage", fields: [featuredImageId], references: [id])
+  parent          Post?      @relation("PageHierarchy", fields: [parentId], references: [id])
+  children        Post[]     @relation("PageHierarchy")
+  redirects       Redirect[]
+  revisions       Revision[]
+  categories      Category[] @relation("PostToCategory")
+  tags            Tag[]      @relation("PostToTag")
+  pageAutosaves   PageAutosave[]
+  pageRevisions   PageRevision[]
+  productMeta     ProductMeta?
+}
+
+model ProductMeta {
+  id               Int      @id @default(autoincrement())
+  postId           Int      @unique
+  sku              String?  @unique
+  englishName      String?
+  technicalName    String?
+  shortDescription String?  @db.Text
+  salesStatus      String?  // 'AVAILABLE', 'OUT_OF_STOCK', 'COMING_SOON', 'DISCONTINUED'
+  stockStatus      String?  // 'IN_STOCK', 'PRE_ORDER', 'OUT_OF_STOCK', 'IMPORT_ON_DEMAND', 'CUT_TO_ORDER', 'CONTACT_TO_CHECK'
+  isFeatured       Boolean  @default(false)
+  galleryIds       String?  @db.Text // JSON array of media URLs or IDs
+  regularPrice     String?
+  salePrice        String?
+
+  // WooCommerce-style/B2B steel product data
+  productKind      String?  @default("SIMPLE")
+  priceMode        String?  @default("CONTACT_QUOTE")
+  unit             String?
+  manageStock      Boolean  @default(false)
+  stockQuantity    Int?
+  allowBackorder   Boolean  @default(false)
+  steelGrade       String?
+  hardness         String?
+  surface          String?
+  origin           String?
+  dynamicSpecs     String?  @db.Text // JSON: [{ name, value }]
+  specTable        String?  @db.Text // JSON: [{ spec, length, status, note }]
+  documents        String?  @db.Text // JSON: [{ label, url, type }]
+  linkedProducts   String?  @db.Text // JSON/text for related/cross-sell/alternatives
+  ctaLabel         String?
+  quoteForm        String?
+  quotePhone       String?
+  quoteNote        String?  @db.Text
+  advancedNote     String?  @db.Text
+  
+  post             Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  type        PostType   @default(POST)
+  name        String
+  slug        String     @unique
+  description String?
+  parentId    Int?
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  posts       Post[]     @relation("PostToCategory")
+}
+
+model Tag {
+  id    Int      @id @default(autoincrement())
+  type  PostType @default(POST)
+  name  String
+  slug  String   @unique
+  posts Post[]   @relation("PostToTag")
+}
+
+model Media {
+  id         Int      @id @default(autoincrement())
+  filename   String
+  url        String
+  mimeType   String?
+  size       Int?
+  uploaderId Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  uploader   User?    @relation(fields: [uploaderId], references: [id])
+  posts      Post[]   @relation("PostFeaturedImage")
+}
+
+model Setting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Revision {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  title     String
+  content   String?
+  slug      String
+  createdAt DateTime @default(now())
+  isDelta   Boolean  @default(false)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id          Int           @id @default(autoincrement())
+  content     String
+  rating      Int?
+  status      CommentStatus @default(PENDING)
+  ipAddress   String?
+  userAgent   String?
+  authorName  String
+  authorEmail String
+  authorUrl   String?
+  userId      Int?
+  postId      Int
+  parentId    Int?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  parent      Comment?      @relation("CommentHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children    Comment[]     @relation("CommentHierarchy")
+  post        Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user        User?         @relation(fields: [userId], references: [id])
+}
+
+model Redirect {
+  id         Int      @id @default(autoincrement())
+  oldUrl     String   @unique
+  newUrl     String
+  postId     Int?
+  statusCode Int      @default(301)
+  createdAt  DateTime @default(now())
+  active     Boolean  @default(true)
+  hits       Int      @default(0)
+  post       Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model DeletedPostHistory {
+  id        Int      @id @default(autoincrement())
+  url       String   @unique
+  title     String?
+  createdAt DateTime @default(now())
+}
+
+model FourOhFourLog {
+  id        Int      @id @default(autoincrement())
+  url       String   @unique
+  visits    Int      @default(1)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  SUBSCRIBER
+}
+
+enum PostStatus {
+  PUBLISHED
+  DRAFT
+  TRASH
+}
+
+enum PostType {
+  POST
+  PAGE
+  SERVICE
+  PRODUCT
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  SPAM
+  TRASH
+}
+
+enum PageLayout {
+  THEME_DEFAULT
+  FULL_WIDTH
+  CANVAS
+}
+
+enum ContentWidth {
+  BOXED
+  FULL_WIDTH
+  CUSTOM
+}
+
+model Template {
+  id            Int                 @id @default(autoincrement())
+  name          String              // "Header chính", "Footer dark", "Single Post IELTS"
+  type          TemplateType        // HEADER, FOOTER, SINGLE_POST, ...
+  status        TemplateStatus      @default(INACTIVE)
+  componentFile String?             // Tên file TSX trong theme, ví dụ: "Header-v2" → theme/{id}/Header-v2.tsx
+  htmlContent   String?             // HTML content từ builder
+  cssContent    String?             // CSS tùy chỉnh
+  builderData   String?             // Trạng thái thiết kế JSON từ Visual Builder
+  isDefault     Boolean             @default(false)
+  priority      Int                 @default(10)  // Số nhỏ = ưu tiên cao
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  conditions    TemplateCondition[]
+  pageAutosaves PageAutosave[]
+  pageRevisions PageRevision[]
+}
+
+model TemplateCondition {
+  id            Int           @id @default(autoincrement())
+  templateId    Int
+  conditionType ConditionType // INCLUDE / EXCLUDE
+  targetType    TargetType    // ENTIRE_SITE, ALL_POSTS, SPECIFIC_POST, CATEGORY, TAG, ...
+  targetId      Int?          // ID cụ thể của post/category/tag/author
+  targetSlug    String?       // Slug backup cho readability trong admin
+  template      Template      @relation(fields: [templateId], references: [id], onDelete: Cascade)
+}
+
+enum TemplateType {
+  HEADER
+  FOOTER
+  SINGLE_POST
+  SINGLE_PAGE
+  ARCHIVE
+  HOMEPAGE
+  FOUR_O_FOUR
+  SEARCH
+  TAG_ARCHIVE
+  LANDING_PAGE
+  SINGLE_PRODUCT
+}
+
+enum TemplateStatus {
+  ACTIVE
+  INACTIVE
+  DRAFT
+}
+
+enum ConditionType {
+  INCLUDE
+  EXCLUDE
+}
+
+enum TargetType {
+  ENTIRE_SITE
+  ALL_POSTS
+  ALL_PAGES
+  SPECIFIC_POST
+  SPECIFIC_PAGE
+  CATEGORY
+  TAG
+  AUTHOR
+  CATEGORY_ARCHIVE
+  TAG_ARCHIVE
+  AUTHOR_ARCHIVE
+  SEARCH_PAGE
+  FOUR_O_FOUR_PAGE
+  POST_TYPE
+  ALL_PRODUCTS
+  SPECIFIC_PRODUCT
+}
+
+model PageAutosave {
+  id           String   @id @default(uuid())
+  postId       Int?
+  templateId   Int?
+  userId       Int?
+
+  title        String?
+  slug         String?
+  content      String?  @db.Text
+  visibility   String?
+  publishedAt  DateTime?
+
+  builderData  String?  @db.Text
+  htmlContent  String?  @db.Text
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  post         Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  template     Template? @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  user         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@unique([templateId, userId])
+}
+
+model PageRevision {
+  id            String   @id @default(uuid())
+  postId        Int?
+  templateId    Int?
+  version       Int
+  revisionName  String?  @db.VarChar(255)
+  builderData   String   @db.Text
+  htmlContent   String   @db.Text
+  cssContent    String?  @db.Text
+  isStarred     Boolean  @default(false)
+  commitMessage String?  @db.Text
+  createdById   Int?
+  createdAt     DateTime @default(now())
+
+  post          Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  template      Template? @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  createdBy     User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+}
+
+model AiUsageLog {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  promptSummary String   @db.VarChar(255)
+  model         String
+  tokens        Int      @default(0)
+  status        String   // "SUCCESS" | "FAILED"
+  error         String?  @db.Text
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model FormSubmission {
+  id          Int      @id @default(autoincrement())
+  formId      String   // ID của khối Form trong Page Builder
+  formName    String   // Tên Form
+  pageUrl     String?  // URL của trang gửi
+  ipAddress   String?  // Địa chỉ IP
+  userAgent   String?  // Trình duyệt
+  data        String   @db.Text // Dữ liệu form dưới dạng JSON String
+  createdAt   DateTime @default(now())
+}
+
+
+model SecurityEvent {
+  id        Int      @id @default(autoincrement())
+  type      String
+  severity  String   @default("info")
+  ipAddress String?
+  userAgent String?
+  method    String?
+  path      String?
+  userId    Int?
+  message   String
+  metadata  String?  @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([type])
+  @@index([severity])
+  @@index([ipAddress])
+  @@index([createdAt])
+}
+
+model SecurityIpRule {
+  id        Int      @id @default(autoincrement())
+  ip        String
+  type      String   // block | allow
+  reason    String?
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ip])
+  @@index([type])
+}
+
+model SecurityScan {
+  id          Int      @id @default(autoincrement())
+  status      String   // running | completed | failed
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  summary     String?  @db.Text
+}
+
+model SecurityFinding {
+  id        Int      @id @default(autoincrement())
+  scanId    Int
+  severity  String
+  type      String
+  filePath  String?
+  message   String
+  details   String?  @db.Text
+  ignored   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model FileIntegritySnapshot {
+  id        Int      @id @default(autoincrement())
+  filePath  String   @unique
+  hash      String
+  size      Int
+  updatedAt DateTime @updatedAt
+}
+
+enum PackageType {
+  CORE
+  PLUGIN
+  THEME
+}
+
+enum PackageStatus {
+  ACTIVE
+  INACTIVE
+  INSTALLED
+  UPDATE_AVAILABLE
+  BROKEN
+}
+
+enum PackageSource {
+  BUILT_IN
+  CONTENT
+  REGISTRY
+  DOCKER_IMAGE
+}
+
+enum UpdateJobType {
+  CORE
+  PLUGIN
+  THEME
+  DATABASE
+}
+
+enum UpdateJobStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  ROLLED_BACK
+}
+
+enum MigrationStatus {
+  PENDING
+  RUNNING
+  APPLIED
+  FAILED
+}
+
+model InstalledPackage {
+  id           Int           @id @default(autoincrement())
+  type         PackageType
+  slug         String
+  name         String
+  version      String
+  status       PackageStatus @default(INSTALLED)
+  source       PackageSource @default(BUILT_IN)
+  manifestJson String?       @db.Text
+  latestVersion String?
+  updateUri    String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  migrations PackageMigration[]
+  backups    PackageBackup[]
+
+  @@unique([type, slug])
+  @@index([type])
+  @@index([status])
+}
+
+model PackageMigration {
+  id            Int             @id @default(autoincrement())
+  packageId     Int?
+  packageSlug   String
+  packageType   PackageType
+  version       String
+  migrationId   String
+  status        MigrationStatus @default(PENDING)
+  checksum      String?
+  appliedAt     DateTime?
+  error         String?         @db.Text
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  installedPackage InstalledPackage? @relation(fields: [packageId], references: [id], onDelete: SetNull)
+
+  @@unique([packageType, packageSlug, migrationId])
+  @@index([status])
+}
+
+model UpdateJob {
+  id            String          @id @default(uuid())
+  type          UpdateJobType
+  targetSlug    String
+  fromVersion   String?
+  toVersion     String?
+  status        UpdateJobStatus @default(PENDING)
+  log           String?         @db.Text
+  error         String?         @db.Text
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdById   Int?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model PackageBackup {
+  id            Int      @id @default(autoincrement())
+  packageId     Int?
+  packageSlug   String
+  packageType   PackageType
+  version       String
+  backupPath    String
+  createdAt     DateTime @default(now())
+  installedPackage InstalledPackage? @relation(fields: [packageId], references: [id], onDelete: SetNull)
+
+  @@index([packageType, packageSlug])
+  @@index([createdAt])
+}

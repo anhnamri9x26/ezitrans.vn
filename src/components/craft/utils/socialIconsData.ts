@@ -1,0 +1,1 @@
+export * from '@/plugins/lexi-page-builder/utils/socialIconsData';

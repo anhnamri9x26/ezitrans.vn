@@ -1,0 +1,49 @@
+{
+  "id": "lexi-shield-security",
+  "name": "Lexi Shield Security",
+  "nameEn": "Lexi Shield Security",
+  "description": "Trung tâm bảo mật cho Lexi CMS: Security Health Score, hardening checklist, login activity monitor, IP blocking, 2FA, WAF cơ bản và file integrity scanner.",
+  "version": "1.0.0",
+  "author": "DeepMind Team",
+  "icon": "shield",
+  "iconColor": "#2563eb",
+  "settingKey": "plugin_lexi_shield_enabled",
+  "category": "security",
+  "requires": [],
+  "adminRoute": "/settings/security",
+  "entry": "index.ts",
+  "componentPath": "@/plugins/lexi-shield-security",
+  "files": [
+    "index.ts",
+    "manifest.json",
+    "README.md",
+    "src/app/admin/settings/security/page.tsx",
+    "src/app/api/security/events/route.ts",
+    "src/app/api/security/health/route.ts",
+    "src/app/api/security/ip-rules/route.ts",
+    "src/app/api/security/scanner/baseline/route.ts",
+    "src/app/api/security/scanner/scan/route.ts",
+    "src/lib/security"
+  ],
+  "capabilities": [
+    "security-health-score",
+    "hardening-checklist",
+    "login-activity-monitor",
+    "ip-blocking",
+    "two-factor-authentication",
+    "static-waf",
+    "file-integrity-scanner"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-29",
+      "changes": [
+        "Đóng gói Lexi Shield thành plugin chính thức",
+        "Thêm Security Health Score và Hardening Checklist",
+        "Thêm Login Activity Monitor và Recommended Actions",
+        "Tích hợp IP Blocking, WAF, 2FA và File Integrity Scanner"
+      ]
+    }
+  ]
+}

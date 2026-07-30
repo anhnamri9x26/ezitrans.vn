@@ -1,0 +1,48 @@
+{
+  "id": "lexi-page-builder",
+  "name": "Lexi Page Builder",
+  "nameEn": "Lexi Page Builder",
+  "description": "Trình thiết kế trang kéo thả trực quan hỗ trợ 20+ block, Form Builder, AI Copilot, Template System. Thiết kế Landing Page và trang nội dung đẹp mắt mà không cần viết mã.",
+  "version": "1.0.0",
+  "author": "Lexi Team",
+  "icon": "layout",
+  "iconColor": "#6366f1",
+  "settingKey": "plugin_lexi_page_builder_enabled",
+  "category": "builder",
+  "requires": [],
+  "adminRoute": "/settings/page-builder",
+  "capabilities": [
+    "drag-drop-editor",
+    "page-builder",
+    "form-builder",
+    "template-builder",
+    "html-renderer",
+    "ai-copilot",
+    "responsive-preview"
+  ],
+  "entry": "index.ts",
+  "componentPath": "@/plugins/lexi-page-builder",
+  "files": [
+    "index.ts",
+    "LexiPageBuilder.tsx",
+    "PageSettingsContext.tsx",
+    "components/**",
+    "panels/**",
+    "utils/**"
+  ],
+  "updateChannels": ["zip", "git"],
+  "repository": null,
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-13",
+      "changes": [
+        "Đổi tên GrapesJS Builder thành Lexi Page Builder",
+        "Chuyển Page Builder thành plugin self-contained kiểu WordPress",
+        "Đưa toàn bộ components, panels và utils vào thư mục plugin",
+        "Hỗ trợ bật/tắt qua Plugin Manager",
+        "Chuẩn bị workflow cập nhật qua ZIP và Git"
+      ]
+    }
+  ]
+}

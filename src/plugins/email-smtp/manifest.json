@@ -1,0 +1,39 @@
+{
+  "id": "email-smtp",
+  "name": "Lexi SMTP plugin",
+  "nameEn": "Lexi SMTP plugin",
+  "description": "Tích hợp máy chủ SMTP (Gmail, Outlook, Hostinger...) để gửi email an toàn, cung cấp SMTP Testing Console debug trực quan, tự động gửi thông báo email khi có bình luận mới, phản hồi bình luận hoặc đăng ký thành viên mới.",
+  "version": "1.0.0",
+  "author": "DeepMind Team",
+  "icon": "mail",
+  "iconColor": "#6366f1",
+  "settingKey": "plugin_email_smtp_enabled",
+  "category": "communication",
+  "requires": [],
+  "adminRoute": "/settings/email",
+  "entry": "index.ts",
+  "componentPath": "@/plugins/email-smtp",
+  "files": [
+    "index.ts",
+    "manifest.json",
+    "lib/mailer.ts",
+    "admin/EmailSettingsPage.tsx",
+    "api/email-test.ts"
+  ],
+  "capabilities": [
+    "smtp-config",
+    "email-notifications",
+    "test-console"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-20",
+      "changes": [
+        "Cấu hình SMTP với hỗ trợ SSL/TLS",
+        "SMTP Testing Console",
+        "Thông báo email tự động cho bình luận và thành viên mới"
+      ]
+    }
+  ]
+}

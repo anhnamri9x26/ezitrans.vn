@@ -1,0 +1,12 @@
+{
+  "id": "default",
+  "name": "Default Theme",
+  "version": "1.0.0",
+  "author": "Lexi Team",
+  "description": "Default starter theme.",
+  "previewImage": "preview.png",
+  "supports": ["header", "footer", "page"],
+  "templates": {
+    "fallback": "page.tsx"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "lexi-commerce",
+  "name": "Lexi Commerce",
+  "nameEn": "Lexi Commerce",
+  "description": "Plugin quản lý sản phẩm cho Lexi CMS. Tạo, chỉnh sửa và hiển thị sản phẩm trên website với đầy đủ SEO, categories và tags.",
+  "version": "1.0.0",
+  "author": "DeepMind Team",
+  "icon": "shopping-bag",
+  "iconColor": "#f59e0b",
+  "settingKey": "plugin_lexi_commerce_enabled",
+  "category": "ecommerce",
+  "requires": [],
+  "adminRoute": "/admin/products",
+  "entry": "index.ts",
+  "componentPath": "@/plugins/lexi-commerce",
+  "hooks": "hooks.ts",
+  "capabilities": [
+    "product-management",
+    "product-categories",
+    "product-seo"
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-07-01",
+      "changes": [
+        "Phiên bản đầu tiên — CRUD sản phẩm cơ bản",
+        "Tích hợp Categories, Tags, Featured Image",
+        "SEO meta fields cho sản phẩm",
+        "Tự động thêm menu Sidebar và Dashboard Card"
+      ]
+    }
+  ]
+}

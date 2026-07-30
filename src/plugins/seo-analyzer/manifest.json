@@ -1,0 +1,65 @@
+{
+  "id": "seo-analyzer",
+  "name": "Lexi SEO plugin",
+  "nameEn": "Lexi SEO plugin",
+  "description": "Tự động kích hoạt các trường SEO mở rộng trong trình biên soạn (Tiêu đề SEO, Thẻ mô tả, Từ khóa chính) kèm hệ thống đo lường, tính toán điểm SEO trực tuyến.",
+  "version": "1.2.0",
+  "author": "DeepMind Team",
+  "icon": "sparkles",
+  "iconColor": "#10b981",
+  "settingKey": "plugin_seo_enabled",
+  "category": "seo",
+  "requires": [],
+  "adminRoute": "/settings/seo",
+  "entry": "index.ts",
+  "componentPath": "@/plugins/seo-analyzer",
+  "hooks": "hooks.ts",
+  "files": [
+    "index.ts",
+    "manifest.json",
+    "components/SeoMetaBox.tsx",
+    "lib/metaTemplate.ts",
+    "lib/technicalSeo.ts",
+    "admin/SeoSettingsPage.tsx",
+    "api/sitemap.ts",
+    "api/robots.ts",
+    "api/llms-txt.ts"
+  ],
+  "capabilities": [
+    "meta-fields",
+    "sitemap",
+    "breadcrumbs",
+    "webmaster-tools",
+    "robots-txt",
+    "rss-feed",
+    "schema-markup",
+    "llms-txt"
+  ],
+  "changelog": [
+    {
+      "version": "1.2.0",
+      "date": "2026-05-31",
+      "changes": [
+        "Thêm Webmaster Tools với trạng thái xác minh real-time",
+        "Tích hợp Google Analytics & Tag Manager tracking",
+        "Gom nhóm Breadcrumbs và llms.txt vào Technical SEO"
+      ]
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-05-25",
+      "changes": [
+        "Thêm Meta Templates cho trang chủ, bài viết, danh mục",
+        "Thêm robots.txt và RSS Feed tùy chỉnh",
+        "Hỗ trợ llms.txt cho AI SEO"
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-05-20",
+      "changes": [
+        "Phiên bản đầu tiên — SEO Meta Box, Sitemap XML, Schema Markup"
+      ]
+    }
+  ]
+}

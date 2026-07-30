@@ -1,0 +1,30 @@
+{
+  "id": "default",
+  "name": "Classic WordPress Style",
+  "nameVi": "Giao diện Truyền thống",
+  "description": "Thiết kế phẳng tối giản cổ điển với Header phẳng, bài viết hiển thị theo lưới 3 cột truyền thống. Tối ưu cực tốt cho các trang tin tức, blog cá nhân hoặc tạp chí nội dung sạch sẽ.",
+  "version": "1.0.0",
+  "author": "Lexi Team",
+  "tags": ["classic", "light-mode", "minimal", "blog"],
+  "previewImage": "preview.png",
+  "supports": ["header", "footer", "homepage", "post", "page", "category", "tag"],
+  "templates": {
+    "fallback": "fallback",
+    "homepage": "homepage",
+    "post": "post",
+    "page": "page",
+    "category": "category",
+    "tag": "tag"
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-15",
+      "changes": [
+        "Giao diện truyền thống với header phẳng",
+        "Lưới bài viết 3 cột responsive",
+        "Footer đầy đủ thông tin liên hệ"
+      ]
+    }
+  ]
+}

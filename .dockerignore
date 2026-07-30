@@ -1,0 +1,37 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build output/cache
+.next
+out
+coverage
+*.tsbuildinfo
+next-env.d.ts
+
+# Git/editor
+.git
+.github
+.gitignore
+.vscode
+.idea
+
+# Local env/runtime data
+.env
+.env.*
+!.env.example
+content
+storage
+scratch
+postgres-data
+
+# One-time database dumps / local SQL helpers
+*.sql
+*.dump
+*.backup
+.verify-setting.sql
+
+# Logs/temp
+*.log
+.DS_Store
+Thumbs.db

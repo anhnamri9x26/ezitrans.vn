@@ -1,0 +1,31 @@
+{
+  "id": "modern",
+  "name": "Modern Glassmorphic UI",
+  "nameVi": "Giao diện Hiện đại",
+  "description": "Phong cách thiết kế lơ lửng Glassmorphism cao cấp, viền mờ trong suốt, đổ bóng sâu mềm mại, tích hợp banner gradient tím-hồng cực kỳ nghệ thuật. Hoàn hảo cho các trang thương hiệu, doanh nghiệp sáng tạo.",
+  "version": "1.0.0",
+  "author": "DeepMind Team",
+  "tags": ["dark-mode", "glassmorphism", "premium", "creative"],
+  "previewImage": "preview.png",
+  "supports": ["header", "footer", "homepage", "post", "page", "category", "tag"],
+  "templates": {
+    "fallback": "fallback",
+    "homepage": "homepage",
+    "post": "post",
+    "page": "page",
+    "category": "category",
+    "tag": "tag"
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-05-15",
+      "changes": [
+        "Glassmorphism UI với backdrop blur",
+        "Gradient tím-hồng nghệ thuật",
+        "Dark mode mặc định",
+        "Trang dịch vụ chuyên biệt (Mua hộ, Ship hộ)"
+      ]
+    }
+  ]
+}
