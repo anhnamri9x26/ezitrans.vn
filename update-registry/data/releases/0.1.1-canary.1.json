@@ -2,16 +2,17 @@
   "product": "lexi-cms",
   "channel": "canary",
   "version": "0.1.1-canary.1",
-  "image": "ghcr.io/your-org/lexi-cms-core@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "image": "ghcr.io/anhnamri9x26/lexi-cms-core@sha256:e53bc8758904cf05f1365eb855dd0526704b221096a38694be4aa2cd9701fa0d",
   "minimumVersion": "0.1.0",
-  "releasedAt": "2026-07-30T18:16:27.812Z",
+  "releasedAt": "2026-07-31T02:56:15.606Z",
   "requiresBackup": true,
   "requiresMigration": false,
   "rollbackCompatible": true,
   "changelog": [
-    "Signed registry canary",
-    "Update Agent integration",
-    "Health probes"
+    "Lexi multi-site update foundation",
+    "Signed Update Registry",
+    "Health and migration checks",
+    "Table of Contents and Contact improvements"
   ],
-  "signature": "tl+DTMSghDdoRJINIdAMMnWjzH9G5H85Vho+tH6ayTCfIXGeSlbJPQdvhGAa1TXWAcMXOsFCP5RQr3JTj/ZfDA=="
+  "signature": "OxOPR0cvv5j9LtoC0OvP4brTGwT4R1FwNE4Dw/KCKLIkMlv/1Rmw7zinsOGIq8dT8bNCAaWnO7lQzTY95SDjBQ=="
 }
