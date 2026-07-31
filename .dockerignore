@@ -27,6 +27,7 @@ postgres-data
 
 # One-time database dumps / local SQL helpers
 *.sql
+!prisma/migrations/**/migration.sql
 *.dump
 *.backup
 .verify-setting.sql

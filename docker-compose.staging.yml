@@ -7,7 +7,7 @@ services:
         CORE_VERSION: ${CORE_VERSION:-0.1.0}
         CORE_GIT_SHA: staging-local
         CORE_BUILD_TIME: staging-local
-    image: lexi-cms-staging:${CORE_VERSION:-0.1.0}
+    image: ${STAGING_APP_IMAGE:-lexi-cms-staging:${CORE_VERSION:-0.1.0}}
     env_file: [.env.staging]
     environment:
       NODE_ENV: production
