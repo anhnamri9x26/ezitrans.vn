@@ -16,7 +16,7 @@ services:
       UPDATE_AGENT_URL: http://update-agent:4577
       LEXI_UPDATE_REGISTRY_URL: http://update-registry:4580
     ports: ["${APP_PORT:-3016}:3000"]
-    volumes: ["./staging-data/content:/app/content"]
+    volumes: ["staging-content:/app/content"]
     depends_on:
       db: { condition: service_healthy }
       update-registry: { condition: service_healthy }
@@ -58,7 +58,12 @@ services:
       CORE_IMAGE_REPOSITORY: ghcr.io/anhnamri9x26/lexi-cms-core
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     volumes:
-      - ./staging-data/content:/agent/content
+      - staging-content:/agent/content
       - ./:/workspace
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on: [db]
+
+volumes:
+  staging-content:
+    external: true
+    name: lexi-staging-content
