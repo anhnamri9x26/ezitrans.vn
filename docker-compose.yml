@@ -1,9 +1,6 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: ${CORE_IMAGE_REPOSITORY:-ezitrans-cms}:${CORE_VERSION:-local}
+    image: ${CORE_IMAGE:-ghcr.io/anhnamri9x26/lexi-cms-core:0.1.1-canary.3}
     restart: unless-stopped
     env_file:
       - .env
@@ -60,8 +57,10 @@ services:
       APP_SERVICE_NAME: app
       APP_READY_URL: http://app:3000/api/health/ready
       COMPOSE_PROJECT_DIR: /workspace
+      COMPOSE_FILE_PATH: /workspace/docker-compose.yml
+      COMPOSE_ENV_FILE: /workspace/.env
       SIMULATE_UPDATES: ${SIMULATE_UPDATES:-true}
-      CORE_IMAGE_REPOSITORY: ${CORE_IMAGE_REPOSITORY:-ghcr.io/lexi-cms/core}
+      CORE_IMAGE_REPOSITORY: ${CORE_IMAGE_REPOSITORY:-ghcr.io/anhnamri9x26/lexi-cms-core}
       COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-ezitransvn}
       DATABASE_URL: postgresql://${POSTGRES_USER:-ezitrans}:${POSTGRES_PASSWORD:-change-me}@db:5432/${POSTGRES_DB:-ezitrans}
     volumes:
