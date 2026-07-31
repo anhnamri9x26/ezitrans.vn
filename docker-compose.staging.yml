@@ -18,6 +18,7 @@ services:
     ports: ["${APP_PORT:-3016}:3000"]
     volumes: ["staging-content:/app/content"]
     depends_on:
+      content-init: { condition: service_completed_successfully }
       db: { condition: service_healthy }
       update-registry: { condition: service_healthy }
     healthcheck:
@@ -26,6 +27,13 @@ services:
       timeout: 5s
       retries: 12
       start_period: 30s
+  content-init:
+    image: alpine:3.20
+    restart: "no"
+    command: ["sh", "-c", "cp -an /source/. /target/"]
+    volumes:
+      - ./staging-data/content:/source:ro
+      - staging-content:/target
   db:
     image: postgres:16-alpine
     env_file: [.env.staging]
@@ -65,5 +73,4 @@ services:
 
 volumes:
   staging-content:
-    external: true
     name: lexi-staging-content
