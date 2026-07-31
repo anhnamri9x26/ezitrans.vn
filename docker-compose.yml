@@ -16,7 +16,7 @@ services:
     ports:
       - "${APP_PORT:-3000}:3000"
     volumes:
-      - ./content:/app/content
+      - site-content:/app/content
     depends_on:
       db:
         condition: service_started
@@ -64,7 +64,7 @@ services:
       COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-ezitransvn}
       DATABASE_URL: postgresql://${POSTGRES_USER:-ezitrans}:${POSTGRES_PASSWORD:-change-me}@db:5432/${POSTGRES_DB:-ezitrans}
     volumes:
-      - ./content:/agent/content
+      - site-content:/agent/content
       - ./:/workspace
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
@@ -97,3 +97,8 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
+
+volumes:
+  site-content:
+    external: true
+    name: ezitrans-content
