@@ -31,6 +31,22 @@
   }
 }
 
+/* Custom Scrollbar cho Admin Sidebar Navigation */
+.admin-sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+.admin-sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.2);
+  border-radius: 9999px;
+}
+.admin-sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.45);
+}
+
+
 @layer utilities {
   .glass-card {
     background: rgba(255, 255, 255, 0.75);

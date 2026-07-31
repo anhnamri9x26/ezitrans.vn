@@ -4,6 +4,9 @@ import Header from './Header';
 import Footer from './Footer';
 import { AlertTriangle } from 'lucide-react';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import ContactPage from './ContactPage';
+import TableOfContents from '@/plugins/table-of-contents/components/TableOfContents';
+import { buildTableOfContents, getTocOptions } from '@/plugins/table-of-contents/lib/toc';
 
 export default async function Page({ 
   post, 
@@ -40,6 +43,18 @@ export default async function Page({
   };
 
   const t = (banners as any)[siteLanguage] || banners.vi;
+
+  // Contact has a dedicated conversion-focused template independent of editor content.
+  if (post?.slug === 'lien-he') {
+    return <ContactPage post={post} settings={settings} />;
+  }
+
+  const tocOptions = getTocOptions(settings);
+  const tocTypes = (settings.toc_content_types || 'POST').split(',');
+  const tocEnabled = settings.plugin_table_of_contents_enabled !== 'false' && tocTypes.includes('PAGE');
+  const tocResult = tocEnabled
+    ? buildTableOfContents(post?.content || '', tocOptions)
+    : { html: post?.content || '', items: [] };
 
   // Check if page builder layout is active
   const isFullWidth = post?.builderData || post?.pageLayout === 'FULL_WIDTH' || post?.pageLayout === 'CANVAS';
@@ -138,9 +153,13 @@ export default async function Page({
               />
             )}
 
+            {tocResult.items.length > 0 && (
+              <TableOfContents items={tocResult.items} options={tocOptions} className="lexi-toc-inline" />
+            )}
+
             <div 
               className="ezi-post-body ql-editor-view"
-              dangerouslySetInnerHTML={{ __html: post?.content || `<p class="text-slate-400 italic">${t.no_content}</p>` }}
+              dangerouslySetInnerHTML={{ __html: tocResult.html || `<p class="text-slate-400 italic">${t.no_content}</p>` }}
             />
 
             {/* Support CTA Block */}

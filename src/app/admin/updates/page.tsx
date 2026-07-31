@@ -48,13 +48,19 @@ export default function UpdatesPage() {
   const [status, setStatus] = useState<any>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [rollbackTag, setRollbackTag] = useState('');
+  const [releaseStatus, setReleaseStatus] = useState<any>(null);
 
   const loadStatus = async () => {
     try {
-      const res = await fetch('/api/updates/status');
-      const data = await res.json();
+      const [statusRes, releaseRes] = await Promise.all([
+        fetch('/api/updates/status'),
+        fetch('/api/updates/check'),
+      ]);
+      const data = await statusRes.json();
+      const releaseData = await releaseRes.json();
       if (data.success) {
         setStatus(data);
+        setReleaseStatus(releaseData);
       } else {
         setMessage({ type: 'error', text: data.error || 'Could not load update status.' });
       }
@@ -212,6 +218,31 @@ export default function UpdatesPage() {
           <div className={`mb-5 rounded-2xl border p-4 font-bold flex items-center gap-2 ${message.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
             {message.type === 'success' ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
             {message.text}
+          </div>
+        )}
+
+        {releaseStatus && (
+          <div className="mb-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Signed Release Registry</p>
+                <h2 className="mt-2 text-lg font-black text-slate-900">
+                  Core {releaseStatus.current?.version || core?.version || 'unknown'}
+                  {releaseStatus.release && <> → {releaseStatus.release.version}</>}
+                </h2>
+                <p className="mt-1 text-slate-500">Channel: <strong>{releaseStatus.current?.channel || 'stable'}</strong></p>
+              </div>
+              <span className={`rounded-full px-3 py-1 text-[10px] font-black ${releaseStatus.compatibility?.updateAvailable ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                {releaseStatus.configured ? (releaseStatus.compatibility?.updateAvailable ? 'Có bản cập nhật' : 'Đã mới nhất') : 'Registry chưa cấu hình'}
+              </span>
+            </div>
+            {releaseStatus.success === false && <p className="mt-3 rounded-xl bg-red-50 p-3 font-bold text-red-700">{releaseStatus.error}</p>}
+            {releaseStatus.message && <p className="mt-3 rounded-xl bg-amber-50 p-3 font-bold text-amber-700">{releaseStatus.message}</p>}
+            {releaseStatus.release?.changelog?.length > 0 && (
+              <ul className="mt-4 list-disc space-y-1 pl-5 text-slate-600">
+                {releaseStatus.release.changelog.map((item: string) => <li key={item}>{item}</li>)}
+              </ul>
+            )}
           </div>
         )}
 

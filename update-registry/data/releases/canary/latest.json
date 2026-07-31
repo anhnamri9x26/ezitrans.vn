@@ -1,0 +1,17 @@
+{
+  "product": "lexi-cms",
+  "channel": "canary",
+  "version": "0.1.1-canary.1",
+  "image": "ghcr.io/your-org/lexi-cms-core@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "minimumVersion": "0.1.0",
+  "releasedAt": "2026-07-30T18:16:27.812Z",
+  "requiresBackup": true,
+  "requiresMigration": false,
+  "rollbackCompatible": true,
+  "changelog": [
+    "Signed registry canary",
+    "Update Agent integration",
+    "Health probes"
+  ],
+  "signature": "tl+DTMSghDdoRJINIdAMMnWjzH9G5H85Vho+tH6ayTCfIXGeSlbJPQdvhGAa1TXWAcMXOsFCP5RQr3JTj/ZfDA=="
+}

@@ -505,7 +505,9 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
   };
 
   const resolvedTemplates = await resolveTemplates(resolveContext);
-  if (resolvedTemplates.body) {
+  if (activeTheme === 'ezitrans' && post.type === 'PAGE' && post.slug === 'lien-he') {
+    TemplateComponent = (await import('@/themes/ezitrans/Page')).default;
+  } else if (resolvedTemplates.body) {
     TemplateComponent = await loadTemplateComponent(
       resolvedTemplates.body,
       activeTheme,

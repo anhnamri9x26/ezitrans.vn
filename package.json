@@ -13,7 +13,10 @@
         "db:seed-header": "npx tsx scratch/seed-header-template.ts",
         "validate:extensions": "tsx scripts/validate-extensions.ts",
         "validate:plugins": "tsx scripts/validate-extensions.ts --plugins",
-        "validate:themes": "tsx scripts/validate-extensions.ts --themes"
+        "validate:themes": "tsx scripts/validate-extensions.ts --themes",
+        "release:validate": "npm run validate:themes && npm run validate:plugins && npx tsc --noEmit && npx prisma validate",
+        "migrate:deploy": "prisma migrate deploy",
+        "update:preflight": "tsx scripts/update-preflight.ts"
     },
     "dependencies": {
         "@craftjs/core": "^0.2.12",

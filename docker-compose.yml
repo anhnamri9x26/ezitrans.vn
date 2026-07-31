@@ -13,12 +13,26 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-ezitrans}:${POSTGRES_PASSWORD:-change-me}@db:5432/${POSTGRES_DB:-ezitrans}
       UPDATE_AGENT_URL: http://update-agent:4577
       UPDATE_AGENT_TOKEN: ${UPDATE_AGENT_TOKEN:-change-me}
+      INTERNAL_HEALTH_TOKEN: ${INTERNAL_HEALTH_TOKEN:-change-me}
+      LEXI_UPDATE_REGISTRY_URL: ${LEXI_UPDATE_REGISTRY_URL:-http://update-registry:4580}
+      LEXI_UPDATE_CHANNEL: ${LEXI_UPDATE_CHANNEL:-canary}
     ports:
       - "${APP_PORT:-3000}:3000"
     volumes:
       - ./content:/app/content
     depends_on:
-      - db
+      db:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   db:
     image: postgres:16-alpine
@@ -37,19 +51,50 @@ services:
       context: ./update-agent
       dockerfile: Dockerfile
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       UPDATE_AGENT_TOKEN: ${UPDATE_AGENT_TOKEN:-change-me}
+      INTERNAL_HEALTH_TOKEN: ${INTERNAL_HEALTH_TOKEN:-change-me}
       CONTENT_DIR: /agent/content
       APP_SERVICE_NAME: app
+      APP_READY_URL: http://app:3000/api/health/ready
       COMPOSE_PROJECT_DIR: /workspace
       SIMULATE_UPDATES: ${SIMULATE_UPDATES:-true}
-      APP_HEALTH_URL: ${APP_HEALTH_URL:-http://app:3000/api/system/health}
-      CORE_IMAGE_REPOSITORY: ${CORE_IMAGE_REPOSITORY:-ezitrans-cms}
+      CORE_IMAGE_REPOSITORY: ${CORE_IMAGE_REPOSITORY:-ghcr.io/lexi-cms/core}
       COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-ezitransvn}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-ezitrans}:${POSTGRES_PASSWORD:-change-me}@db:5432/${POSTGRES_DB:-ezitrans}
     volumes:
       - ./content:/agent/content
       - ./:/workspace
       - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "${UPDATE_AGENT_PORT:-4577}:4577"
+    depends_on:
+      - db
+    expose:
+      - "4577"
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
+  update-registry:
+    build:
+      context: ./update-registry
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      REGISTRY_PORT: 4580
+      REGISTRY_DATA_DIR: /registry/data
+    volumes:
+      - ./update-registry/data:/registry/data
+    expose:
+      - "4580"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:4580/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "2"

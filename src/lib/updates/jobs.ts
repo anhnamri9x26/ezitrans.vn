@@ -1,20 +1,21 @@
 import { prisma } from '@/lib/prisma';
+import { getCoreBuildInfo } from '@/lib/version';
 
 export async function ensureCorePackage() {
-  const version = process.env.CORE_VERSION || '0.1.0';
+  const build = getCoreBuildInfo();
   return prisma.installedPackage.upsert({
-    where: { type_slug: { type: 'CORE', slug: 'ezitrans-cms' } },
+    where: { type_slug: { type: 'CORE', slug: 'lexi-cms' } },
     update: {
-      name: 'Ezitrans CMS',
-      version,
+      name: 'Lexi CMS',
+      version: build.version,
       status: 'ACTIVE',
       source: 'DOCKER_IMAGE',
     },
     create: {
       type: 'CORE',
-      slug: 'ezitrans-cms',
-      name: 'Ezitrans CMS',
-      version,
+      slug: 'lexi-cms',
+      name: 'Lexi CMS',
+      version: build.version,
       status: 'ACTIVE',
       source: 'DOCKER_IMAGE',
     },

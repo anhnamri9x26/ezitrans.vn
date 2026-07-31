@@ -1,7 +1,7 @@
 import { prisma } from '../src/lib/prisma';
-
 async function run() {
-  const categories = await prisma.category.findMany();
-  console.log(categories);
+  const cats = await prisma.category.findMany();
+  console.log('--- ALL CATEGORIES ---');
+  console.log(JSON.stringify(cats, null, 2));
 }
 run();

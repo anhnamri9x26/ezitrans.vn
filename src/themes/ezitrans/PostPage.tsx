@@ -8,6 +8,8 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import { prisma } from '@/lib/prisma';
 import { getSiteUrl } from '@/lib/technicalSeo';
 import { generatePostUrl } from '@/lib/permalink';
+import TableOfContents from '@/plugins/table-of-contents/components/TableOfContents';
+import { buildTableOfContents, getTocOptions } from '@/plugins/table-of-contents/lib/toc';
 
 export default async function PostPage({ 
   post, 
@@ -29,6 +31,12 @@ export default async function PostPage({
   const isPost = post.type === 'POST';
   const siteLanguage = settings.site_language || 'vi';
   const permalinkStructure = settings.permalink_structure || '/%postname%.html';
+  const tocOptions = getTocOptions(settings);
+  const tocTypes = (settings.toc_content_types || 'POST').split(',');
+  const tocEnabled = settings.plugin_table_of_contents_enabled !== 'false' && tocTypes.includes(post.type);
+  const tocResult = tocEnabled
+    ? buildTableOfContents(post.content || '', tocOptions)
+    : { html: post.content || '', items: [] };
 
   // Fetch recent posts for the sidebar
   let recentPosts: any[] = [];
@@ -108,9 +116,13 @@ export default async function PostPage({
               />
             )}
 
+            {tocResult.items.length > 0 && tocOptions.position === 'inline' && (
+              <TableOfContents items={tocResult.items} options={tocOptions} className="lexi-toc-inline" />
+            )}
+
             <article 
               className="ezi-post-body ql-editor-view"
-              dangerouslySetInnerHTML={{ __html: post.content || '<p className="italic text-slate-400">Bài viết này chưa có nội dung.</p>' }}
+              dangerouslySetInnerHTML={{ __html: tocResult.html || '<p className="italic text-slate-400">Bài viết này chưa có nội dung.</p>' }}
             />
 
             {/* Comments Section */}
@@ -123,6 +135,9 @@ export default async function PostPage({
 
           {/* Right Column: Sidebar */}
           <aside className="ezi-sidebar">
+            {tocResult.items.length > 0 && tocOptions.position === 'sidebar' && (
+              <TableOfContents items={tocResult.items} options={tocOptions} />
+            )}
             
             {/* Widget 1: Recent Posts */}
             <div className="ezi-sidebar-widget">

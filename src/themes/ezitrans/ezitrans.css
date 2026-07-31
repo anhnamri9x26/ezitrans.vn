@@ -2395,3 +2395,117 @@
     font-size: 24px;
   }
 }
+
+/* Contact Page */
+.ezi-contact-hero{padding:72px 0 100px;background:radial-gradient(circle at 82% 18%,rgba(37,99,235,.16),transparent 28%),linear-gradient(135deg,#071b3f 0%,#0b3472 60%,#0d5dd7 100%);color:#fff;position:relative;overflow:hidden}.ezi-contact-hero:after{content:"";position:absolute;right:-80px;bottom:-180px;width:520px;height:520px;border:1px solid rgba(255,255,255,.12);border-radius:50%;box-shadow:0 0 0 70px rgba(255,255,255,.035),0 0 0 140px rgba(255,255,255,.025)}.ezi-contact-hero .ezi-breadcrumbs,.ezi-contact-hero .ezi-breadcrumbs a{color:rgba(255,255,255,.7)}.ezi-contact-kicker{display:inline-block;color:#ff9e2f;font-size:11px;font-weight:900;letter-spacing:.16em;margin:24px 0 14px}.ezi-contact-hero h1{font-size:clamp(38px,5vw,64px);line-height:1.08;letter-spacing:-.045em;margin:0;max-width:850px;color:#fff}.ezi-contact-hero p{font-size:16px;line-height:1.8;color:rgba(255,255,255,.74);max-width:640px;margin:22px 0 0}.ezi-contact-main{background:#f5f8fd;padding-bottom:88px}.ezi-contact-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;transform:translateY(-36px);position:relative;z-index:2}.ezi-contact-quick-card{background:#fff;border:1px solid #e5ebf5;border-radius:16px;padding:19px;display:flex;align-items:center;gap:13px;color:#102449;box-shadow:0 16px 40px rgba(15,43,90,.08);transition:.25s}.ezi-contact-quick-card:hover{transform:translateY(-4px);border-color:#b9d3ff;box-shadow:0 20px 45px rgba(15,73,170,.13)}.ezi-contact-quick-card i{width:42px;height:42px;border-radius:12px;background:#edf4ff;color:#1465d9;display:grid;place-items:center;flex:none}.ezi-contact-quick-card>span{font-size:11px;color:#7a879d;min-width:0}.ezi-contact-quick-card strong{display:block;color:#102449;font-size:12px;margin-top:3px;white-space:normal}.ezi-contact-quick-card>svg{margin-left:auto;color:#9babbd;flex:none}.ezi-contact-layout{display:grid;grid-template-columns:.86fr 1.14fr;gap:48px;align-items:center;padding:40px 0 80px}.ezi-contact-intro h2,.ezi-contact-map h2{font-size:clamp(30px,3.5vw,44px);line-height:1.15;letter-spacing:-.035em;color:#0a2248;margin:0 0 18px}.ezi-contact-intro>p{font-size:15px;line-height:1.8;color:#64748b}.ezi-contact-benefits{display:grid;gap:15px;margin:30px 0}.ezi-contact-benefits>div{display:flex;gap:12px;align-items:center}.ezi-contact-benefits svg{color:#0e69dd;background:#eaf3ff;padding:7px;width:34px;height:34px;border-radius:50%}.ezi-contact-benefits span{font-size:12px;color:#7a879d}.ezi-contact-benefits strong{display:block;font-size:14px;color:#102449;margin-bottom:2px}.ezi-contact-direct{display:flex;gap:10px;flex-wrap:wrap}.ezi-contact-direct a{display:inline-flex;align-items:center;gap:7px;padding:11px 15px;border-radius:10px;background:#fff;border:1px solid #dfe7f2;color:#174c96;font-weight:800;font-size:12px}.ezi-contact-form{background:#fff;border:1px solid #e2e9f4;border-radius:22px;padding:36px;box-shadow:0 24px 70px rgba(17,52,100,.11)}.ezi-contact-form-head span{color:#1264d6;font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.ezi-contact-form-head h2{font-size:28px;color:#0a2248;margin:7px 0}.ezi-contact-form-head p{font-size:12px;color:#7a879d;margin:0 0 25px}.ezi-contact-fields{display:grid;grid-template-columns:1fr 1fr;gap:17px}.ezi-contact-fields label{font-size:11px;font-weight:800;color:#233c61;display:grid;gap:7px}.ezi-contact-fields input,.ezi-contact-fields select,.ezi-contact-fields textarea{width:100%;border:1px solid #dce4ef;border-radius:10px;padding:12px 13px;background:#f9fbfe;color:#172b4d;font:inherit;outline:none;transition:.2s}.ezi-contact-fields input:focus,.ezi-contact-fields select:focus,.ezi-contact-fields textarea:focus{border-color:#2472df;background:#fff;box-shadow:0 0 0 3px rgba(36,114,223,.1)}.ezi-contact-field-wide{grid-column:1/-1}.ezi-contact-submit{border:0;margin-top:20px;min-height:45px;padding-inline:24px}.ezi-contact-submit:disabled{opacity:.65;cursor:wait}.ezi-contact-notice{display:flex;align-items:center;gap:8px;padding:11px 13px;border-radius:9px;margin:14px 0 0;font-size:12px;font-weight:700}.ezi-contact-notice.success{background:#ecfdf5;color:#087a56}.ezi-contact-notice.error{background:#fff1f2;color:#be123c}.ezi-spin{animation:ezi-spin .8s linear infinite}@keyframes ezi-spin{to{transform:rotate(360deg)}}.ezi-contact-map{display:grid;grid-template-columns:1fr .8fr;min-height:320px;background:#0a2859;color:#fff;border-radius:24px;overflow:hidden}.ezi-contact-map>div:first-child{padding:50px}.ezi-contact-map h2{color:#fff}.ezi-contact-map p{display:flex;align-items:flex-start;gap:9px;color:#b9c8df;line-height:1.7;margin-bottom:24px}.ezi-contact-map-visual{background:radial-gradient(circle,rgba(44,130,255,.45),transparent 50%),linear-gradient(135deg,#0e4a9b,#071b3f);display:flex;align-items:center;justify-content:center;gap:13px;font-weight:900;font-size:17px;letter-spacing:.06em}.ezi-contact-map-visual svg{color:#ff9e2f}.ezi-contact-map-visual small{font-size:10px;color:#aac4e9;font-weight:600}.ezi-contact-form :focus-visible,.ezi-contact-quick-card:focus-visible,.ezi-contact-direct a:focus-visible{outline:3px solid rgba(255,158,47,.45);outline-offset:3px}
+@media(max-width:960px){.ezi-contact-quick{grid-template-columns:1fr 1fr}.ezi-contact-layout{grid-template-columns:1fr;gap:32px}.ezi-contact-map{grid-template-columns:1fr}.ezi-contact-map-visual{min-height:210px}}@media(max-width:620px){.ezi-contact-hero{padding:50px 0 74px}.ezi-contact-quick{grid-template-columns:1fr;transform:translateY(-24px)}.ezi-contact-layout{padding:20px 0 55px}.ezi-contact-form{padding:24px 18px;border-radius:16px}.ezi-contact-fields{grid-template-columns:1fr}.ezi-contact-field-wide{grid-column:auto}.ezi-contact-map>div:first-child{padding:30px 22px}.ezi-contact-main{padding-bottom:50px}}@media(prefers-reduced-motion:reduce){.ezi-contact-quick-card{transition:none}.ezi-spin{animation:none}}
+
+/* Contact Page Refactored (Simple & Clean) */
+.ezi-contact-hero-simple {
+  padding: 60px 0 40px;
+  background: #f8fafc;
+  text-align: center;
+  border-bottom: 1px solid #e2e8f0;
+}
+.ezi-contact-hero-simple h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 12px 0 0;
+}
+.ezi-contact-hero-divider {
+  margin: 14px auto 0;
+  height: 4px;
+  width: 50px;
+  border-radius: 2px;
+  background: var(--orange);
+}
+.ezi-contact-main-simple {
+  background: #ffffff;
+  padding: 60px 0 80px;
+}
+.ezi-contact-grid-simple {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 60px;
+  align-items: start;
+}
+.ezi-contact-info-simple h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 14px;
+}
+.ezi-contact-intro-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #64748b;
+  margin-bottom: 30px;
+}
+.ezi-contact-details-list {
+  display: grid;
+  gap: 24px;
+}
+.ezi-contact-detail-item {
+  display: flex;
+  gap: 16px;
+  align-items: start;
+}
+.ezi-contact-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #475569;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.ezi-contact-detail-item span {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.ezi-contact-detail-item strong {
+  display: block;
+  font-size: 14px;
+  color: #1e293b;
+  margin-top: 4px;
+}
+.ezi-contact-detail-item strong a {
+  color: inherit;
+  transition: color 0.15s;
+}
+.ezi-contact-detail-item strong a:hover {
+  color: var(--orange);
+}
+.ezi-contact-map-link {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
+}
+.ezi-contact-form-wrapper-simple .ezi-contact-form {
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  background: #ffffff;
+}
+.ezi-contact-form-wrapper-simple .ezi-contact-form-head {
+  display: none; /* Hide internal header since simple page has h1 */
+}
+
+@media (max-width: 900px) {
+  .ezi-contact-grid-simple {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .ezi-contact-main-simple {
+    padding: 40px 0 60px;
+  }
+}

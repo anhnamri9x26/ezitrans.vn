@@ -50,6 +50,7 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
   const [isSeoActive, setIsSeoActive] = useState<boolean>(true);
   const [isPageBuilderActive, setIsPageBuilderActive] = useState<boolean>(true);
   const [isLexiShieldActive, setIsLexiShieldActive] = useState<boolean>(true);
+  const [isTocActive, setIsTocActive] = useState<boolean>(true);
   const [activeThemeName, setActiveThemeName] = useState<string>('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -104,6 +105,7 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
               s.plugin_grapesjs_enabled !== 'false'
             );
             setIsLexiShieldActive(s.plugin_lexi_shield_enabled !== 'false');
+            setIsTocActive(s.plugin_table_of_contents_enabled !== 'false');
           }
 
           if (data.theme) {
@@ -252,6 +254,7 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
         { name: 'Đường dẫn tĩnh', path: '/admin/settings/permalink' },
         { name: 'Bình luận', path: '/admin/settings/discussion' },
         ...(isEmailSmtpActive ? [{ name: 'Cấu hình Email', path: '/admin/settings/email' }] : []),
+        ...(isTocActive ? [{ name: 'Mục lục bài viết', path: '/admin/settings/table-of-contents' }] : []),
         { name: 'Phân quyền', path: '/admin/settings/roles' },
       ],
     },
@@ -386,7 +389,7 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
             <X size={20} />
           </button>
         </div>
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto md:overflow-visible">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto admin-sidebar-nav pb-20">
           {filteredMenuItems.map((item, idx) => {
             const isActive = (() => {
               if (item.path === '/admin/dashboard') {
@@ -494,30 +497,6 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
                                 ? 'text-brand-600 dark:text-brand-400 bg-brand-50/60 dark:bg-brand-500/10'
                                 : 'text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50/30 dark:hover:bg-slate-800/30'
                             }`}
-                          >
-                            {displayName}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* Hover Sub Menu - Floating Dark Card to the right (Desktop only) */}
-                  {!isActive && item.submenu && hoveredItem === item.name && (
-                    <div className={`hidden md:flex absolute left-[195px] w-[170px] bg-slate-900 text-slate-100 rounded-lg shadow-xl p-1.5 z-50 flex-col space-y-0.5 border border-slate-800 ${
-                      idx > filteredMenuItems.length - 4 ? 'bottom-0' : 'top-0'
-                    }`}>
-                      <div className={`absolute right-full border-8 border-transparent border-r-slate-900 pointer-events-none ${
-                        idx > filteredMenuItems.length - 4 ? 'bottom-3' : 'top-3'
-                      }`} />
-                      
-                      {item.submenu.map((sub) => {
-                        const displayName = sub.path === '/settings/discussion' ? t('Bình luận_submenu') : t(sub.name);
-                        return (
-                          <Link
-                            key={sub.name}
-                            href={sub.path}
-                            className="block py-2 px-3 rounded text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
                           >
                             {displayName}
                           </Link>

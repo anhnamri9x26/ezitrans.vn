@@ -12,15 +12,25 @@ import {
 import { createPreUpdateBackup } from '@/lib/updates/backup';
 import { enableMaintenanceMode, disableMaintenanceMode } from '@/lib/updates/maintenance';
 import { callUpdateAgent } from '@/lib/updates/agentClient';
+import { fetchLatestRelease, manifestFingerprint, releaseCompatibility } from '@/lib/updates/releaseRegistry';
+import { getCoreBuildInfo } from '@/lib/version';
 
-function resolveCoreTarget(corePackage: { latestVersion?: string | null; version: string }) {
-  const repository = process.env.CORE_IMAGE_REPOSITORY || 'ezitrans-cms';
-  const targetVersion = corePackage.latestVersion || process.env.CORE_VERSION || corePackage.version;
-  return {
-    repository,
-    targetVersion,
-    targetImage: `${repository}:${targetVersion}`,
-  };
+async function resolveCoreTarget(corePackage: { latestVersion?: string | null; version: string }) {
+  const build = getCoreBuildInfo();
+  const release = await fetchLatestRelease(build.channel);
+  if (release) {
+    const compatibility = releaseCompatibility(release, corePackage.version);
+    if (!compatibility.currentSupported) {
+      throw new Error(`Phiên bản hiện tại ${corePackage.version} thấp hơn mức tối thiểu ${release.minimumVersion}. Cần nâng cấp theo lộ trình trung gian.`);
+    }
+    return { repository: release.image.split('@')[0], targetVersion: release.version, targetImage: release.image, releaseFingerprint: manifestFingerprint(release) };
+  }
+  if (process.env.SIMULATE_UPDATES === 'false') {
+    throw new Error('Real update requires a configured signed LEXI_UPDATE_REGISTRY_URL.');
+  }
+  const repository = process.env.CORE_IMAGE_REPOSITORY || 'ghcr.io/lexi-cms/core';
+  const targetVersion = corePackage.latestVersion || build.version;
+  return { repository, targetVersion, targetImage: `${repository}@sha256:${'0'.repeat(64)}`, releaseFingerprint: null };
 }
 
 export async function POST() {
@@ -34,10 +44,10 @@ export async function POST() {
     }
 
     const corePackage = await ensureCorePackage();
-    const coreTarget = resolveCoreTarget(corePackage);
+    const coreTarget = await resolveCoreTarget(corePackage);
     const job = await createUpdateJob({
       type: 'CORE',
-      targetSlug: 'ezitrans-cms',
+      targetSlug: 'lexi-cms',
       fromVersion: corePackage.version,
       toVersion: coreTarget.targetVersion,
       createdById: user?.id,
@@ -62,6 +72,7 @@ export async function POST() {
       targetVersion: coreTarget.targetVersion,
       targetImage: coreTarget.targetImage,
       currentVersion: corePackage.version,
+      releaseFingerprint: coreTarget.releaseFingerprint,
     });
     await appendUpdateJobLog(job.id, `Target Docker image: ${coreTarget.targetImage}`);
     await appendUpdateJobLog(job.id, agentResult.message || 'Update agent finished.');
