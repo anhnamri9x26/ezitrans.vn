@@ -76,7 +76,11 @@ export default function UpdatesPage() {
   }, []);
 
   const runCoreUpdate = async () => {
-    if (!confirm(isRealMode ? `Start REAL Docker core update to ${targetImage}? The app container may restart. A backup will be created first.` : 'Start simulated one-click core update? The system will enable maintenance mode and create a backup first.')) return;
+    const targetVersion = releaseStatus?.release?.version || 'phiên bản mới';
+    const confirmation = isRealMode
+      ? `Cập nhật Lexi CMS lên ${targetVersion}? Hệ thống sẽ tự động sao lưu và có thể khởi động lại trong ít phút.`
+      : `Chạy mô phỏng cập nhật lên ${targetVersion}? Hệ thống sẽ tạo bản sao lưu nhưng không thay đổi Docker.`;
+    if (!confirm(confirmation)) return;
     setIsUpdating(true);
     setMessage(null);
     try {
@@ -174,262 +178,43 @@ export default function UpdatesPage() {
   };
 
   const core = status?.core as InstalledPackage | undefined;
-  const plugins = (status?.packages || []).filter((p: InstalledPackage) => p.type === 'PLUGIN');
-  const themes = (status?.packages || []).filter((p: InstalledPackage) => p.type === 'THEME');
-  const runtimePlugins = plugins.filter((p: InstalledPackage) => p.source === 'CONTENT');
-  const runtimeThemes = themes.filter((p: InstalledPackage) => p.source === 'CONTENT');
   const recentJobs = (status?.recentJobs || []) as UpdateJob[];
   const backups = (status?.backups || []) as PackageBackup[];
   const maintenance = status?.maintenance;
   const agent = status?.updateAgent;
   const diagnostics = agent?.diagnostics;
   const isRealMode = agent?.simulateUpdates === false;
-  const targetImage = `${agent?.coreImageRepository || 'ezitrans-cms'}:${core?.latestVersion || agent?.coreVersion || core?.version || 'local'}`;
-  const dockerDf = diagnostics?.dockerSystemDf;
-  const dockerDfText = dockerDf?.stdout || dockerDf?.stderr || dockerDf?.error || 'No Docker disk usage data yet.';
-  const dockerVersionText = diagnostics?.dockerVersion?.stdout || diagnostics?.dockerVersion?.error || 'Unknown';
-  const composeVersionText = diagnostics?.composeVersion?.stdout || diagnostics?.composeVersion?.error || 'Unknown';
+  const updateAvailable = Boolean(releaseStatus?.configured && releaseStatus?.compatibility?.updateAvailable);
+  const currentVersion = releaseStatus?.current?.version || core?.version || 'Không xác định';
+  const latestVersion = releaseStatus?.release?.version || currentVersion;
+  const currentImage = String(diagnostics?.currentImage || '').split('\n').find((line: string) => line.includes('ghcr.io/'))?.trim() || 'Không xác định';
 
   return (
     <CapabilityGuard capability="update_core">
-      <div className="max-w-6xl mx-auto pb-12 text-xs">
-        <div className="relative overflow-hidden rounded-3xl border border-indigo-100 bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 p-8 shadow-2xl shadow-indigo-950/20 mb-6 text-white">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(129,140,248,.35),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(34,211,238,.18),transparent_30%)]" />
-          <div className="relative flex items-start justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-100 ring-1 ring-white/15 mb-4">
-                <ShieldCheck size={13} /> Docker-first Update Center
-              </div>
-              <h1 className="text-3xl font-black tracking-tight">One-Click Updates</h1>
-              <p className="mt-2 max-w-2xl text-sm text-indigo-100/85">
-                WordPress-like updates with maintenance mode, mandatory backups, update jobs, logs, and rollback-ready architecture.
-              </p>
+      <div className="mx-auto max-w-6xl pb-12 text-sm text-slate-700">
+        <header className="mb-6 flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
+          <div><h1 className="text-2xl font-black text-slate-900">Cập nhật hệ thống</h1><p className="mt-1 text-slate-500">Kiểm tra và cài đặt phiên bản Lexi CMS mới.</p></div>
+          <button onClick={() => { setIsLoading(true); loadStatus(); }} className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-bold hover:bg-slate-50"><RefreshCw size={15}/> Kiểm tra lại</button>
+        </header>
+        {message && <div className={`mb-5 flex items-center gap-2 rounded-xl border p-4 font-bold ${message.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'}`}>{message.type === 'success' ? <CheckCircle2 size={17}/> : <AlertTriangle size={17}/>} {message.text}</div>}
+        {isLoading ? <div className="rounded-xl border bg-white p-10 text-center text-slate-500">Đang kiểm tra cập nhật...</div> : <div className="space-y-5">
+          <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between"><div className="flex gap-4"><div className={`h-fit rounded-full p-3 ${updateAvailable ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600'}`}>{updateAvailable ? <DownloadCloud size={24}/> : <CheckCircle2 size={24}/>}</div><div><h2 className="text-xl font-black text-slate-900">{updateAvailable ? 'Có phiên bản mới' : 'Lexi CMS đã được cập nhật'}</h2><p className="mt-2">Phiên bản hiện tại: <strong>{currentVersion}</strong>{updateAvailable && <> <span className="mx-2 text-slate-300">→</span> Mới nhất: <strong className="text-blue-700">{latestVersion}</strong></>}</p><p className="mt-2 text-xs text-slate-500">Kênh: {releaseStatus?.current?.channel || 'stable'} · {isRealMode ? 'Cập nhật thật' : 'Chế độ mô phỏng'}</p></div></div>
+              <button onClick={runCoreUpdate} disabled={isUpdating || !updateAvailable || !agent?.reachable} className="rounded-lg bg-blue-600 px-5 py-2.5 font-black text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300">{isUpdating ? 'Đang cập nhật...' : updateAvailable ? `Cập nhật lên ${latestVersion}` : 'Đã mới nhất'}</button>
             </div>
-            <button
-              onClick={() => { setIsLoading(true); loadStatus(); }}
-              className="rounded-2xl bg-white/10 px-4 py-2 font-bold text-white ring-1 ring-white/15 hover:bg-white/15 transition-all flex items-center gap-2"
-            >
-              <RefreshCw size={14} /> Check again
-            </button>
-          </div>
-        </div>
-
-        {message && (
-          <div className={`mb-5 rounded-2xl border p-4 font-bold flex items-center gap-2 ${message.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
-            {message.type === 'success' ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
-            {message.text}
-          </div>
-        )}
-
-        {releaseStatus && (
-          <div className="mb-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Signed Release Registry</p>
-                <h2 className="mt-2 text-lg font-black text-slate-900">
-                  Core {releaseStatus.current?.version || core?.version || 'unknown'}
-                  {releaseStatus.release && <> → {releaseStatus.release.version}</>}
-                </h2>
-                <p className="mt-1 text-slate-500">Channel: <strong>{releaseStatus.current?.channel || 'stable'}</strong></p>
-              </div>
-              <span className={`rounded-full px-3 py-1 text-[10px] font-black ${releaseStatus.compatibility?.updateAvailable ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                {releaseStatus.configured ? (releaseStatus.compatibility?.updateAvailable ? 'Có bản cập nhật' : 'Đã mới nhất') : 'Registry chưa cấu hình'}
-              </span>
-            </div>
-            {releaseStatus.success === false && <p className="mt-3 rounded-xl bg-red-50 p-3 font-bold text-red-700">{releaseStatus.error}</p>}
-            {releaseStatus.message && <p className="mt-3 rounded-xl bg-amber-50 p-3 font-bold text-amber-700">{releaseStatus.message}</p>}
-            {releaseStatus.release?.changelog?.length > 0 && (
-              <ul className="mt-4 list-disc space-y-1 pl-5 text-slate-600">
-                {releaseStatus.release.changelog.map((item: string) => <li key={item}>{item}</li>)}
-              </ul>
-            )}
-          </div>
-        )}
-
-        {isLoading ? (
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center text-slate-500 shadow-sm">Loading update status...</div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <section className="lg:col-span-2 space-y-5">
-              <div className={`rounded-3xl border p-5 shadow-sm ${isRealMode ? 'border-red-200 bg-red-50 text-red-900' : 'border-blue-200 bg-blue-50 text-blue-900'}`}>
-                <h2 className="text-lg font-black flex items-center gap-2"><ShieldCheck size={18} /> Update Execution Mode</h2>
-                <p className="mt-2 font-bold">{isRealMode ? 'Real Docker mode' : 'Simulation mode'}</p>
-                <p className="mt-1 text-xs">Target image: <strong>{targetImage}</strong></p>
-                {isRealMode ? (
-                  <p className="mt-2 rounded-2xl bg-white/60 p-3 text-xs font-bold">Real mode can pull images, recreate the app container, health-check, and attempt rollback.</p>
-                ) : (
-                  <p className="mt-2 rounded-2xl bg-white/60 p-3 text-xs font-bold">Safe dry-run: backups and jobs run, but update-agent skips Docker pull/restart.</p>
-                )}
-              </div>
-              <div className={`rounded-3xl border p-5 shadow-sm ${maintenance?.enabled ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}>
-                <h2 className="text-lg font-black flex items-center gap-2"><Activity size={18} /> Maintenance Mode</h2>
-                <p className="mt-2 font-bold">{maintenance?.enabled ? 'Enabled' : 'Disabled'}</p>
-                {maintenance?.enabled && <p className="mt-1 text-xs">{maintenance.reason} · Job {maintenance.jobId}</p>}
-              </div>
-
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h2 className="text-lg font-black text-slate-900 flex items-center gap-2"><ShieldCheck className="text-orange-600" size={18} /> Docker Recovery</h2>
-                    <p className="mt-2 text-slate-500">Update-agent: <strong>{agent?.configured ? (agent?.reachable ? 'Reachable' : 'Configured but unreachable') : 'Not configured'}</strong></p>
-                    {agent?.lastError && <p className="mt-2 rounded-2xl border border-red-100 bg-red-50 p-3 text-[11px] font-bold text-red-700">{agent.lastError}</p>}
-                  </div>
-                  <span className={`rounded-full px-3 py-1 text-[10px] font-black ${agent?.reachable ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                    {agent?.reachable ? 'Diagnostics online' : 'Diagnostics limited'}
-                  </span>
-                </div>
-                <div className="mt-4 grid md:grid-cols-2 gap-3">
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                    <p className="font-black text-slate-700">Current image</p>
-                    <p className="mt-1 break-all text-[10px] text-slate-500">{diagnostics?.currentImage || 'Unknown'}</p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                    <p className="font-black text-slate-700">Compose project</p>
-                    <p className="mt-1 break-all text-[10px] text-slate-500">{diagnostics?.composeProjectDir || 'Unknown'}</p>
-                  </div>
-                </div>
-                <details className="mt-3 rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                  <summary className="cursor-pointer font-black text-slate-700">Docker diagnostics</summary>
-                  <p className="mt-3 font-bold text-slate-500">Docker version</p>
-                  <pre className="mt-1 max-h-24 overflow-auto whitespace-pre-wrap rounded-xl bg-white p-2 text-[10px] text-slate-500">{dockerVersionText}</pre>
-                  <p className="mt-3 font-bold text-slate-500">Compose version</p>
-                  <pre className="mt-1 max-h-24 overflow-auto whitespace-pre-wrap rounded-xl bg-white p-2 text-[10px] text-slate-500">{composeVersionText}</pre>
-                  <p className="mt-3 font-bold text-slate-500">Docker system df</p>
-                  <pre className="mt-1 max-h-32 overflow-auto whitespace-pre-wrap rounded-xl bg-white p-2 text-[10px] text-slate-500">{dockerDfText}</pre>
-                </details>
-                <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-800">
-                  <strong>Docker Desktop metadata I/O errors:</strong> restart Docker Desktop, check disk space, run <code>docker system df</code>, and only prune/reset Docker data manually after review.
-                </div>
-                <div className="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
-                  <p className="font-black text-indigo-900">Manual Core Rollback</p>
-                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                    <input
-                      value={rollbackTag}
-                      onChange={(event) => setRollbackTag(event.target.value)}
-                      placeholder={`${agent?.coreImageRepository || 'ezitrans-cms'}:rollback-...`}
-                      className="min-w-0 flex-1 rounded-xl border border-indigo-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 outline-none focus:border-indigo-500"
-                    />
-                    <button onClick={runCoreRollback} disabled={isUpdating} className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-black text-white hover:bg-indigo-700 disabled:opacity-50">
-                      Rollback Core Image
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h2 className="text-xl font-black text-slate-900 flex items-center gap-2"><DownloadCloud className="text-indigo-600" size={20} /> Core CMS</h2>
-                    <p className="mt-1 text-slate-500">Current version: <strong>{core?.version || 'unknown'}</strong></p>
-                    <p className="mt-1 text-slate-400">Source: {core?.source || 'DOCKER_IMAGE'} · Status: {core?.status || 'ACTIVE'}</p>
-                  </div>
-                  <button
-                    onClick={runCoreUpdate}
-                    disabled={isUpdating}
-                    className="rounded-2xl bg-indigo-600 px-5 py-3 text-white font-black shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 disabled:opacity-60 transition-all"
-                  >
-                    {isUpdating ? 'Updating...' : 'Update Now'}
-                  </button>
-                </div>
-                <div className="mt-5 rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-emerald-800 flex gap-3">
-                  <CheckCircle2 size={18} className="shrink-0" />
-                  <div>
-                    <strong>Milestone 3 safety flow:</strong> update actions now enable maintenance mode and require a pre-update backup before simulation/agent execution.
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-5">
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <h2 className="text-lg font-black text-slate-900 flex items-center gap-2"><PackageCheck className="text-violet-600" size={18} /> Plugins</h2>
-                  <p className="mt-2 text-slate-500">{plugins.length} tracked plugins · {runtimePlugins.length} runtime content packages.</p>
-                  <p className="mt-2 rounded-2xl bg-violet-50 border border-violet-100 p-3 text-[11px] font-bold text-violet-700">ZIP uploads now install into content/plugins with backup and rollback-safe swaps.</p>
-                </div>
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <h2 className="text-lg font-black text-slate-900 flex items-center gap-2"><PackageCheck className="text-cyan-600" size={18} /> Themes</h2>
-                  <p className="mt-2 text-slate-500">{themes.length} tracked themes · {runtimeThemes.length} runtime content packages.</p>
-                  <p className="mt-2 rounded-2xl bg-cyan-50 border border-cyan-100 p-3 text-[11px] font-bold text-cyan-700">ZIP uploads now install into content/themes with backup and rollback-safe swaps.</p>
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-black text-slate-900 flex items-center gap-2"><Database className="text-emerald-600" size={18} /> Database</h2>
-                  <button onClick={runDatabaseUpdate} disabled={isUpdating} className="rounded-2xl bg-emerald-600 px-4 py-2 font-black text-white hover:bg-emerald-700 disabled:opacity-60">Update Database</button>
-                </div>
-                <p className="mt-2 text-slate-500">Runs database update jobs through the backup-protected update tracking foundation.</p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2"><Archive className="text-orange-600" size={18} /> Recent Backups</h2>
-                <div className="mt-4 space-y-3">
-                  {backups.length === 0 ? <p className="text-slate-400">No backups yet.</p> : backups.map((backup) => (
-                    <div key={backup.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <strong className="text-slate-800">{backup.packageType} · {backup.packageSlug}</strong>
-                        <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-black text-orange-700">v{backup.version}</span>
-                      </div>
-                      <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${backup.canRestore ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
-                          {backup.canRestore ? 'Restore ready' : 'Blocked'}
-                        </span>
-                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${backup.backupExists ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`}>
-                          {backup.backupExists ? 'Path OK' : 'Path missing'}
-                        </span>
-                        {backup.installedPackage && (
-                          <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-black text-slate-600">
-                            Current {backup.installedPackage.version} · {backup.installedPackage.status}
-                          </span>
-                        )}
-                      </div>
-                      <p className="mt-1 text-[10px] text-slate-400">{new Date(backup.createdAt).toLocaleString()}</p>
-                      {backup.restoreBlockReason && (
-                        <p className="mt-2 rounded-xl border border-amber-200 bg-amber-50 p-2 text-[10px] font-bold text-amber-700">{backup.restoreBlockReason}</p>
-                      )}
-                      <p className="mt-2 break-all rounded-xl bg-white p-2 text-[10px] text-slate-500 border border-slate-100">{backup.backupPath}</p>
-                      <div className="mt-3 flex items-center gap-2">
-                        <button
-                          onClick={() => runBackupAction(backup, 'dry-run')}
-                          disabled={isUpdating || !backup.canRestore}
-                          className="rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-[10px] font-black text-indigo-700 hover:bg-indigo-100 disabled:opacity-50"
-                        >
-                          Dry Run
-                        </button>
-                        <button
-                          onClick={() => runBackupAction(backup, 'restore')}
-                          disabled={isUpdating || !backup.canRestore}
-                          className="rounded-xl border border-orange-200 bg-orange-500 px-3 py-1.5 text-[10px] font-black text-white hover:bg-orange-600 disabled:opacity-50"
-                        >
-                          Restore
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            <aside className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm h-fit">
-              <h2 className="text-lg font-black text-slate-900 flex items-center gap-2"><Clock3 size={18} className="text-slate-500" /> Recent Jobs</h2>
-              <div className="mt-4 space-y-3">
-                {recentJobs.length === 0 ? (
-                  <p className="text-slate-400">No update jobs yet.</p>
-                ) : recentJobs.map((job: UpdateJob) => (
-                  <div key={job.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <strong className="text-slate-800">{job.type} · {job.targetSlug}</strong>
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${job.status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-700' : job.status === 'FAILED' ? 'bg-red-100 text-red-700' : 'bg-indigo-100 text-indigo-700'}`}>{job.status}</span>
-                    </div>
-                    <p className="mt-1 text-[10px] text-slate-400">{new Date(job.createdAt).toLocaleString()}</p>
-                    {job.error && <p className="mt-2 rounded-xl bg-red-50 p-2 text-[10px] text-red-600 border border-red-100">{job.error}</p>}
-                    {job.log && <pre className="mt-2 max-h-28 overflow-auto whitespace-pre-wrap rounded-xl bg-white p-2 text-[10px] text-slate-500 border border-slate-100">{job.log}</pre>}
-                  </div>
-                ))}
-              </div>
-            </aside>
-          </div>
-        )}
+            {releaseStatus?.release?.changelog?.length > 0 && <div className="mt-5 border-t pt-4"><p className="mb-2 text-xs font-black uppercase tracking-wider text-slate-500">Nội dung phiên bản</p><ul className="list-disc space-y-1 pl-5 text-slate-600">{releaseStatus.release.changelog.map((item: string) => <li key={item}>{item}</li>)}</ul></div>}
+          </section>
+          <section className="grid gap-4 md:grid-cols-3"><StatusCard label="Trạng thái" value={maintenance?.enabled ? 'Đang bảo trì' : agent?.reachable ? 'Hệ thống sẵn sàng' : 'Cần kiểm tra'} ok={agent?.reachable}/><StatusCard label="Sao lưu trước cập nhật" value="Bắt buộc và tự động" ok/><StatusCard label="Chế độ bảo trì" value={maintenance?.enabled ? 'Đang bật' : 'Đang tắt'} ok={!maintenance?.enabled}/></section>
+          <div className="grid gap-5 lg:grid-cols-3"><section className="space-y-5 lg:col-span-2">
+            <SimplePanel title="Lịch sử cập nhật">{recentJobs.length === 0 ? <p className="text-slate-400">Chưa có lần cập nhật nào.</p> : <div className="space-y-3">{recentJobs.map(job => <div key={job.id} className="rounded-lg border bg-slate-50 p-3"><div className="flex justify-between gap-3"><strong>{job.fromVersion || '—'} → {job.toVersion || job.targetSlug}</strong><span className={`rounded-full px-2 py-1 text-[10px] font-black ${job.status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-700' : job.status === 'FAILED' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>{job.status}</span></div><p className="mt-1 text-xs text-slate-400">{new Date(job.createdAt).toLocaleString('vi-VN')}</p>{job.error && <p className="mt-2 text-xs font-bold text-red-600">{job.error}</p>}</div>)}</div>}</SimplePanel>
+            <SimplePanel title="Bản sao lưu gần đây">{backups.length === 0 ? <p className="text-slate-400">Chưa có bản sao lưu.</p> : <div className="space-y-3">{backups.slice(0,5).map(backup => <div key={backup.id} className="flex flex-col gap-3 rounded-lg border bg-slate-50 p-3 sm:flex-row sm:items-center sm:justify-between"><div><strong>{backup.packageSlug} · v{backup.version}</strong><p className="mt-1 text-xs text-slate-400">{new Date(backup.createdAt).toLocaleString('vi-VN')}</p></div><div className="flex gap-2"><button onClick={() => runBackupAction(backup,'dry-run')} disabled={!backup.canRestore || isUpdating} className="rounded-lg border bg-white px-3 py-1.5 text-xs font-bold disabled:opacity-50">Kiểm tra</button><button onClick={() => runBackupAction(backup,'restore')} disabled={!backup.canRestore || isUpdating} className="rounded-lg bg-orange-50 px-3 py-1.5 text-xs font-bold text-orange-700 disabled:opacity-50">Khôi phục</button></div></div>)}</div>}</SimplePanel>
+          </section><aside className="h-fit rounded-xl border bg-white p-5"><h2 className="font-black text-slate-900">Thông tin kỹ thuật</h2><dl className="mt-4 space-y-3 text-xs"><Info label="Update Agent" value={agent?.reachable ? 'Đang kết nối' : 'Không kết nối được'}/><Info label="Image đang chạy" value={currentImage}/><Info label="Compose project" value={diagnostics?.composeProjectDir || 'Không xác định'}/></dl><details className="mt-4 border-t pt-4"><summary className="cursor-pointer font-bold text-slate-600">Chẩn đoán Docker</summary><pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap rounded bg-slate-50 p-2 text-[10px]">{diagnostics?.dockerSystemDf?.stdout || 'Chưa có dữ liệu'}</pre></details><details className="mt-4 border-t pt-4"><summary className="cursor-pointer font-bold text-red-600">Khôi phục thủ công</summary><div className="mt-3 space-y-2"><input value={rollbackTag} onChange={e => setRollbackTag(e.target.value)} placeholder="Nhập rollback tag" className="w-full rounded-lg border px-3 py-2 text-xs"/><button onClick={runCoreRollback} disabled={!rollbackTag.trim() || isUpdating} className="w-full rounded-lg bg-red-600 px-3 py-2 text-xs font-black text-white disabled:opacity-50">Khôi phục phiên bản cũ</button></div></details></aside></div>
+        </div>}
       </div>
     </CapabilityGuard>
   );
 }
+
+function StatusCard({label,value,ok}:{label:string;value:string;ok?:boolean}) { return <div className="rounded-xl border bg-white p-4"><p className="text-xs font-bold text-slate-500">{label}</p><p className="mt-2 flex items-center gap-2 font-black text-slate-900"><span className={`h-2 w-2 rounded-full ${ok ? 'bg-emerald-500' : 'bg-amber-500'}`}/>{value}</p></div>; }
+function SimplePanel({title,children}:{title:string;children:React.ReactNode}) { return <div className="rounded-xl border bg-white p-5"><h2 className="mb-4 font-black text-slate-900">{title}</h2>{children}</div>; }
+function Info({label,value}:{label:string;value:string}) { return <div><dt className="font-bold text-slate-400">{label}</dt><dd className="mt-1 break-all font-medium text-slate-700">{value}</dd></div>; }

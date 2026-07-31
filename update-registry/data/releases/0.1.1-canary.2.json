@@ -1,0 +1,18 @@
+{
+  "product": "lexi-cms",
+  "channel": "canary",
+  "version": "0.1.1-canary.2",
+  "image": "ghcr.io/anhnamri9x26/lexi-cms-core@sha256:c7cea099a0fa03fb7e56af39037044388d3a13fbed400eddc7cbcae1564a4a6b",
+  "minimumVersion": "0.1.0",
+  "releasedAt": "2026-07-31T06:06:23.529Z",
+  "requiresBackup": true,
+  "requiresMigration": false,
+  "rollbackCompatible": true,
+  "changelog": [
+    "Giao diện cập nhật đơn giản, dễ hiểu",
+    "Tách Lexi CMS Core sang repository riêng",
+    "Đóng gói đầy đủ Prisma migration SQL",
+    "Trung lập hóa thiết lập cài đặt Core"
+  ],
+  "signature": "YBEnIcAAIln+uwgiehhRVVskQIB5xYSbz9R4DmIOb697UBRkVZcKU/YMYldWbc2VnLQbqRuTv3fjPPgoJNZKCQ=="
+}
