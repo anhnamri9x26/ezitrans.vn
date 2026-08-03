@@ -5,6 +5,16 @@ import { getCurrentUser } from '@/lib/session';
 import { userCan } from '@/lib/capabilities';
 import { getHydratedNavigation } from '@/lib/navigation/service';
 import { hydrateSettingsWithNavigation } from '@/lib/navigation/settings';
+import { normalizeSiteUrl } from '@/lib/site-identity';
+
+function validateTrackingValue(label: string, rawValue: unknown, pattern: RegExp) {
+  const value = String(rawValue ?? '').trim();
+  if (!value) return '';
+  if (!pattern.test(value)) {
+    throw new Error(`${label}: mã cấu hình không đúng định dạng`);
+  }
+  return label === 'Ahrefs Analytics' ? value : value.toUpperCase();
+}
 
 export async function GET(req: Request) {
   try {
@@ -88,14 +98,14 @@ export async function GET(req: Request) {
       active_theme: 'default',
       theme_menu_header: '[{"id":"1","label":"TRANG CHỦ","url":"/","indent":0},{"id":"2","label":"GIỚI THIỆU","url":"/gioi-thieu","indent":0},{"id":"3","label":"MUA HỘ","url":"/category/mua-ho-thanh-toan-ho","indent":0},{"id":"4","label":"SHIP HỘ","url":"/category/chuyen-hang-tu-nuoc-ngoai-ve","indent":0},{"id":"5","label":"XUẤT KHẨU","url":"/category/xuat-khau","indent":0},{"id":"6","label":"DỊCH VỤ KHÁC","url":"/category/dich-vu-khac","indent":0},{"id":"7","label":"CHIA SẺ KINH NGHIỆM","url":"/category/huong-dan-chia-se","indent":0},{"id":"8","label":"LIÊN HỆ","url":"/lien-he","indent":0}]',
       theme_menu_footer: '[{"label":"Trang chủ","url":"/"},{"label":"Giới thiệu","url":"/gioi-thieu"},{"label":"Mua hộ","url":"/category/mua-ho-thanh-toan-ho"},{"label":"Ship hộ","url":"/category/chuyen-hang-tu-nuoc-ngoai-ve"},{"label":"Liên hệ","url":"/lien-he"}]',
-      footer_copyright: '© 2026 Ezitrans CMS - Giải pháp logistics toàn diện',
-      footer_about_text: 'Ezitrans là đơn vị logistics hàng đầu cung cấp dịch vụ mua hộ, thanh toán hộ và vận chuyển quốc tế an toàn, tối ưu chi phí.',
-      footer_phone: '0868.375.300',
-      footer_email: 'ezitrans.vn@gmail.com',
-      footer_address: 'Số 8, Ngõ 79/14 Đường Quảng Khánh, Tây Hồ, Hà Nội',
+      footer_copyright: '',
+      footer_about_text: '',
+      footer_phone: '',
+      footer_email: '',
+      footer_address: '',
       // SMTP & Email Notification Settings
-      mail_from_email: 'admin@lexi.vn',
-      mail_from_name: 'Lexi',
+      mail_from_email: '',
+      mail_from_name: '',
       mail_force_from_email: 'false',
       mail_smtp_host: '',
       mail_smtp_port: '465',
@@ -140,11 +150,12 @@ export async function GET(req: Request) {
       seo_yandex_verification: '',
       seo_google_analytics: '',
       seo_google_tag_manager: '',
+      seo_ahrefs_analytics_key: '',
       seo_google_verified: 'false',
       seo_bing_verified: 'false',
       seo_yandex_verified: 'false',
       seo_schema_type: 'organization',
-      seo_schema_name: 'Lexi',
+      seo_schema_name: '',
       seo_schema_logo: '',
       seo_facebook_url: '',
       seo_instagram_url: '',
@@ -271,9 +282,12 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { 
       default_category_id, 
-      site_title, 
-      site_tagline, 
-      site_email, 
+      site_title,
+      site_tagline,
+      site_url,
+      site_email,
+      site_phone,
+      site_address,
       plugin_seo_enabled,
       comment_global_enabled,
       comment_require_name_email,
@@ -360,6 +374,7 @@ export async function POST(req: Request) {
       seo_yandex_verification,
       seo_google_analytics,
       seo_google_tag_manager,
+      seo_ahrefs_analytics_key,
       seo_google_verified,
       seo_bing_verified,
       seo_yandex_verified,
@@ -438,6 +453,16 @@ export async function POST(req: Request) {
       registration_require_email_verify
     } = body;
 
+    if (site_url !== undefined && !normalizeSiteUrl(String(site_url))) {
+      return NextResponse.json({ success: false, error: 'URL website không đúng định dạng HTTP/HTTPS.' }, { status: 400 });
+    }
+    if (site_email !== undefined && String(site_email).trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(site_email).trim())) {
+      return NextResponse.json({ success: false, error: 'Email website không đúng định dạng.' }, { status: 400 });
+    }
+    if (site_phone !== undefined && String(site_phone).trim() && !/^[+\d][\d\s().-]{5,24}$/.test(String(site_phone).trim())) {
+      return NextResponse.json({ success: false, error: 'Số điện thoại không đúng định dạng.' }, { status: 400 });
+    }
+
     const dataToSave = {
       allow_user_registration: allow_user_registration !== undefined ? String(allow_user_registration) : undefined,
       default_registration_role: default_registration_role !== undefined ? String(default_registration_role) : undefined,
@@ -445,7 +470,13 @@ export async function POST(req: Request) {
       default_category_id: default_category_id ? String(default_category_id) : undefined,
       site_title,
       site_tagline,
-      site_email,
+      site_url: site_url !== undefined ? String(site_url).trim().replace(/\/+$/, '') : undefined,
+      site_email: site_email !== undefined ? String(site_email).trim().toLowerCase() : undefined,
+      site_phone: site_phone !== undefined ? String(site_phone).trim() : undefined,
+      site_address: site_address !== undefined ? String(site_address).trim() : undefined,
+      footer_email: site_email !== undefined ? String(site_email).trim().toLowerCase() : footer_email !== undefined ? String(footer_email) : undefined,
+      footer_phone: site_phone !== undefined ? String(site_phone).trim() : footer_phone !== undefined ? String(footer_phone) : undefined,
+      footer_address: site_address !== undefined ? String(site_address).trim() : footer_address !== undefined ? String(footer_address) : undefined,
       plugin_seo_enabled: plugin_seo_enabled !== undefined ? String(plugin_seo_enabled) : undefined,
       comment_global_enabled: comment_global_enabled !== undefined ? String(comment_global_enabled) : undefined,
       comment_require_name_email: comment_require_name_email !== undefined ? String(comment_require_name_email) : undefined,
@@ -485,9 +516,6 @@ export async function POST(req: Request) {
       theme_menu_footer: theme_menu_footer !== undefined ? String(theme_menu_footer) : undefined,
       footer_copyright: footer_copyright !== undefined ? String(footer_copyright) : undefined,
       footer_about_text: footer_about_text !== undefined ? String(footer_about_text) : undefined,
-      footer_phone: footer_phone !== undefined ? String(footer_phone) : undefined,
-      footer_email: footer_email !== undefined ? String(footer_email) : undefined,
-      footer_address: footer_address !== undefined ? String(footer_address) : undefined,
       // SMTP & Email Notification Settings
       mail_from_email: mail_from_email !== undefined ? String(mail_from_email) : undefined,
       mail_from_name: mail_from_name !== undefined ? String(mail_from_name) : undefined,
@@ -533,8 +561,9 @@ export async function POST(req: Request) {
       seo_google_verification: seo_google_verification !== undefined ? String(seo_google_verification) : undefined,
       seo_bing_verification: seo_bing_verification !== undefined ? String(seo_bing_verification) : undefined,
       seo_yandex_verification: seo_yandex_verification !== undefined ? String(seo_yandex_verification) : undefined,
-      seo_google_analytics: seo_google_analytics !== undefined ? String(seo_google_analytics) : undefined,
-      seo_google_tag_manager: seo_google_tag_manager !== undefined ? String(seo_google_tag_manager) : undefined,
+      seo_google_analytics: seo_google_analytics !== undefined ? validateTrackingValue('Google Analytics', seo_google_analytics, /^G-[A-Z0-9]+$/i) : undefined,
+      seo_google_tag_manager: seo_google_tag_manager !== undefined ? validateTrackingValue('Google Tag Manager', seo_google_tag_manager, /^GTM-[A-Z0-9]+$/i) : undefined,
+      seo_ahrefs_analytics_key: seo_ahrefs_analytics_key !== undefined ? validateTrackingValue('Ahrefs Analytics', seo_ahrefs_analytics_key, /^[A-Za-z0-9+/=_-]{8,128}$/) : undefined,
       seo_google_verified: seo_google_verified !== undefined ? String(seo_google_verified) : undefined,
       seo_bing_verified: seo_bing_verified !== undefined ? String(seo_bing_verified) : undefined,
       seo_yandex_verified: seo_yandex_verified !== undefined ? String(seo_yandex_verified) : undefined,

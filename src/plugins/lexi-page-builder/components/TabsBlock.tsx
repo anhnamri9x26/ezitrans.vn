@@ -104,9 +104,9 @@ export const TabsBlock = (rawProps: TabsBlockProps) => {
   const props = useResponsiveProps(rawProps) as typeof rawProps;
   const {
     items = [
-      { id: '1', title: 'Tab #1', content: 'Ná»™i dung hiá»ƒn thá»‹ máº«u cho Tab sá»‘ 1. Báº¡n cÃ³ thá»ƒ kÃ©o tháº£ báº¥t ká»³ thÃ nh pháº§n nÃ o vÃ o Ä‘Ã¢y hoáº·c Ä‘á»•i sang Ä‘á»‹nh dáº¡ng vÄƒn báº£n.', cssId: '', contentType: 'text' },
-      { id: '2', title: 'Tab #2', content: 'Ná»™i dung hiá»ƒn thá»‹ máº«u cho Tab sá»‘ 2. Chá»‰nh sá»­a dá»… dÃ ng vá»›i báº£ng thuá»™c tÃ­nh bÃªn pháº£i.', cssId: '', contentType: 'text' },
-      { id: '3', title: 'Tab sá»‘ 3', content: 'Ná»™i dung hiá»ƒn thá»‹ máº«u cho Tab sá»‘ 3. Táº¡o hiá»‡u á»©ng tab Ä‘áº¹p máº¯t, chuyÃªn nghiá»‡p nhÆ° Elementor.', cssId: '', contentType: 'text' }
+      { id: '1', title: 'Tab #1', content: 'Nội dung hiển thị mẫu cho Tab số 1. Bạn có thể kéo thả bất kỳ thành phần nào vào đây hoặc đổi sang định dạng văn bản.', cssId: '', contentType: 'text' },
+      { id: '2', title: 'Tab #2', content: 'Nội dung hiển thị mẫu cho Tab số 2. Chỉnh sửa dễ dàng với bảng thuộc tính bên phải.', cssId: '', contentType: 'text' },
+      { id: '3', title: 'Tab số 3', content: 'Nội dung hiển thị mẫu cho Tab số 3. Tạo hiệu ứng tab đẹp mắt, chuyên nghiệp như Elementor.', cssId: '', contentType: 'text' }
     ],
     direction = 'top',
     align = 'start',
@@ -596,9 +596,9 @@ TabsBlock.craft = {
   props: {
     ...defaultLayoutProps,
     items: [
-      { id: '1', title: 'Tab #1', content: 'Ná»™i dung hiá»ƒn thá»‹ máº«u cho Tab sá»‘ 1. Báº¡n cÃ³ thá»ƒ kÃ©o tháº£ báº¥t ká»³ thÃ nh pháº§n nÃ o vÃ o Ä‘Ã¢y hoáº·c Ä‘á»•i sang Ä‘á»‹nh dáº¡ng vÄƒn báº£n.', cssId: '', contentType: 'text' },
-      { id: '2', title: 'Tab #2', content: 'Ná»™i dung hiá»ƒn thá»‹ máº«u cho Tab sá»‘ 2. Chá»‰nh sá»­a dá»… dÃ ng vá»›i báº£ng thuá»™c tÃ­nh bÃªn pháº£i.', cssId: '', contentType: 'text' },
-      { id: '3', title: 'Tab sá»‘ 3', content: 'Ná»™i dung hiá»ƒn thá»‹ máº«u cho Tab sá»‘ 3. Táº¡o hiá»‡u á»©ng tab Ä‘áº¹p máº¯t, chuyÃªn nghiá»‡p nhÆ° Elementor.', cssId: '', contentType: 'text' }
+      { id: '1', title: 'Tab #1', content: 'Nội dung hiển thị mẫu cho Tab số 1. Bạn có thể kéo thả bất kỳ thành phần nào vào đây hoặc đổi sang định dạng văn bản.', cssId: '', contentType: 'text' },
+      { id: '2', title: 'Tab #2', content: 'Nội dung hiển thị mẫu cho Tab số 2. Chỉnh sửa dễ dàng với bảng thuộc tính bên phải.', cssId: '', contentType: 'text' },
+      { id: '3', title: 'Tab số 3', content: 'Nội dung hiển thị mẫu cho Tab số 3. Tạo hiệu ứng tab đẹp mắt, chuyên nghiệp như Elementor.', cssId: '', contentType: 'text' }
     ],
     direction: 'top',
     align: 'start',

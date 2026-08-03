@@ -1,5 +1,5 @@
 import React from 'react';
-import NotFoundContent from './NotFoundContent';
+import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { resolveTemplates } from '@/lib/templateResolver';
 import { loadTemplateComponent } from '@/lib/templateLoader';
@@ -15,7 +15,7 @@ interface TagArchiveProps {
 
 export default async function TagArchive({ slug, settings, activeTheme, currentPage = 1 }: TagArchiveProps) {
   const tag = await prisma.tag.findUnique({ where: { slug } });
-  if (!tag) return <NotFoundContent settings={settings} />;
+  if (!tag) notFound();
 
   const perPage = 12;
   const safeCurrentPage = Math.max(1, currentPage);
@@ -37,7 +37,7 @@ export default async function TagArchive({ slug, settings, activeTheme, currentP
     })
   ]);
   const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
-  if (safeCurrentPage > totalPages) return <NotFoundContent settings={settings} />;
+  if (safeCurrentPage > totalPages) notFound();
   const pagination = {
     currentPage: safeCurrentPage,
     perPage,

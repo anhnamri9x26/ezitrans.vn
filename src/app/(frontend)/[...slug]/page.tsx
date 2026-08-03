@@ -1,5 +1,4 @@
-import { permanentRedirect } from 'next/navigation';
-import NotFoundContent from './NotFoundContent';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { Calendar, User, ArrowLeft, Home, AlertTriangle, ShieldAlert } from 'lucide-react';
@@ -26,11 +25,13 @@ interface CatchAllProps {
 
 import { parsePermalinkStructure, generatePostUrl, formatDateWordPress, resolvePostFromUrl } from '@/lib/permalink';
 import {
-  buildBreadcrumbSchema,
+  absoluteUrl,
+  buildContentSchema,
   getPostCanonicalUrl,
   getRobotsDirectives,
   getSiteUrl,
   getSocialImageUrl,
+  safeJsonLd,
 } from '@/lib/technicalSeo';
 
 const getCachedSettings = cache(loadHydratedSettings);
@@ -49,65 +50,81 @@ export async function generateMetadata({ params }: CatchAllProps): Promise<Metad
   // 1. Fetch settings
   const settings = await getCachedSettings();
 
-  const siteTitle = settings['site_title'] || 'lexi.vn';
+  const siteTitle = settings['site_title'] || 'Website';
   const siteUrl = getSiteUrl(settings);
 
-  // 1.5 Intercept Taxonomy Routing
+  // 1.5 Intercept taxonomy and archive metadata with complete canonical/social fields.
   const categoryBase = settings['permalink_category_base'] || 'category';
   const tagBase = settings['permalink_tag_base'] || 'tag';
   const productCategoryBase = settings['permalink_product_category_base'] || 'danh-muc-san-pham';
+  const archiveMetadata = (title: string, description: string, canonicalPath: string, index: boolean): Metadata => {
+    const canonical = absoluteUrl(canonicalPath, siteUrl);
+    const image = absoluteUrl(settings['seo_default_og_image'] || settings['site_logo'], siteUrl) || undefined;
+    return {
+      title,
+      description,
+      alternates: { canonical },
+      robots: getRobotsDirectives(settings, { index }),
+      openGraph: {
+        type: 'website', title, description, url: canonical, siteName: siteTitle, locale: 'vi_VN',
+        images: image ? [{ url: image, alt: title }] : undefined,
+      },
+      twitter: {
+        card: image ? 'summary_large_image' : 'summary', title, description,
+        images: image ? [image] : undefined,
+      },
+    };
+  };
+  const resolveArchiveText = (template: string, term: string) => resolveMetaTemplate(template, {
+    term,
+    title: term,
+    sitename: siteTitle,
+    tagline: settings['site_tagline'] || '',
+    sep: settings['seo_meta_separator'] || '|',
+  });
 
   if (slug.length >= 2) {
-    if (slug[0] === categoryBase) {
-      const taxonomySlug = slug[1];
-      const cat = await prisma.category.findUnique({ where: { slug: taxonomySlug } });
-      if (cat) return { title: `Chuyên mục: ${cat.name} | ${siteTitle}`, description: cat.description };
+    if (slug[0] === categoryBase || slug[0] === productCategoryBase) {
+      const cat = await prisma.category.findUnique({ where: { slug: slug[1] } });
+      if (cat) {
+        const title = resolveArchiveText(settings['seo_meta_title_category'] || '%term% %sep% %sitename%', cat.name);
+        const description = resolveArchiveText(settings['seo_meta_desc_category'] || 'Xem toàn bộ bài viết chuyên mục %term% tại %sitename%.', cat.name);
+        return archiveMetadata(title, description, `/${slug[0]}/${cat.slug}`, settings['seo_index_categories'] !== 'false');
+      }
     } else if (slug[0] === tagBase) {
-      const taxonomySlug = slug[1];
-      const tag = await prisma.tag.findUnique({ where: { slug: taxonomySlug } });
-      if (tag) return { title: `Thẻ: ${tag.name} | ${siteTitle}` };
-    } else if (slug[0] === productCategoryBase) {
-      const taxonomySlug = slug[1];
-      const cat = await prisma.category.findUnique({ where: { slug: taxonomySlug } });
-      if (cat) return { title: `Danh mục sản phẩm: ${cat.name} | ${siteTitle}`, description: cat.description };
+      const tag = await prisma.tag.findUnique({ where: { slug: slug[1] } });
+      if (tag) {
+        const title = resolveArchiveText(settings['seo_meta_title_tag'] || '%term% %sep% %sitename%', tag.name);
+        const description = resolveArchiveText(settings['seo_meta_desc_tag'] || 'Bài viết được gắn thẻ %term% trên %sitename%.', tag.name);
+        return archiveMetadata(title, description, `/${tagBase}/${tag.slug}`, settings['seo_index_tags'] === 'true');
+      }
     }
   }
 
-  // Archive routes are valid pages, not missing-content pages.
   if (slug.length === 1 && slug[0] === 'tim-kiem') {
-    return {
-      title: `Tìm kiếm | ${siteTitle}`,
-      description: `Tìm kiếm bài viết và dịch vụ trên ${siteTitle}`,
-      robots: getRobotsDirectives(settings, { index: false }),
-    };
+    return archiveMetadata(`Tìm kiếm | ${siteTitle}`, `Tìm kiếm bài viết và dịch vụ trên ${siteTitle}`, '/tim-kiem', false);
   }
 
   if (slug.length === 2 && slug[0] === 'author') {
-    const author = await prisma.user.findUnique({
-      where: { username: slug[1] },
-      select: { name: true, username: true }
-    });
+    const author = await prisma.user.findUnique({ where: { username: slug[1] }, select: { name: true, username: true } });
     if (author) {
       const authorName = author.name || author.username;
-      return {
-        title: `Tác giả: ${authorName} | ${siteTitle}`,
-        description: `Các bài viết được xuất bản bởi ${authorName} trên ${siteTitle}`,
-      };
+      return archiveMetadata(
+        `Tác giả: ${authorName} | ${siteTitle}`,
+        `Các bài viết được xuất bản bởi ${authorName} trên ${siteTitle}`,
+        `/author/${author.username}`,
+        settings['seo_index_author_archive'] === 'true',
+      );
     }
   }
 
   if (slug.length === 1 && slug[0] === 'tin-tuc') {
-    return {
-      title: `Tất cả bài viết | ${siteTitle}`,
-      description: settings['site_tagline'] || `Tất cả bài viết trên ${siteTitle}`,
-    };
+    return archiveMetadata(`Tất cả bài viết | ${siteTitle}`, settings['site_tagline'] || `Tất cả bài viết trên ${siteTitle}`, '/tin-tuc', settings['seo_index_posts_archive'] !== 'false');
   }
 
   if (slug.length === 1 && slug[0] === (settings['permalink_product_base'] || 'san-pham')) {
-    return {
-      title: `Tất cả sản phẩm | ${siteTitle}`,
-      description: settings['site_tagline'] || `Tất cả sản phẩm trên ${siteTitle}`,
-    };
+    const base = settings['permalink_product_base'] || 'san-pham';
+    return archiveMetadata(`Tất cả sản phẩm | ${siteTitle}`, settings['site_tagline'] || `Tất cả sản phẩm trên ${siteTitle}`, `/${base}`, settings['seo_index_products'] !== 'false');
   }
 
   const isSeoEnabled = settings['plugin_seo_enabled'] !== 'false';
@@ -121,7 +138,7 @@ export async function generateMetadata({ params }: CatchAllProps): Promise<Metad
 
   if (!post) {
     return {
-      title: 'KhÃ´ng tÃ¬m tháº¥y ná»™i dung',
+      title: 'Không tìm thấy nội dung',
       robots: getRobotsDirectives(settings, { index: false })
     };
   }
@@ -130,7 +147,7 @@ export async function generateMetadata({ params }: CatchAllProps): Promise<Metad
   // siteTitle is already defined at the top
   
   let titleText = post.title;
-  let description = post.excerpt || `Äá»c ${post.title} trÃªn ${siteTitle}`;
+  let description = post.excerpt || `Đọc ${post.title} trên ${siteTitle}`;
 
   if (isSeoEnabled) {
     if (post.seoTitle) {
@@ -293,7 +310,7 @@ function replaceDynamicTags(text: string, post: any, settings: Record<string, st
   const currentDate = `${day}/${month}/${year}`;
 
   return text
-    .replaceAll('{{site_name}}', settings['site_title'] || settings['site_name'] || 'lexi.vn')
+    .replaceAll('{{site_name}}', settings['site_title'] || settings['site_name'] || 'Website')
     .replaceAll('{{site_url}}', settings['site_url'] || '')
     .replaceAll('{{site_phone}}', settings['site_phone'] || settings['contact_phone'] || '')
     .replaceAll('{{site_email}}', settings['site_email'] || settings['contact_email'] || '')
@@ -343,11 +360,22 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
 
   // --- Step 3: Fetch Discussion & Permalink Settings ---
   const settings = await getCachedSettings();
+  const requestedPreviewTheme = Array.isArray(query.theme) ? query.theme[0] : query.theme;
+  const legacyPreviewTheme = Array.isArray(query.preview_theme) ? query.preview_theme[0] : query.preview_theme;
+  const isCustomizerPreview = (Array.isArray(query.customize_preview) ? query.customize_preview[0] : query.customize_preview) === '1';
+  const allowedPreviewThemes = new Set(['default', 'ezitrans']);
+  const previewTheme = isCustomizerPreview && requestedPreviewTheme && allowedPreviewThemes.has(requestedPreviewTheme)
+    ? requestedPreviewTheme
+    : legacyPreviewTheme && allowedPreviewThemes.has(legacyPreviewTheme)
+      ? legacyPreviewTheme
+      : null;
+  const resolvedActiveTheme = previewTheme || settings['active_theme'] || 'default';
 
   const currentStructure = settings['permalink_structure'] || '/%postname%.html';
-  const productBaseSetting = settings['permalink_product_base'] || 'san-pham';
-  const productStructureBase = productBaseSetting.startsWith('/') ? productBaseSetting : '/' + productBaseSetting;
-  const productStructure = productStructureBase.endsWith('/') ? productStructureBase + '%postname%/' : productStructureBase + '/%postname%/';
+  const normalizeRouteBase = (value: string, fallback: string) => value.trim().replace(/^\/+|\/+$/g, '') || fallback;
+  const productBaseSetting = normalizeRouteBase(settings['permalink_product_base'] || 'san-pham', 'san-pham');
+  const productStructureBase = '/' + productBaseSetting;
+  const productStructure = productStructureBase + '/%postname%/';
   
   const siteLanguageSetting = settings['site_language'] || 'vi';
   const langKey = (siteLanguageSetting in frontendDict) ? siteLanguageSetting : 'vi';
@@ -377,22 +405,22 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
   }
 
   // --- Step 3.5: Intercept Taxonomy Routing ---
-  const categoryBase = settings['permalink_category_base'] || 'category';
-  const tagBase = settings['permalink_tag_base'] || 'tag';
-  const productCategoryBase = settings['permalink_product_category_base'] || 'danh-muc-san-pham';
+  const categoryBase = normalizeRouteBase(settings['permalink_category_base'] || 'category', 'category');
+  const tagBase = normalizeRouteBase(settings['permalink_tag_base'] || 'tag', 'tag');
+  const productCategoryBase = normalizeRouteBase(settings['permalink_product_category_base'] || 'danh-muc-san-pham', 'danh-muc-san-pham');
 
   const taxonomyBases = new Set([categoryBase, tagBase, productCategoryBase]);
   if (taxonomyBases.has(slug[0]) && slug.length !== 2) {
-    return <NotFoundContent settings={settings} />;
+    notFound();
   }
 
   if (slug.length === 2) {
     if (slug[0] === categoryBase) {
-      return <CategoryArchive slug={slug[1]} type="POST" settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
+      return <CategoryArchive slug={slug[1]} type="POST" settings={settings} activeTheme={resolvedActiveTheme} currentPage={currentPage} />;
     } else if (slug[0] === tagBase) {
-      return <TagArchive slug={slug[1]} settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
+      return <TagArchive slug={slug[1]} settings={settings} activeTheme={resolvedActiveTheme} currentPage={currentPage} />;
     } else if (slug[0] === productCategoryBase) {
-      return <CategoryArchive slug={slug[1]} type="PRODUCT" settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
+      return <CategoryArchive slug={slug[1]} type="PRODUCT" settings={settings} activeTheme={resolvedActiveTheme} currentPage={currentPage} />;
     }
   }
 
@@ -401,18 +429,18 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
 
   if (slug.length === 1 && slug[0] === 'tim-kiem') {
     const rawQuery = Array.isArray(query.q) ? query.q[0] : query.q;
-    return <SearchArchive query={rawQuery || ''} settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
+    return <SearchArchive query={rawQuery || ''} settings={settings} activeTheme={resolvedActiveTheme} currentPage={currentPage} />;
   }
 
   if (slug.length === 2 && slug[0] === 'author') {
-    return <AuthorArchive username={slug[1]} settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
+    return <AuthorArchive username={slug[1]} settings={settings} activeTheme={resolvedActiveTheme} currentPage={currentPage} />;
   }
 
   if (slug.length === 1) {
     if (slug[0] === productBaseSetting) {
-      return <CategoryArchive slug="all" type="PRODUCT" settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
+      return <CategoryArchive slug="all" type="PRODUCT" settings={settings} activeTheme={resolvedActiveTheme} currentPage={currentPage} />;
     } else if (slug[0] === postArchiveBase) {
-      return <CategoryArchive slug="all" type="POST" settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
+      return <CategoryArchive slug="all" type="POST" settings={settings} activeTheme={resolvedActiveTheme} currentPage={currentPage} />;
     }
   }
 
@@ -437,7 +465,7 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
   // awaiting the analytics upsert keeps the transition pending and leaves the
   // previous route visible and non-interactive until a hard reload.
   if (!post) {
-    return <NotFoundContent settings={settings} />;
+    notFound();
   }
 
   // User session authorization (for previewing Draft/Trash)
@@ -446,13 +474,13 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
 
   // Hide draft or trashed posts from guests
   if (post.status === 'TRASH' && !isAuthorizedUser) {
-    return <NotFoundContent settings={settings} />;
+    notFound();
   }
   if (post.status === 'DRAFT' && !isAuthorizedUser) {
-    return <NotFoundContent settings={settings} />;
+    notFound();
   }
   if (post.status === 'PUBLISHED' && new Date(post.publishedAt) > new Date() && !isAuthorizedUser) {
-    return <NotFoundContent settings={settings} />;
+    notFound();
   }
 
   if (post.type === 'PRODUCT') {
@@ -493,7 +521,7 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
   const formattedDate = formatDateWordPress(post.createdAt, dateFormatSetting, siteLanguageSetting);
   const formattedUpdateDate = formatDateWordPress(post.updatedAt, dateFormatSetting, siteLanguageSetting);
 
-  const activeTheme = settings['active_theme'] || 'default';
+  const activeTheme = resolvedActiveTheme;
 
   // Keep template selection statically analyzable for Turbopack.
   // Use explicit switch cases so we don't have open-ended module graphs.
@@ -556,24 +584,31 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
     content: replaceDynamicTags(post.content || '', post, settings, canonicalUrl),
   };
 
-  const breadcrumbSchema = settings['seo_breadcrumbs_enabled'] !== 'false'
-    ? buildBreadcrumbSchema([
-      { name: settings['seo_breadcrumbs_home'] || 'Trang chá»§', url: getSiteUrl(settings) },
-      ...(processedPost.type !== 'PAGE' && processedPost.categories?.[0]
-        ? [{ name: processedPost.categories[0].name, url: `${getSiteUrl(settings)}/category/${processedPost.categories[0].slug}` }]
-        : []),
-      { name: processedPost.title, url: canonicalUrl },
-    ])
+  const breadcrumbItems = [
+    { name: settings['seo_breadcrumbs_home'] || 'Trang chủ', url: `${getSiteUrl(settings)}/` },
+    ...(processedPost.type !== 'PAGE' && processedPost.categories?.[0]
+      ? [{ name: processedPost.categories[0].name, url: `${getSiteUrl(settings)}/category/${processedPost.categories[0].slug}` }]
+      : []),
+    { name: processedPost.title, url: canonicalUrl },
+  ];
+  const contentSchema = settings['plugin_seo_enabled'] !== 'false'
+    ? buildContentSchema(
+      processedPost,
+      settings,
+      canonicalUrl,
+      post.seoDescription || post.excerpt || `Đọc ${post.title} trên ${settings['site_title'] || 'Website'}`,
+      breadcrumbItems,
+    )
     : null;
 
   return (
     <>
-      {breadcrumbSchema && (
+      {contentSchema && (
         <script
-          id="yoast-breadcrumb-schema"
+          id="seo-content-schema"
           type="application/ld+json"
           suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(contentSchema) }}
         />
       )}
       <TemplateShell

@@ -52,7 +52,7 @@ export const TextBlock = (rawProps: TextBlockProps) => {
   const { device = 'desktop' } = usePageSettings();
   const props = createResponsiveProps(rawProps, device) as typeof rawProps;
   const {
-    text = 'Nh?p d�p chu?t v�o d�y d? s?a do?n van. B?n c� th? s? d?ng c�ng c? b�n ph?i d? thay d?i ph�ng ch?, k�ch thu?c, m�u s?c v� nhi?u t�y ch?nh kh�c. C�ng c? d?ng trang gi�p b?n d? d�ng t?o ra nh?ng do?n van b?n d?p m?t v� chuy�n nghi?p ch? b?ng v�i thao t�c don gi?n.',
+    text = 'Nhấp đúp chuột vào đây để sửa đoạn văn. Bạn có thể sử dụng công cụ bên phải để thay đổi phông chữ, kích thước, màu sắc và nhiều tùy chỉnh khác. Công cụ dựng trang giúp bạn dễ dàng tạo ra những đoạn văn bản đẹp mắt và chuyên nghiệp chỉ bằng vài thao tác đơn giản.',
     fontSize = '16px',
     fontWeight = '400',
     fontFamily = 'var(--site-font-family-body)',
@@ -320,7 +320,7 @@ export const TextBlock = (rawProps: TextBlockProps) => {
 TextBlock.craft = {
   name: 'TextBlock',
   props: {
-    text: 'Nh?p d�p chu?t v�o d�y d? s?a do?n van. B?n c� th? s? d?ng c�ng c? b�n ph?i d? thay d?i ph�ng ch?, k�ch thu?c, m�u s?c v� nhi?u t�y ch?nh kh�c. C�ng c? d?ng trang gi�p b?n d? d�ng t?o ra nh?ng do?n van b?n d?p m?t v� chuy�n nghi?p ch? b?ng v�i thao t�c don gi?n.',
+    text: 'Nhấp đúp chuột vào đây để sửa đoạn văn. Bạn có thể sử dụng công cụ bên phải để thay đổi phông chữ, kích thước, màu sắc và nhiều tùy chỉnh khác. Công cụ dựng trang giúp bạn dễ dàng tạo ra những đoạn văn bản đẹp mắt và chuyên nghiệp chỉ bằng vài thao tác đơn giản.',
     fontSize: '16px',
     fontWeight: '400',
     fontFamily: 'var(--site-font-family-body)',

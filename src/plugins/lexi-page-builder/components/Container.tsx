@@ -513,7 +513,7 @@ export const Container = (rawProps: ContainerProps) => {
                   }
                 }}
                 className="h-5 w-5 flex items-center justify-center text-white/80 hover:text-white hover:bg-slate-600 transition-colors cursor-pointer"
-                title="ThÃªm Section á»Ÿ trÃªn"
+                title="Thêm Section ở trên"
               >
                 <Plus size={11} strokeWidth={2.5} />
               </button>
@@ -527,7 +527,7 @@ export const Container = (rawProps: ContainerProps) => {
                   }
                 }}
                 className="h-5 w-5 flex items-center justify-center text-white/80 hover:text-white hover:bg-slate-600 transition-colors cursor-grab active:cursor-grabbing"
-                title="KÃ©o Ä‘á»ƒ di chuyá»ƒn"
+                title="Kéo để di chuyển"
               >
                 <GripVertical size={11} />
               </div>
@@ -543,7 +543,7 @@ export const Container = (rawProps: ContainerProps) => {
                   }, 0);
                 }}
                 className="h-5 w-5 flex items-center justify-center text-white/80 hover:text-red-400 hover:bg-slate-600 transition-colors cursor-pointer"
-                title="XÃ³a"
+                title="Xóa"
               >
                 <X size={11} strokeWidth={2.5} />
               </button>
@@ -668,7 +668,7 @@ export const Container = (rawProps: ContainerProps) => {
               className={`text-slate-300 hover:text-slate-500 transition-colors duration-150 p-2 bg-transparent border-0 outline-none flex items-center justify-center ${
                 isLocked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
               }`}
-              title="ThÃªm thÃ nh pháº§n"
+              title="Thêm thành phần"
             >
               <Plus size={20} strokeWidth={1.5} />
             </button>

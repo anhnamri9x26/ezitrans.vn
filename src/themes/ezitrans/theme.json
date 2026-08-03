@@ -1,8 +1,8 @@
 {
     "id":  "ezitrans",
     "name":  "Ezitrans Global",
-    "nameVi":  "Ezitrans ToÃ n Cáº§u",
-    "description":  "Giao diá»‡n logistics quá»‘c táº¿ hiá»‡n Ä‘áº¡i, cao cáº¥p dÃ nh riÃªng cho Ezitrans.",
+    "nameVi":  "Ezitrans Toàn Cầu",
+    "description":  "Giao diện logistics quốc tế hiện đại, cao cấp dành riêng cho Ezitrans.",
     "version":  "2.0.0",
     "author":  "Ezitrans",
     "tags":  [
@@ -31,19 +31,24 @@
                   },
     "menuLocations":  [
                           {
+                              "label":  "Top Menu",
                               "key":  "header-utility",
-                              "label":  "LiÃªn káº¿t tiá»‡n Ã­ch Ä‘áº§u trang",
-                              "description":  "Thanh liÃªn káº¿t nhá» phÃ­a trÃªn header."
+                              "description":  "Các liên kết tiện ích trên thanh đầu trang."
                           },
                           {
+                              "label":  "Menu chính (Desktop)",
                               "key":  "header-primary",
-                              "label":  "Menu chÃ­nh Ä‘áº§u trang",
-                              "description":  "Äiá»u hÆ°á»›ng thÆ°Æ¡ng hiá»‡u chÃ­nh."
+                              "description":  "Điều hướng chính trên máy tính."
                           },
                           {
-                              "key":  "footer-primary",
+                              "label":  "Menu Mobile",
+                              "key":  "mobile-primary",
+                              "description":  "Menu riêng trong drawer mobile; nếu chưa gán sẽ dùng Menu chính."
+                          },
+                          {
                               "label":  "Menu Footer",
-                              "description":  "Má»™t menu phÃ¢n cáº¥p: má»¥c cáº¥p 0 lÃ  tiÃªu Ä‘á» nhÃ³m, má»¥c cáº¥p 1 lÃ  liÃªn káº¿t trong nhÃ³m."
+                              "key":  "footer-primary",
+                              "description":  "Một menu phân cấp: mục cấp 0 là tiêu đề nhóm, mục cấp 1 là liên kết trong nhóm."
                           }
                       ],
     "customizer":  [

@@ -12,11 +12,11 @@ const asArray=<T>(value:T|T[]|null|undefined):T[]=>value==null?[]:Array.isArray(
 const text=(value:unknown):string=>{if(value==null)return '';if(Array.isArray(value))return value.map(text).join('');if(typeof value==='object'&&'#text' in (value as object))return text((value as {'#text':unknown})['#text']);return String(value)};
 const integer=(value:unknown)=>Number.parseInt(text(value),10)||0;
 const date=(value:unknown)=>{const raw=text(value).trim();if(!raw||raw.startsWith('0000-00-00'))return new Date();const parsed=new Date(raw.includes('T')?raw:raw.replace(' ','T')+'Z');return Number.isNaN(parsed.getTime())?new Date():parsed};
-export function assertSafeWxr(xml:string){if(/<!DOCTYPE|<!ENTITY/i.test(xml))throw new Error('WXR khÃ´ng há»£p lá»‡: DOCTYPE/ENTITY khÃ´ng Ä‘Æ°á»£c há»— trá»£.');if(!/<wp:wxr_version>\s*1\.[12]\s*<\/wp:wxr_version>/i.test(xml))throw new Error('File XML khÃ´ng pháº£i WordPress WXR 1.1/1.2 há»£p lá»‡.')}
+export function assertSafeWxr(xml:string){if(/<!DOCTYPE|<!ENTITY/i.test(xml))throw new Error('WXR không hợp lệ: DOCTYPE/ENTITY không được hỗ trợ.');if(!/<wp:wxr_version>\s*1\.[12]\s*<\/wp:wxr_version>/i.test(xml))throw new Error('File XML không phải WordPress WXR 1.1/1.2 hợp lệ.')}
 export function parseWxrXml(xml:string):WxrDocument{
  assertSafeWxr(xml);
  const parser=new XMLParser({ignoreAttributes:false,attributeNamePrefix:'@_',textNodeName:'#text',parseTagValue:false,trimValues:false,processEntities:true,cdataPropName:'#text',isArray:(_n,p)=>['rss.channel.item','rss.channel.wp:author','rss.channel.wp:category','rss.channel.wp:tag','rss.channel.item.category','rss.channel.item.wp:postmeta','rss.channel.item.wp:comment'].includes(String(p))});
- const channel=parser.parse(xml)?.rss?.channel;if(!channel)throw new Error('KhÃ´ng tÃ¬m tháº¥y channel WXR trong file XML.');
+ const channel=parser.parse(xml)?.rss?.channel;if(!channel)throw new Error('Không tìm thấy channel WXR trong file XML.');
  const authors=asArray<any>(channel['wp:author']).map(a=>({id:integer(a['wp:author_id']),login:text(a['wp:author_login']).trim(),email:text(a['wp:author_email']).trim(),displayName:text(a['wp:author_display_name']).trim()}));
  const categories=asArray<any>(channel['wp:category']).map(c=>({id:integer(c['wp:term_id']),nicename:text(c['wp:category_nicename']).trim(),parent:text(c['wp:category_parent']).trim(),name:text(c['wp:cat_name']).trim()}));
  const tags=asArray<any>(channel['wp:tag']).map(t=>({id:integer(t['wp:term_id']),slug:text(t['wp:tag_slug']).trim(),name:text(t['wp:tag_name']).trim()}));

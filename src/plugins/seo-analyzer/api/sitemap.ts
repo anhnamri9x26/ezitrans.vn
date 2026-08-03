@@ -5,133 +5,70 @@ import { escapeXml, getSiteUrl } from '@/lib/technicalSeo';
 
 export const dynamic = 'force-dynamic';
 
+type SitemapEntry = { url: string; lastmod?: Date; changefreq: string; priority: string };
+
 export async function GET() {
   try {
-    // 1. Load SEO settings
     const dbSettings = await prisma.setting.findMany();
-    const settings = dbSettings.reduce<Record<string, string>>((acc: Record<string, string>, cur: { key: string; value: string }) => {
+    const settings = dbSettings.reduce<Record<string, string>>((acc, cur) => {
       acc[cur.key] = cur.value;
       return acc;
     }, {});
-
-    const isSeoActive = settings['plugin_seo_enabled'] !== 'false';
-    const sitemapEnabled = settings['seo_sitemap_enabled'] !== 'false';
-
-    if (!isSeoActive || !sitemapEnabled) {
+    if (settings.plugin_seo_enabled === 'false' || settings.seo_sitemap_enabled === 'false') {
       return new NextResponse('Sitemap is disabled', { status: 404 });
     }
 
-    const permalinkStructure = settings['permalink_structure'] || '/%postname%.html';
-
-    // 2. Fetch all published posts and pages
-    const posts = await prisma.post.findMany({
-      where: {
-        status: 'PUBLISHED',
-        publishedAt: { lte: new Date() }
-      },
-      select: {
-        id: true,
-        slug: true,
-        type: true,
-        legacyId: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    });
-
-    // 3. Fetch all categories
-    const categories = await prisma.category.findMany({
-      select: {
-        slug: true,
-      },
-    });
-
-    // 4. Fetch all tags
-    const tags = await prisma.tag.findMany({
-      select: {
-        slug: true,
-      },
-    });
+    const now = new Date();
+    const [posts, categories, tags, authors] = await Promise.all([
+      prisma.post.findMany({
+        where: { status: 'PUBLISHED', publishedAt: { lte: now } },
+        select: { id: true, slug: true, type: true, legacyId: true, createdAt: true, publishedAt: true, updatedAt: true },
+        orderBy: { updatedAt: 'desc' },
+      }),
+      prisma.category.findMany({
+        where: { posts: { some: { status: 'PUBLISHED', publishedAt: { lte: now } } } },
+        select: { slug: true },
+      }),
+      prisma.tag.findMany({
+        where: { posts: { some: { status: 'PUBLISHED', publishedAt: { lte: now } } } },
+        select: { slug: true },
+      }),
+      prisma.user.findMany({
+        where: { posts: { some: { status: 'PUBLISHED', publishedAt: { lte: now }, type: { in: ['POST', 'SERVICE'] } } } },
+        select: { username: true },
+      }),
+    ]);
 
     const siteUrl = getSiteUrl(settings);
-    
-    // Indexing settings
-    const indexPosts = settings['seo_index_posts'] !== 'false';
-    const indexPages = settings['seo_index_pages'] !== 'false';
-    const indexServices = settings['seo_index_services'] !== 'false';
-    const indexProducts = settings['seo_index_products'] !== 'false';
-    const indexCategories = settings['seo_index_categories'] !== 'false';
-    const indexTags = settings['seo_index_tags'] === 'true';
+    const permalinkStructure = settings.permalink_structure || '/%postname%.html';
+    const categoryBase = settings.permalink_category_base || 'category';
+    const tagBase = settings.permalink_tag_base || 'tag';
+    const entries: SitemapEntry[] = [{ url: `${siteUrl}/`, changefreq: 'daily', priority: '1.0' }];
+    const allow = {
+      POST: settings.seo_index_posts !== 'false' && settings.seo_sitemap_posts !== 'false',
+      PAGE: settings.seo_index_pages !== 'false' && settings.seo_sitemap_pages !== 'false',
+      SERVICE: settings.seo_index_services !== 'false' && settings.seo_sitemap_services !== 'false',
+      PRODUCT: settings.seo_index_products !== 'false' && settings.seo_sitemap_products !== 'false',
+    } as Record<string, boolean>;
 
-    // Sitemap settings (independent from indexing controls)
-    const sitemapPosts = settings['seo_sitemap_posts'] !== undefined ? settings['seo_sitemap_posts'] !== 'false' : indexPosts;
-    const sitemapPages = settings['seo_sitemap_pages'] !== undefined ? settings['seo_sitemap_pages'] !== 'false' : indexPages;
-    const sitemapServices = settings['seo_sitemap_services'] !== undefined ? settings['seo_sitemap_services'] !== 'false' : indexServices;
-    const sitemapProducts = settings['seo_sitemap_products'] !== undefined ? settings['seo_sitemap_products'] !== 'false' : indexProducts;
-    const sitemapCategories = settings['seo_sitemap_categories'] !== undefined ? settings['seo_sitemap_categories'] !== 'false' : indexCategories;
-    const sitemapTags = settings['seo_sitemap_tags'] !== undefined ? settings['seo_sitemap_tags'] === 'true' : indexTags;
-
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${siteUrl}</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>`;
-
-    // Add posts, pages, and services based on independent sitemap controls
-    posts
-      .filter((post) => {
-        if (post.type === 'PAGE') return sitemapPages;
-        if (post.type === 'SERVICE') return sitemapServices;
-        if (post.type === 'PRODUCT') return sitemapProducts;
-        return sitemapPosts;
-      })
-      .forEach((post) => {
-      let postUrl = '';
-      if (post.type === 'PAGE') {
-        postUrl = `${siteUrl}/${post.slug}`;
-      } else {
-        postUrl = `${siteUrl}${generatePostUrl(post, permalinkStructure)}`;
-      }
-      
-      const lastmod = post.updatedAt.toISOString().split('T')[0];
-      xml += `
-  <url>
-    <loc>${escapeXml(postUrl)}</loc>
-    <lastmod>${escapeXml(lastmod)}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>${post.type === 'PAGE' ? '0.8' : '0.7'}</priority>
-  </url>`;
-    });
-
-    if (sitemapCategories) {
-      categories.forEach((cat) => {
-        xml += `
-  <url>
-    <loc>${escapeXml(`${siteUrl}/category/${cat.slug}`)}</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>`;
-      });
+    for (const post of posts) {
+      if (!allow[post.type] || (post.type === 'PAGE' && post.slug === 'trang-chu')) continue;
+      const path = post.type === 'PAGE' ? `/${post.slug}` : generatePostUrl(post, permalinkStructure);
+      entries.push({ url: `${siteUrl}${path}`, lastmod: post.updatedAt, changefreq: 'weekly', priority: post.type === 'PAGE' ? '0.8' : '0.7' });
+    }
+    if (settings.seo_index_categories !== 'false' && settings.seo_sitemap_categories !== 'false') {
+      categories.forEach(category => entries.push({ url: `${siteUrl}/${categoryBase}/${category.slug}`, changefreq: 'weekly', priority: '0.5' }));
+    }
+    if (settings.seo_index_tags === 'true' && settings.seo_sitemap_tags === 'true') {
+      tags.forEach(tag => entries.push({ url: `${siteUrl}/${tagBase}/${tag.slug}`, changefreq: 'monthly', priority: '0.3' }));
+    }
+    if (settings.seo_index_author_archive === 'true' && settings.seo_sitemap_author_archive === 'true') {
+      authors.forEach(author => entries.push({ url: `${siteUrl}/author/${author.username}`, changefreq: 'monthly', priority: '0.4' }));
     }
 
-    if (sitemapTags) {
-      tags.forEach((tag) => {
-        xml += `
-  <url>
-    <loc>${escapeXml(`${siteUrl}/tag/${tag.slug}`)}</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>`;
-      });
-    }
-
-    xml += '\n</urlset>';
-
+    const unique = [...new Map(entries.map(entry => [entry.url, entry])).values()];
+    const body = unique.map(entry => `  <url>\n    <loc>${escapeXml(entry.url)}</loc>${entry.lastmod ? `\n    <lastmod>${entry.lastmod.toISOString()}</lastmod>` : ''}\n    <changefreq>${entry.changefreq}</changefreq>\n    <priority>${entry.priority}</priority>\n  </url>`).join('\n');
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`;
     return new NextResponse(xml, {
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',

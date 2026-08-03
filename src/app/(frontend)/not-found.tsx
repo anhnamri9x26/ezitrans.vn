@@ -27,7 +27,7 @@ export default async function NotFound() {
         <h2 className="ezi-404-subtitle">Trang Không Tồn Tại</h2>
         
         <p className="ezi-404-text">
-          Đường dẫn này không tồn tại hoặc đã được di dời sang địa chỉ mới. Vui lòng quay trở lại Trang chủ hoặc liên hệ hỗ trợ từ Ezitrans.
+          Đường dẫn này không tồn tại hoặc đã được di dời sang địa chỉ mới. Vui lòng quay trở lại Trang chủ hoặc liên hệ bộ phận hỗ trợ.
         </p>
 
         <div className="ezi-404-actions">

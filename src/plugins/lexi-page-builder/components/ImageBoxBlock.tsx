@@ -91,10 +91,10 @@ export const ImageBoxBlock = (rawProps: ImageBoxBlockProps) => {
   const props = useResponsiveProps(rawProps) as typeof rawProps;
   const {
     url = '',
-    alt = 'HÃ¬nh áº£nh thiáº¿t káº¿',
+    alt = 'Hình ảnh thiết kế',
     imageResolution = 'large',
-    title = 'ÄÃ¢y lÃ  tiÃªu Ä‘á»',
-    description = 'ThÃªm má»™t Ä‘oáº¡n vÄƒn báº£n á»Ÿ Ä‘Ã¢y. Nháº¥p vÃ o Ã´ vÄƒn báº£n Ä‘á»ƒ tÃ¹y chá»‰nh ná»™i dung, phong cÃ¡ch phÃ´ng chá»¯ vÃ  mÃ u sáº¯c cá»§a Ä‘oáº¡n vÄƒn cá»§a báº¡n.',
+    title = 'Đây là tiêu đề',
+    description = 'Thêm một đoạn văn bản ở đây. Nhấp vào ô văn bản để tùy chỉnh nội dung, phong cách phông chữ và màu sắc của đoạn văn của bạn.',
     link = '',
     titleTag = 'h3',
     dynamicTitle,
@@ -294,16 +294,16 @@ export const ImageBoxBlock = (rawProps: ImageBoxBlockProps) => {
             props.url = data.media.url;
           }, 500);
         } else {
-          alert('Táº£i lÃªn tháº¥t báº¡i: ' + (data.error || 'Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh'));
+          alert('Tải lên thất bại: ' + (data.error || 'Lỗi không xác định'));
         }
       } catch (error) {
-        alert('Lá»—i káº¿t ná»‘i mÃ¡y chá»§ khi táº£i áº£nh lÃªn!');
+        alert('Lỗi kết nối máy chủ khi tải ảnh lên!');
         console.error(error);
       } finally {
         setIsUploading(false);
       }
     } else {
-      alert('Vui lÃ²ng kÃ©o tháº£ tá»‡p hÃ¬nh áº£nh!');
+      alert('Vui lòng kéo thả tệp hình ảnh!');
     }
   };
 
@@ -369,7 +369,7 @@ export const ImageBoxBlock = (rawProps: ImageBoxBlockProps) => {
         }`}
       >
         <ImageIcon className="w-8 h-8 mb-2 opacity-50 text-slate-400" strokeWidth={1.5} />
-        <span className="text-[10px] font-bold">ChÆ°a chá»n hÃ¬nh áº£nh</span>
+        <span className="text-[10px] font-bold">Chưa chọn hình ảnh</span>
       </div>
     );
   };
@@ -437,14 +437,14 @@ export const ImageBoxBlock = (rawProps: ImageBoxBlockProps) => {
           {enabled && isDragging && !isLocked && (
             <div className="absolute inset-0 bg-brand-500/10 border-2 border-brand-500 border-dashed rounded flex flex-col items-center justify-center text-brand-600 font-bold z-40 backdrop-blur-[1px] animate-pulse">
               <span className="text-[8px] uppercase tracking-wider bg-white px-1.5 py-1 rounded shadow border border-brand-100 font-sans">
-                Tháº£ áº£nh ðŸš€
+                Thả ảnh 🚀
               </span>
             </div>
           )}
           {enabled && isUploading && (
             <div className="absolute inset-0 bg-slate-900/60 rounded flex flex-col items-center justify-center text-white font-bold z-40 backdrop-blur-[2px]">
               <Loader2 className="animate-spin h-4 w-4 text-white mb-1" />
-              <span className="text-[8px] tracking-wide font-sans">Táº£i lÃªn...</span>
+              <span className="text-[8px] tracking-wide font-sans">Tải lên...</span>
             </div>
           )}
         </div>
@@ -577,10 +577,10 @@ ImageBoxBlock.craft = {
   name: 'ImageBoxBlock',
   props: {
     url: '',
-    alt: 'HÃ¬nh áº£nh thiáº¿t káº¿',
+    alt: 'Hình ảnh thiết kế',
     imageResolution: 'large',
-    title: 'ÄÃ¢y lÃ  tiÃªu Ä‘á»',
-    description: 'ThÃªm má»™t Ä‘oáº¡n vÄƒn báº£n á»Ÿ Ä‘Ã¢y. Nháº¥p vÃ o Ã´ vÄƒn báº£n Ä‘á»ƒ tÃ¹y chá»‰nh ná»™i dung, phong cÃ¡ch phÃ´ng chá»¯ vÃ  mÃ u sáº¯c cá»§a Ä‘oáº¡n vÄƒn cá»§a báº¡n.',
+    title: 'Đây là tiêu đề',
+    description: 'Thêm một đoạn văn bản ở đây. Nhấp vào ô văn bản để tùy chỉnh nội dung, phong cách phông chữ và màu sắc của đoạn văn của bạn.',
     link: '',
     titleTag: 'h3',
 

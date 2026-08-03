@@ -1,12 +1,33 @@
 {
-  "id": "default",
-  "name": "Default Theme",
-  "version": "1.0.0",
-  "author": "Lexi Team",
-  "description": "Default starter theme.",
-  "previewImage": "preview.png",
-  "supports": ["header", "footer", "page"],
-  "templates": {
-    "fallback": "page.tsx"
-  }
+    "id":  "default",
+    "name":  "Lexi Starter",
+    "version":  "2.0.0",
+    "author":  "Lexi Team",
+    "description":  "Neutral premium starter theme for new Lexi CMS websites.",
+    "previewImage":  "preview.png",
+    "supports":  [
+                     "header",
+                     "footer",
+                     "homepage",
+                     "post",
+                     "page",
+                     "category",
+                     "tag",
+                     "search",
+                     "author",
+                     "product",
+                     "product-category"
+                 ],
+    "templates":  {
+                      "fallback":  "page.tsx",
+                      "homepage":  "Homepage.tsx",
+                      "post":  "PostPage.tsx",
+                      "page":  "Page.tsx",
+                      "category":  "CategoryPage.tsx",
+                      "tag":  "TagPage.tsx",
+                      "search":  "SearchPage.tsx",
+                      "author":  "AuthorPage.tsx",
+                      "product":  "ProductPage.tsx",
+                      "productCategory":  "ProductCategoryPage.tsx"
+                  }
 }

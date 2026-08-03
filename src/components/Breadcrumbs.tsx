@@ -21,7 +21,7 @@ export default function Breadcrumbs({ settings = {}, items }: BreadcrumbsProps) 
   const breadcrumbsEnabled = settings['seo_breadcrumbs_enabled'] !== 'false';
   const separator = settings['seo_breadcrumbs_separator'] || '»';
   const homeLabel = settings['seo_breadcrumbs_home'] || 'Trang chủ';
-  const siteUrl = String(settings['site_url'] || settings['home_url'] || 'https://ezitrans.vn').replace(/\/+$/, '');
+  const siteUrl = String(settings['site_url'] || settings['home_url'] || '').replace(/\/+$/, '');
 
   // Do not render if SEO plugin or breadcrumbs display is disabled
   if (!isSeoActive || !breadcrumbsEnabled) {

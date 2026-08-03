@@ -344,9 +344,8 @@ export async function POST(req: Request) {
         const notifyAdmin = s.email_notify_admin_comment !== 'false';
         const notifyUserReply = s.email_notify_user_reply !== 'false';
 
-        // 1. Notify Admin for new comment (if not created by elevated admin)
-        if (notifyAdmin && !isElevatedUser) {
-          const adminEmail = s.site_email || s.mail_from_email || 'admin@lexi.vn';
+        const adminEmail = (s.site_email || s.mail_from_email || '').trim();
+        if (notifyAdmin && !isElevatedUser && adminEmail) {
           const moderationText = newComment.status === 'APPROVED' ? 'Đã duyệt tự động' : 'Đang chờ phê duyệt';
           const hostUrl = process.env.NEXTAUTH_URL || 'http://localhost:3005';
           const commentLink = `${hostUrl}/comments`;

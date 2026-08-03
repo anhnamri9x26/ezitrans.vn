@@ -104,8 +104,8 @@ export async function POST(req: Request) {
 
         const notifyAdminUser = s.email_notify_admin_user !== 'false';
 
-        if (notifyAdminUser) {
-          const adminEmail = s.site_email || s.mail_from_email || 'admin@lexi.vn';
+        const adminEmail = (s.site_email || s.mail_from_email || '').trim();
+        if (notifyAdminUser && adminEmail) {
           const hostUrl = process.env.NEXTAUTH_URL || 'http://localhost:3005';
           const userLink = `${hostUrl}/users`;
 

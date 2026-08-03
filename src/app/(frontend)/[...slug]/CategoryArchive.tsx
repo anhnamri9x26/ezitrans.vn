@@ -1,5 +1,5 @@
 import React from 'react';
-import NotFoundContent from './NotFoundContent';
+import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { resolveTemplates } from '@/lib/templateResolver';
 import { loadTemplateComponent } from '@/lib/templateLoader';
@@ -88,16 +88,12 @@ export default async function CategoryArchive({ slug, type, settings, activeThem
     }
   }
 
-  if (!category) {
-    return <NotFoundContent />;
-  }
+  if (!category) notFound();
 
   posts = category.posts || [];
   const totalItems = category.totalItems || posts.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
-  if (safeCurrentPage > totalPages) {
-    return <NotFoundContent />;
-  }
+  if (safeCurrentPage > totalPages) notFound();
   const pagination = {
     currentPage: safeCurrentPage,
     perPage,
@@ -120,7 +116,7 @@ export default async function CategoryArchive({ slug, type, settings, activeThem
     templateName = 'ProductCategoryPage';
   }
 
-  // Táº£i Ä‘á»™ng (Dynamic Import) template tÆ°Æ¡ng á»©ng cá»§a Theme Ä‘ang kÃ­ch hoáº¡t
+  // Tải động (Dynamic Import) template tương ứng của Theme đang kích hoạt
   let defaultTemplate;
   if (activeTheme === 'ezitrans' && templateName === 'CategoryPage') {
     defaultTemplate = (await import('@/themes/ezitrans/CategoryPage')).default;

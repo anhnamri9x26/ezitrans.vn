@@ -2,7 +2,7 @@ import React from 'react';
 import { prisma } from '@/lib/prisma';
 import { Metadata } from 'next';
 import { resolveMetaTemplate } from '@/lib/metaTemplate';
-import { getRobotsDirectives, getSiteUrl } from '@/lib/technicalSeo';
+import { absoluteUrl, getRobotsDirectives, getSiteUrl } from '@/lib/technicalSeo';
 import { resolveTemplates } from '@/lib/templateResolver';
 import { loadTemplateComponent } from '@/lib/templateLoader';
 import TemplateShell from '@/components/TemplateShell';
@@ -41,13 +41,29 @@ export async function generateMetadata(): Promise<Metadata> {
     }
   }
 
+  const image = absoluteUrl(settings['seo_default_og_image'] || settings['site_logo'], siteUrl) || undefined;
   return {
     title: titleText,
     description,
     alternates: {
-      canonical: siteUrl,
+      canonical: `${siteUrl}/`,
     },
     robots: getRobotsDirectives(settings, { index: true }),
+    openGraph: {
+      type: 'website',
+      title: titleText,
+      description,
+      url: `${siteUrl}/`,
+      siteName: siteTitle,
+      locale: 'vi_VN',
+      images: image ? [{ url: image, alt: siteTitle }] : undefined,
+    },
+    twitter: {
+      card: image ? 'summary_large_image' : 'summary',
+      title: titleText,
+      description,
+      images: image ? [image] : undefined,
+    },
   };
 }
 
@@ -67,8 +83,16 @@ export default async function PublicHomepage({
   // 1. Lấy tất cả cài đặt hệ thống và menu đã phân công
   const settings = await loadHydratedSettings();
 
-  // Hỗ trợ preview theme qua query param ?preview_theme=modern
-  const previewTheme = typeof params.preview_theme === 'string' ? params.preview_theme : null;
+  // Customizer may preview a non-active built-in theme without changing the live website.
+  const requestedPreviewTheme = typeof params.theme === 'string' ? params.theme : null;
+  const legacyPreviewTheme = typeof params.preview_theme === 'string' ? params.preview_theme : null;
+  const isCustomizerPreview = params.customize_preview === '1';
+  const allowedPreviewThemes = new Set(['default', 'ezitrans']);
+  const previewTheme = isCustomizerPreview && requestedPreviewTheme && allowedPreviewThemes.has(requestedPreviewTheme)
+    ? requestedPreviewTheme
+    : legacyPreviewTheme && allowedPreviewThemes.has(legacyPreviewTheme)
+      ? legacyPreviewTheme
+      : null;
   const activeTheme = previewTheme || settings['active_theme'] || 'default';
 
   // 2. Lấy tất cả bài viết đã công khai (PUBLISHED)

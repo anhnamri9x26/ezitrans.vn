@@ -201,11 +201,11 @@ export const MenuBlock = (rawProps: MenuBlockProps) => {
     menuSource = 'header',
     menuId,
     customItems = [
-      { id: '1', label: 'Trang chá»§', url: '/', indent: 0 },
-      { id: '2', label: 'Dá»‹ch vá»¥', url: '#', indent: 0 },
-      { id: '3', label: 'Dá»‹ch vá»¥ 1', url: '/dich-vu-1', indent: 1 },
-      { id: '4', label: 'Dá»‹ch vá»¥ 2', url: '/dich-vu-2', indent: 1 },
-      { id: '5', label: 'LiÃªn há»‡', url: '/lien-he', indent: 0 }
+      { id: '1', label: 'Trang chủ', url: '/', indent: 0 },
+      { id: '2', label: 'Dịch vụ', url: '#', indent: 0 },
+      { id: '3', label: 'Dịch vụ 1', url: '/dich-vu-1', indent: 1 },
+      { id: '4', label: 'Dịch vụ 2', url: '/dich-vu-2', indent: 1 },
+      { id: '5', label: 'Liên hệ', url: '/lien-he', indent: 0 }
     ],
     resolvedItems = [],
     menuLayout = 'horizontal',
@@ -945,11 +945,11 @@ MenuBlock.craft = {
     menuSource: 'header',
     menuId: undefined,
     customItems: [
-      { id: '1', label: 'Trang chá»§', url: '/', indent: 0 },
-      { id: '2', label: 'Dá»‹ch vá»¥', url: '#', indent: 0 },
-      { id: '3', label: 'Dá»‹ch vá»¥ 1', url: '/dich-vu-1', indent: 1 },
-      { id: '4', label: 'Dá»‹ch vá»¥ 2', url: '/dich-vu-2', indent: 1 },
-      { id: '5', label: 'LiÃªn há»‡', url: '/lien-he', indent: 0 }
+      { id: '1', label: 'Trang chủ', url: '/', indent: 0 },
+      { id: '2', label: 'Dịch vụ', url: '#', indent: 0 },
+      { id: '3', label: 'Dịch vụ 1', url: '/dich-vu-1', indent: 1 },
+      { id: '4', label: 'Dịch vụ 2', url: '/dich-vu-2', indent: 1 },
+      { id: '5', label: 'Liên hệ', url: '/lien-he', indent: 0 }
     ],
     menuLayout: 'horizontal',
     resolvedItems: [],

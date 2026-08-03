@@ -20,7 +20,7 @@ export default function NotFoundContent({ settings = {} }: { settings?: Record<s
         <h1 className="ezi-404-title">404</h1>
         <h2 className="ezi-404-subtitle">Trang Không Tồn Tại</h2>
         <p className="ezi-404-text">
-          Đường dẫn này không tồn tại hoặc đã được di dời. Bạn có thể quay về Trang chủ hoặc liên hệ Ezitrans để được hỗ trợ.
+          Đường dẫn này không tồn tại hoặc đã được di dời. Bạn có thể quay về Trang chủ hoặc liên hệ bộ phận hỗ trợ.
         </p>
         <div className="ezi-404-actions">
           <Link href="/" className="ezi-btn ezi-btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>

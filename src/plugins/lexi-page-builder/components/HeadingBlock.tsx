@@ -45,7 +45,7 @@ export const HeadingBlock = (rawProps: HeadingBlockProps) => {
   const { device = 'desktop' } = usePageSettings();
   const props = createResponsiveProps(rawProps, device) as typeof rawProps;
   const {
-    text = 'TiÃªu Ä‘á» má»›i',
+    text = 'Tiêu đề mới',
     level = 'h2',
     link = '',
     fontSize = '32px',
@@ -328,7 +328,7 @@ export const HeadingBlock = (rawProps: HeadingBlockProps) => {
 HeadingBlock.craft = {
   name: 'HeadingBlock',
   props: {
-    text: 'TiÃªu Ä‘á» má»›i',
+    text: 'Tiêu đề mới',
     level: 'h2',
     link: '',
     fontSize: '32px',

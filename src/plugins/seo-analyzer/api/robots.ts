@@ -14,11 +14,10 @@ export async function GET() {
       return acc;
     }, {});
 
-    const isSeoActive = settings.plugin_seo_enabled !== 'false';
     const robotsEnabled = settings.seo_robots_txt_enabled !== 'false';
 
-    if (!isSeoActive || !robotsEnabled) {
-      return new NextResponse('User-agent: *\nDisallow: /', {
+    if (!robotsEnabled) {
+      return new NextResponse('User-agent: *\nAllow: /\n', {
         headers: { 'Content-Type': 'text/plain; charset=utf-8' },
       });
     }
@@ -35,7 +34,7 @@ export async function GET() {
       'Allow: /',
       ...disallowPaths.map(path => `Disallow: ${path.startsWith('/') ? path : `/${path}`}`),
       '',
-      `Sitemap: ${siteUrl}/sitemap.xml`,
+      `Sitemap: ${siteUrl}/sitemap_index.xml`,
       '',
     ].join('\n');
 

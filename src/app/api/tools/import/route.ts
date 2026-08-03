@@ -132,7 +132,7 @@ export async function GET(req: NextRequest) {
   const user = await getCurrentUser();
   const hasCap = await userCan(user, 'manage_tools');
   if (!hasCap) {
-    return NextResponse.json({ success: false, error: 'Báº¡n khÃ´ng cÃ³ quyá»n sá»­ dá»¥ng cÃ´ng cá»¥' }, { status: 403 });
+    return NextResponse.json({ success: false, error: 'Bạn không có quyền sử dụng công cụ' }, { status: 403 });
   }
 
   const { searchParams } = new URL(req.url);
@@ -147,7 +147,7 @@ export async function GET(req: NextRequest) {
       const importFiles = await getImportFiles();
       const targetFile = importFiles.find(f => f.name === selectedFile);
       if (!targetFile || !fs.existsSync(targetFile.path)) {
-        return NextResponse.json({ success: false, error: 'KhÃ´ng tÃ¬m tháº¥y file SQL' }, { status: 404 });
+        return NextResponse.json({ success: false, error: 'Không tìm thấy file SQL' }, { status: 404 });
       }
 
       const summary = targetFile.format === 'xml'
@@ -207,7 +207,7 @@ export async function GET(req: NextRequest) {
       if (!progressSetting) {
         return NextResponse.json({
           success: true,
-          progress: { status: 'idle', logs: ['ChÆ°a cÃ³ tiáº¿n trÃ¬nh import nÃ o cháº¡y.'] }
+          progress: { status: 'idle', logs: ['Chưa có tiến trình import nào chạy.'] }
         });
       }
 
@@ -228,46 +228,46 @@ export async function GET(req: NextRequest) {
 
     // WordPress tables column definitions (derived from analysis)
     const wpPostsColumns = [
-      { name: 'ID', type: 'bigint', desc: 'ID bÃ i viáº¿t gá»‘c (KhÃ³a chÃ­nh)' },
-      { name: 'post_author', type: 'bigint', desc: 'ID tÃ¡c giáº£' },
-      { name: 'post_date', type: 'datetime', desc: 'NgÃ y Ä‘Äƒng bÃ i' },
-      { name: 'post_content', type: 'longtext', desc: 'Ná»™i dung bÃ i viáº¿t' },
-      { name: 'post_title', type: 'text', desc: 'TiÃªu Ä‘á» bÃ i viáº¿t' },
-      { name: 'post_excerpt', type: 'text', desc: 'TÃ³m táº¯t bÃ i viáº¿t' },
-      { name: 'post_status', type: 'varchar', desc: 'Tráº¡ng thÃ¡i (publish, draft...)' },
-      { name: 'post_name', type: 'varchar', desc: 'Slug URL bÃ i viáº¿t' },
-      { name: 'post_parent', type: 'bigint', desc: 'ID bÃ i cha (cho Page)' },
-      { name: 'post_type', type: 'varchar', desc: 'Loáº¡i bÃ i viáº¿t (post, page, attachment...)' }
+      { name: 'ID', type: 'bigint', desc: 'ID bài viết gốc (Khóa chính)' },
+      { name: 'post_author', type: 'bigint', desc: 'ID tác giả' },
+      { name: 'post_date', type: 'datetime', desc: 'Ngày đăng bài' },
+      { name: 'post_content', type: 'longtext', desc: 'Nội dung bài viết' },
+      { name: 'post_title', type: 'text', desc: 'Tiêu đề bài viết' },
+      { name: 'post_excerpt', type: 'text', desc: 'Tóm tắt bài viết' },
+      { name: 'post_status', type: 'varchar', desc: 'Trạng thái (publish, draft...)' },
+      { name: 'post_name', type: 'varchar', desc: 'Slug URL bài viết' },
+      { name: 'post_parent', type: 'bigint', desc: 'ID bài cha (cho Page)' },
+      { name: 'post_type', type: 'varchar', desc: 'Loại bài viết (post, page, attachment...)' }
     ];
 
     const wpUsersColumns = [
-      { name: 'ID', type: 'bigint', desc: 'ID thÃ nh viÃªn' },
-      { name: 'user_login', type: 'varchar', desc: 'TÃªn Ä‘Äƒng nháº­p' },
-      { name: 'user_pass', type: 'varchar', desc: 'Máº­t kháº©u Ä‘Ã£ mÃ£ hÃ³a' },
-      { name: 'user_email', type: 'varchar', desc: 'Äá»‹a chá»‰ Email' },
-      { name: 'user_registered', type: 'datetime', desc: 'NgÃ y Ä‘Äƒng kÃ½ thÃ nh viÃªn' },
-      { name: 'display_name', type: 'varchar', desc: 'TÃªn hiá»ƒn thá»‹' }
+      { name: 'ID', type: 'bigint', desc: 'ID thành viên' },
+      { name: 'user_login', type: 'varchar', desc: 'Tên đăng nhập' },
+      { name: 'user_pass', type: 'varchar', desc: 'Mật khẩu đã mã hóa' },
+      { name: 'user_email', type: 'varchar', desc: 'Địa chỉ Email' },
+      { name: 'user_registered', type: 'datetime', desc: 'Ngày đăng ký thành viên' },
+      { name: 'display_name', type: 'varchar', desc: 'Tên hiển thị' }
     ];
 
     // Destination tables columns (our Prisma system)
     const systemPostFields = [
-      { name: 'title', type: 'String', required: true, desc: 'TiÃªu Ä‘á» bÃ i viáº¿t' },
-      { name: 'slug', type: 'String', required: true, desc: 'ÄÆ°á»ng dáº«n tÄ©nh URL (Slug)' },
-      { name: 'content', type: 'String', required: false, desc: 'Ná»™i dung chi tiáº¿t bÃ i viáº¿t' },
-      { name: 'excerpt', type: 'String', required: false, desc: 'Äoáº¡n trÃ­ch mÃ´ táº£ ngáº¯n' },
-      { name: 'status', type: 'PostStatus', required: true, desc: 'Tráº¡ng thÃ¡i (PUBLISHED, DRAFT)' },
-      { name: 'type', type: 'PostType', required: true, desc: 'PhÃ¢n loáº¡i (POST, PAGE, SERVICE)' },
-      { name: 'publishedAt', type: 'DateTime', required: true, desc: 'NgÃ y giá» xuáº¥t báº£n' },
-      { name: 'authorId', type: 'Int', required: true, desc: 'ID TÃ¡c giáº£ biÃªn soáº¡n' },
-      { name: 'legacyId', type: 'Int', required: false, desc: 'ID bÃ i viáº¿t cÅ© tá»« Wordpress' }
+      { name: 'title', type: 'String', required: true, desc: 'Tiêu đề bài viết' },
+      { name: 'slug', type: 'String', required: true, desc: 'Đường dẫn tĩnh URL (Slug)' },
+      { name: 'content', type: 'String', required: false, desc: 'Nội dung chi tiết bài viết' },
+      { name: 'excerpt', type: 'String', required: false, desc: 'Đoạn trích mô tả ngắn' },
+      { name: 'status', type: 'PostStatus', required: true, desc: 'Trạng thái (PUBLISHED, DRAFT)' },
+      { name: 'type', type: 'PostType', required: true, desc: 'Phân loại (POST, PAGE, SERVICE)' },
+      { name: 'publishedAt', type: 'DateTime', required: true, desc: 'Ngày giờ xuất bản' },
+      { name: 'authorId', type: 'Int', required: true, desc: 'ID Tác giả biên soạn' },
+      { name: 'legacyId', type: 'Int', required: false, desc: 'ID bài viết cũ từ Wordpress' }
     ];
 
     const systemUserFields = [
-      { name: 'username', type: 'String', required: true, desc: 'TÃªn tÃ i khoáº£n Ä‘Äƒng nháº­p' },
-      { name: 'email', type: 'String', required: true, desc: 'Äá»‹a chá»‰ Email duy nháº¥t' },
-      { name: 'password', type: 'String', required: true, desc: 'Máº­t kháº©u mÃ£ hÃ³a báº£o máº­t' },
-      { name: 'name', type: 'String', required: false, desc: 'Há» vÃ  tÃªn hiá»ƒn thá»‹' },
-      { name: 'role', type: 'Role', required: true, desc: 'PhÃ¢n quyá»n (ADMIN, SUBSCRIBER...)' }
+      { name: 'username', type: 'String', required: true, desc: 'Tên tài khoản đăng nhập' },
+      { name: 'email', type: 'String', required: true, desc: 'Địa chỉ Email duy nhất' },
+      { name: 'password', type: 'String', required: true, desc: 'Mật khẩu mã hóa bảo mật' },
+      { name: 'name', type: 'String', required: false, desc: 'Họ và tên hiển thị' },
+      { name: 'role', type: 'Role', required: true, desc: 'Phân quyền (ADMIN, SUBSCRIBER...)' }
     ];
 
     return NextResponse.json({
@@ -297,7 +297,7 @@ export async function POST(req: NextRequest) {
     const user = await getCurrentUser();
     const hasCap = await userCan(user, 'manage_tools');
     if (!hasCap) {
-      return NextResponse.json({ success: false, error: 'Báº¡n khÃ´ng cÃ³ quyá»n sá»­ dá»¥ng cÃ´ng cá»¥' }, { status: 403 });
+      return NextResponse.json({ success: false, error: 'Bạn không có quyền sử dụng công cụ' }, { status: 403 });
     }
     const body = await req.json();
     const { fieldMapping, options } = body;
@@ -311,7 +311,7 @@ export async function POST(req: NextRequest) {
     if (!targetFile || !fs.existsSync(targetFile.path)) {
       return NextResponse.json({
         success: false,
-        error: `KhÃ´ng tÃ¬m tháº¥y file SQL nÃ o Ä‘á»ƒ xá»­ lÃ½. Vui lÃ²ng Ä‘áº·t tá»‡p tin SQL vÃ o thÆ° má»¥c gá»‘c cá»§a trang web.`
+        error: `Không tìm thấy file SQL nào để xử lý. Vui lòng đặt tệp tin SQL vào thư mục gốc của trang web.`
       }, { status: 404 });
     }
 
@@ -375,7 +375,7 @@ export async function PUT(req: NextRequest) {
     const user = await getCurrentUser();
     const hasCap = await userCan(user, 'manage_tools');
     if (!hasCap) {
-      return NextResponse.json({ success: false, error: 'Báº¡n khÃ´ng cÃ³ quyá»n sá»­ dá»¥ng cÃ´ng cá»¥' }, { status: 403 });
+      return NextResponse.json({ success: false, error: 'Bạn không có quyền sử dụng công cụ' }, { status: 403 });
     }
     const body = await req.json().catch(() => ({}));
     const cleanAbsoluteLinks = body.cleanAbsoluteLinks !== false;
@@ -418,7 +418,7 @@ export async function PUT(req: NextRequest) {
           try {
             await downloadAndSyncImage(relativeImagePath);
           } catch (e) {
-            console.error(`Lá»—i táº£i áº£nh trong dá»n dáº¹p bÃ i viáº¿t cÅ©: ${relativeImagePath}`, e);
+            console.error(`Lỗi tải ảnh trong dọn dẹp bài viết cũ: ${relativeImagePath}`, e);
           }
         }
       }
@@ -434,7 +434,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `ÄÃ£ xá»­ lÃ½ thÃ nh cÃ´ng cho ${updatedCount} bÃ i viáº¿t!`,
+      message: `Đã xử lý thành công cho ${updatedCount} bài viết!`,
       updatedCount
     });
   } catch (err: any) {
@@ -448,12 +448,12 @@ export async function DELETE() {
     const user = await getCurrentUser();
     const hasCap = await userCan(user, 'manage_tools');
     if (!hasCap) {
-      return NextResponse.json({ success: false, error: 'Báº¡n khÃ´ng cÃ³ quyá»n sá»­ dá»¥ng cÃ´ng cá»¥' }, { status: 403 });
+      return NextResponse.json({ success: false, error: 'Bạn không có quyền sử dụng công cụ' }, { status: 403 });
     }
     await prisma.setting.deleteMany({
       where: { key: 'import_progress' }
     });
-    return NextResponse.json({ success: true, message: 'ÄÃ£ reset tiáº¿n trÃ¬nh import.' });
+    return NextResponse.json({ success: true, message: 'Đã reset tiến trình import.' });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 550 });
   }

@@ -41,7 +41,7 @@ export interface AccordionBlockProps extends Partial<CommonLayoutProps> {
   maxExpanded?: 'one' | 'unlimited';
   animationDuration?: string;
 
-  // Style > Item Wrapper (Ná»™i dung thu gá»n)
+  // Style > Item Wrapper (Nội dung thu gọn)
   itemSpacing?: string;
   contentSpacing?: string;
   itemBgType?: 'color' | 'image';
@@ -54,7 +54,7 @@ export interface AccordionBlockProps extends Partial<CommonLayoutProps> {
   itemBorderRadius?: string;
   itemPadding?: string;
 
-  // Style > Title (Äáº§u trang)
+  // Style > Title (Đầu trang)
   titleFontFamily?: string;
   titleFontSize?: string;
   titleFontWeight?: string;
@@ -82,7 +82,7 @@ export interface AccordionBlockProps extends Partial<CommonLayoutProps> {
   iconColorHover?: string;
   iconColorActive?: string;
 
-  // Style > Content (Ná»™i dung)
+  // Style > Content (Nội dung)
   contentBgType?: 'color' | 'image';
   contentBgColor?: string;
   contentBorderType?: string;
@@ -109,9 +109,9 @@ export const AccordionBlock = (rawProps: AccordionBlockProps) => {
   const props = useResponsiveProps(rawProps) as typeof rawProps;
   const {
     items = [
-      { id: '1', title: 'Má»¥c danh sÃ¡ch #1', content: 'ÄÃ¢y lÃ  ná»™i dung tráº£ lá»i máº«u cho má»¥c sá»‘ 1. Báº¡n cÃ³ thá»ƒ dá»… dÃ ng thay Ä‘á»•i vÄƒn báº£n nÃ y trong pháº§n cÃ i Ä‘áº·t bÃªn pháº£i.', cssId: '' },
-      { id: '2', title: 'Má»¥c danh sÃ¡ch #2', content: 'ÄÃ¢y lÃ  ná»™i dung tráº£ lá»i máº«u cho má»¥c sá»‘ 2. KÃ©o tháº£ Ä‘á»ƒ thay Ä‘á»•i vá»‹ trÃ­ cÃ¡c má»¥c theo Ã½ muá»‘n.', cssId: '' },
-      { id: '3', title: 'Má»¥c danh sÃ¡ch #3', content: 'Báº¡n cÃ³ thá»ƒ tÃ¹y chá»‰nh mÃ u sáº¯c, biá»ƒu tÆ°á»£ng vÃ  hiá»‡u á»©ng cá»§a Sáº­p má»Ÿ (FAQ) trong pháº§n cÃ i Ä‘áº·t TÆ°Æ¡ng tÃ¡c vÃ  Giao diá»‡n.', cssId: '' }
+      { id: '1', title: 'Mục danh sách #1', content: 'Đây là nội dung trả lời mẫu cho mục số 1. Bạn có thể dễ dàng thay đổi văn bản này trong phần cài đặt bên phải.', cssId: '' },
+      { id: '2', title: 'Mục danh sách #2', content: 'Đây là nội dung trả lời mẫu cho mục số 2. Kéo thả để thay đổi vị trí các mục theo ý muốn.', cssId: '' },
+      { id: '3', title: 'Mục danh sách #3', content: 'Bạn có thể tùy chỉnh màu sắc, biểu tượng và hiệu ứng của Sập mở (FAQ) trong phần cài đặt Tương tác và Giao diện.', cssId: '' }
     ],
     itemAlign = 'left',
     iconPosition = 'right',
@@ -570,9 +570,9 @@ AccordionBlock.craft = {
   props: {
     ...defaultLayoutProps,
     items: [
-      { id: '1', title: 'Má»¥c danh sÃ¡ch #1', content: 'ÄÃ¢y lÃ  ná»™i dung tráº£ lá»i máº«u cho má»¥c sá»‘ 1. Báº¡n cÃ³ thá»ƒ dá»… dÃ ng thay Ä‘á»•i vÄƒn báº£n nÃ y trong pháº§n cÃ i Ä‘áº·t bÃªn pháº£i.', cssId: '', contentType: 'text' },
-      { id: '2', title: 'Má»¥c danh sÃ¡ch #2', content: 'ÄÃ¢y lÃ  ná»™i dung tráº£ lá»i máº«u cho má»¥c sá»‘ 2. KÃ©o tháº£ Ä‘á»ƒ thay Ä‘á»•i vá»‹ trÃ­ cÃ¡c má»¥c theo Ã½ muá»‘n.', cssId: '', contentType: 'text' },
-      { id: '3', title: 'Má»¥c danh sÃ¡ch #3', content: 'Báº¡n cÃ³ thá»ƒ tÃ¹y chá»‰nh mÃ u sáº¯c, biá»ƒu tÆ°á»£ng vÃ  hiá»‡u á»©ng cá»§a Sáº­p má»Ÿ (FAQ) trong pháº§n cÃ i Ä‘áº·t TÆ°Æ¡ng tÃ¡c vÃ  Giao diá»‡n.', cssId: '', contentType: 'text' }
+      { id: '1', title: 'Mục danh sách #1', content: 'Đây là nội dung trả lời mẫu cho mục số 1. Bạn có thể dễ dàng thay đổi văn bản này trong phần cài đặt bên phải.', cssId: '', contentType: 'text' },
+      { id: '2', title: 'Mục danh sách #2', content: 'Đây là nội dung trả lời mẫu cho mục số 2. Kéo thả để thay đổi vị trí các mục theo ý muốn.', cssId: '', contentType: 'text' },
+      { id: '3', title: 'Mục danh sách #3', content: 'Bạn có thể tùy chỉnh màu sắc, biểu tượng và hiệu ứng của Sập mở (FAQ) trong phần cài đặt Tương tác và Giao diện.', cssId: '', contentType: 'text' }
     ],
     
     itemAlign: 'left',

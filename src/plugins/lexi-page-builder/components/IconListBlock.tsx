@@ -67,9 +67,9 @@ export const IconListBlock = (rawProps: IconListBlockProps) => {
   const props = useResponsiveProps(rawProps) as typeof rawProps;
   const {
     items = [
-      { id: '1', text: 'Má»¥c danh sÃ¡ch #1', iconName: 'Check' },
-      { id: '2', text: 'Má»¥c danh sÃ¡ch #2', iconName: 'X' },
-      { id: '3', text: 'Má»¥c danh sÃ¡ch #3', iconName: 'CircleDot' }
+      { id: '1', text: 'Mục danh sách #1', iconName: 'Check' },
+      { id: '2', text: 'Mục danh sách #2', iconName: 'X' },
+      { id: '3', text: 'Mục danh sách #3', iconName: 'CircleDot' }
     ],
     listLayout = 'vertical',
     align = 'left',
@@ -372,9 +372,9 @@ IconListBlock.craft = {
   name: 'IconListBlock',
   props: {
     items: [
-      { id: '1', text: 'Má»¥c danh sÃ¡ch #1', iconName: 'Check' },
-      { id: '2', text: 'Má»¥c danh sÃ¡ch #2', iconName: 'X' },
-      { id: '3', text: 'Má»¥c danh sÃ¡ch #3', iconName: 'CircleDot' }
+      { id: '1', text: 'Mục danh sách #1', iconName: 'Check' },
+      { id: '2', text: 'Mục danh sách #2', iconName: 'X' },
+      { id: '3', text: 'Mục danh sách #3', iconName: 'CircleDot' }
     ],
     listLayout: 'vertical',
     align: 'left',

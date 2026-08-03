@@ -3,7 +3,7 @@
   "name": "Contact Hub",
   "nameEn": "Contact Hub",
   "description": "Trung tâm liên hệ đa kênh với live preview, sắp xếp kênh, Contact Hub thu gọn, stack buttons và thanh CTA mobile.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": "DeepMind Team",
   "icon": "message-circle",
   "iconColor": "#0c64d0",
@@ -20,7 +20,8 @@
     "lib/contactWidgetConfig.ts",
     "components/FloatingContactButtons.tsx",
     "components/contact-widget.css",
-    "admin/ContactSettingsPage.tsx"
+    "admin/ContactSettingsPage.tsx",
+    "admin/contact-settings.css"
   ],
   "capabilities": [
     "contact-hub",

@@ -71,7 +71,7 @@ export const ImageBlock = (rawProps: ImageBlockProps) => {
   const props = useResponsiveProps(rawProps) as typeof rawProps;
   const {
     url = '',
-    alt = 'HÃ¬nh áº£nh thiáº¿t káº¿',
+    alt = 'Hình ảnh thiết kế',
     width = '100%',
     widthMode = 'full',
     customWidth = '',
@@ -269,16 +269,16 @@ export const ImageBlock = (rawProps: ImageBlockProps) => {
             props.url = data.media.url;
           }, 500);
         } else {
-          alert('Táº£i lÃªn tháº¥t báº¡i: ' + (data.error || 'Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh'));
+          alert('Tải lên thất bại: ' + (data.error || 'Lỗi không xác định'));
         }
       } catch (error) {
-        alert('Lá»—i káº¿t ná»‘i mÃ¡y chá»§ khi táº£i áº£nh lÃªn!');
+        alert('Lỗi kết nối máy chủ khi tải ảnh lên!');
         console.error(error);
       } finally {
         setIsUploading(false);
       }
     } else {
-      alert('Vui lÃ²ng kÃ©o tháº£ tá»‡p hÃ¬nh áº£nh!');
+      alert('Vui lòng kéo thả tệp hình ảnh!');
     }
   };
 
@@ -301,7 +301,7 @@ export const ImageBlock = (rawProps: ImageBlockProps) => {
       }`}
     >
       <ImageIcon className="w-8 h-8 mb-2 opacity-50 text-slate-400" strokeWidth={1.5} />
-      <span className="text-[11px] font-bold">ChÆ°a chá»n hÃ¬nh áº£nh</span>
+      <span className="text-[11px] font-bold">Chưa chọn hình ảnh</span>
     </div>
   );
 
@@ -413,7 +413,7 @@ export const ImageBlock = (rawProps: ImageBlockProps) => {
       {enabled && isDragging && !isLocked && (
         <div className="absolute inset-0 bg-brand-500/10 border-2 border-brand-500 border-dashed rounded-lg flex flex-col items-center justify-center text-brand-600 font-bold z-40 backdrop-blur-[1px] animate-pulse">
           <span className="text-[11px] uppercase tracking-wider bg-white px-2.5 py-1.5 rounded-lg shadow-lg border border-brand-100 font-sans">
-            Tháº£ file áº£nh Ä‘á»ƒ táº£i lÃªn ðŸš€
+            Thả file ảnh để tải lên 🚀
           </span>
         </div>
       )}
@@ -421,7 +421,7 @@ export const ImageBlock = (rawProps: ImageBlockProps) => {
       {enabled && isUploading && (
         <div className="absolute inset-0 bg-slate-900/60 rounded-lg flex flex-col items-center justify-center text-white font-bold z-40 backdrop-blur-[2px]">
           <Loader2 className="animate-spin h-5 w-5 text-white mb-1.5" />
-          <span className="text-[10px] tracking-wide font-sans">Äang táº£i lÃªn...</span>
+          <span className="text-[10px] tracking-wide font-sans">Đang tải lên...</span>
         </div>
       )}
 
@@ -436,7 +436,7 @@ ImageBlock.craft = {
   props: {
     ...defaultLayoutProps,
     url: '',
-    alt: 'HÃ¬nh áº£nh thiáº¿t káº¿',
+    alt: 'Hình ảnh thiết kế',
     width: '100%',
     widthMode: 'full',
     customWidth: '',

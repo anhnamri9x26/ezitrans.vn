@@ -61,7 +61,7 @@ export interface ButtonBlockProps extends CommonLayoutProps {
 export const ButtonBlock = (rawProps: ButtonBlockProps) => {
   const props = useResponsiveProps(rawProps) as ButtonBlockProps;
   const {
-    text = 'Nháº¥p Ä‘Ãºp chuá»™t Ä‘á»ƒ sá»­a nÃºt',
+    text = 'Nhấp đúp chuột để sửa nút',
     link = '',
     fontSize = '14px',
     fontWeight = '600',
@@ -454,7 +454,7 @@ ButtonBlock.craft = {
   name: 'ButtonBlock',
   props: {
     ...defaultLayoutProps,
-    text: 'NÃºt báº¥m',
+    text: 'Nút bấm',
     link: '',
     fontSize: '14px',
     fontWeight: '600',

@@ -162,7 +162,7 @@ export default function DatabaseImportPage() {
   const [showMissingImagesList, setShowMissingImagesList] = useState<boolean>(false);
 
   // WordPress REST taxonomy recovery
-  const [restBaseUrl, setRestBaseUrl] = useState<string>('https://ezitrans.vn');
+  const [restBaseUrl, setRestBaseUrl] = useState<string>('');
   const [restLoading, setRestLoading] = useState<boolean>(false);
   const [restError, setRestError] = useState<string | null>(null);
   const [restPreview, setRestPreview] = useState<{ baseUrl: string; categories: number; tags: number; posts: number } | null>(null);

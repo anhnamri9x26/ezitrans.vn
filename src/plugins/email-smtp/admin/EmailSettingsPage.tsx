@@ -8,7 +8,7 @@ export function EmailSettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
 
   // Email Config State
-  const [mailFromEmail, setMailFromEmail] = useState('admin@lexi.vn');
+  const [mailFromEmail, setMailFromEmail] = useState('');
   const [mailFromName, setMailFromName] = useState('Lexi');
   const [mailForceFromEmail, setMailForceFromEmail] = useState('false');
   const [mailSmtpHost, setMailSmtpHost] = useState('');
@@ -217,7 +217,7 @@ export function EmailSettingsPage() {
                   type="email"
                   value={mailFromEmail}
                   onChange={(e) => setMailFromEmail(e.target.value)}
-                  placeholder="admin@lexi.vn"
+                  placeholder="name@your-domain.com"
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-slate-700 bg-white"
                 />
                 <p className="text-[10px] text-slate-400 mt-1">Địa chỉ email mà tất cả các email từ trang web này sẽ được gửi đi.</p>

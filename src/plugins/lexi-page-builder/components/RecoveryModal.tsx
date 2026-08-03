@@ -40,21 +40,21 @@ export default function RecoveryModal({
           </div>
 
           <h3 className="text-lg font-black text-slate-800 uppercase tracking-wide">
-            Ph�t hi?n b?n nh�p t? d?ng m?i
+            Phát hiện bản nháp tự động mới
           </h3>
           <p className="text-[10px] text-amber-600 font-bold uppercase tracking-wider mt-1 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
-            Kh�i ph?c sau s? c?
+            Khôi phục sau sự cố
           </p>
 
           <p className="text-slate-600 text-sm mt-4 leading-relaxed px-2">
-            H? th?ng d� t? d?ng luu l?i m?t b?n sao thi?t k? c?a b?n v�o l�c{" "}
-            <span className="font-bold text-slate-800">{formattedDate}</span>. B?n nh�p n�y m?i hon phi�n b?n ch�nh th?c hi?n t?i tr�n m�y ch?.
+            Hệ thống đã tự động lưu lại một bản sao thiết kế của bạn vào lúc{" "}
+            <span className="font-bold text-slate-800">{formattedDate}</span>. Bản nháp này mới hơn phiên bản chính thức hiện tại trên máy chủ.
           </p>
 
           <div className="w-full bg-slate-50 border border-slate-100 rounded-xl p-3.5 mt-5 text-[11px] text-slate-500 leading-relaxed text-left flex gap-2">
-            <span className="shrink-0 text-slate-400">??</span>
+            <span className="shrink-0 text-slate-400">💡</span>
             <span>
-              Ch?n <strong>Kh�i ph?c</strong> d? t?i l?i c�ng vi?c dang dang d? c?a b?n. Ch?n <strong>B? qua</strong> n?u b?n mu?n ti?p t?c ch?nh s?a phi�n b?n ch�nh th?c tr�n m�y ch? (B?n nh�p t? d?ng s? b? x�a).
+              Chọn <strong>Khôi phục</strong> để tải lại công việc đang dang dở của bạn. Chọn <strong>Bỏ qua</strong> nếu bạn muốn tiếp tục chỉnh sửa phiên bản chính thức trên máy chủ (bản nháp tự động sẽ bị xóa).
             </span>
           </div>
 
@@ -64,14 +64,14 @@ export default function RecoveryModal({
               className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm cursor-pointer"
             >
               <Trash2 size={13} className="opacity-70" />
-              B? qua
+              Bỏ qua
             </button>
             <button
               onClick={onRestore}
               className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#5ad0d0] hover:bg-[#46bebe] text-white rounded-xl text-xs font-bold transition-all active:scale-95 shadow-md shadow-[#5ad0d0]/20 cursor-pointer"
             >
               <RefreshCw size={13} className="animate-spin-slow" />
-              Kh�i ph?c
+              Khôi phục
             </button>
           </div>
         </div>

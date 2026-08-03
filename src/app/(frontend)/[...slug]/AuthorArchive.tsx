@@ -1,8 +1,8 @@
+import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { resolveTemplates } from '@/lib/templateResolver';
 import { loadTemplateComponent } from '@/lib/templateLoader';
 import TemplateShell from '@/components/TemplateShell';
-import NotFoundContent from './NotFoundContent';
 import type { Prisma } from '@prisma/client';
 import type { ElementType } from 'react';
 
@@ -18,7 +18,7 @@ export default async function AuthorArchive({ username, settings, activeTheme, c
     where: { username },
     select: { id: true, username: true, name: true, createdAt: true }
   });
-  if (!author) return <NotFoundContent settings={settings} />;
+  if (!author) notFound();
 
   const perPage = 12;
   const safeCurrentPage = Math.max(1, currentPage);
@@ -41,7 +41,7 @@ export default async function AuthorArchive({ username, settings, activeTheme, c
   ]);
 
   const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
-  if (safeCurrentPage > totalPages) return <NotFoundContent settings={settings} />;
+  if (safeCurrentPage > totalPages) notFound();
   const pagination = {
     currentPage: safeCurrentPage, perPage, totalItems, totalPages,
     startItem: totalItems === 0 ? 0 : skip + 1,
@@ -51,7 +51,7 @@ export default async function AuthorArchive({ username, settings, activeTheme, c
   const templateName = 'AuthorPage';
   const DefaultTemplate = activeTheme === 'ezitrans'
     ? (await import('@/themes/ezitrans/AuthorPage')).default
-    : (await import('@/themes/default/CategoryPage')).default;
+    : (await import('@/themes/default/AuthorPage')).default;
   const context = { pageType: 'ARCHIVE' as const, authorId: author.id };
   const resolved = await resolveTemplates(context);
   const AuthorTemplate: ElementType = resolved.body

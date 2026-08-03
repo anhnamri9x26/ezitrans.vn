@@ -29,9 +29,12 @@ export default function AdminSettingsClient({ extraPanels = [] }: AdminSettingsC
   const [isSaving, setIsSaving] = useState(false);
 
   // General Form states
-  const [siteTitle, setSiteTitle] = useState('Lexi');
-  const [siteTagline, setSiteTagline] = useState('Vận Chuyển Hàng Quốc Tế');
-  const [siteEmail, setSiteEmail] = useState('pewnoy.com@gmail.com');
+  const [siteTitle, setSiteTitle] = useState('');
+  const [siteTagline, setSiteTagline] = useState('');
+  const [siteUrl, setSiteUrl] = useState('');
+  const [siteEmail, setSiteEmail] = useState('');
+  const [sitePhone, setSitePhone] = useState('');
+  const [siteAddress, setSiteAddress] = useState('');
   const [defaultCategoryId, setDefaultCategoryId] = useState('');
   
   // Membership settings
@@ -90,7 +93,10 @@ export default function AdminSettingsClient({ extraPanels = [] }: AdminSettingsC
           const s = settingsData.settings;
           if (s.site_title) setSiteTitle(s.site_title);
           if (s.site_tagline) setSiteTagline(s.site_tagline);
+          if (s.site_url) setSiteUrl(s.site_url);
           if (s.site_email) setSiteEmail(s.site_email);
+          if (s.site_phone || s.footer_phone) setSitePhone(s.site_phone || s.footer_phone);
+          if (s.site_address || s.footer_address) setSiteAddress(s.site_address || s.footer_address);
           if (s.default_category_id) setDefaultCategoryId(s.default_category_id);
           
           if (s.allow_user_registration) setAllowRegistration(s.allow_user_registration === 'true');
@@ -154,7 +160,10 @@ export default function AdminSettingsClient({ extraPanels = [] }: AdminSettingsC
         body: JSON.stringify({
           site_title: siteTitle,
           site_tagline: siteTagline,
+          site_url: siteUrl,
           site_email: siteEmail,
+          site_phone: sitePhone,
+          site_address: siteAddress,
           default_category_id: defaultCategoryId,
           allow_user_registration: allowRegistration,
           default_registration_role: defaultRegistrationRole,
@@ -354,18 +363,27 @@ export default function AdminSettingsClient({ extraPanels = [] }: AdminSettingsC
               </div>
             </div>
 
-            {/* Email */}
+            {/* Official URL */}
             <div className="grid grid-cols-3 items-start gap-4">
-              <label className="text-xs font-bold text-slate-700 text-right mt-2">Email quản trị</label>
+              <label className="text-xs font-bold text-slate-700 text-right mt-2">URL chính thức</label>
               <div className="col-span-2">
-                <input 
-                  type="email" 
-                  value={siteEmail}
-                  onChange={(e) => setSiteEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-slate-700 bg-white" 
-                  required
-                />
+                <input type="url" value={siteUrl} onChange={(e) => setSiteUrl(e.target.value)} placeholder="https://your-domain.com" className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-slate-700 bg-white" required />
+                <p className="text-[10px] text-slate-400 mt-1 font-semibold">Nguồn URL cho canonical, sitemap, robots và schema.</p>
               </div>
+            </div>
+
+            {/* Contact identity */}
+            <div className="grid grid-cols-3 items-start gap-4">
+              <label className="text-xs font-bold text-slate-700 text-right mt-2">Email website</label>
+              <div className="col-span-2"><input type="email" value={siteEmail} onChange={(e) => setSiteEmail(e.target.value)} placeholder="contact@your-domain.com" className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-slate-700 bg-white" /><p className="text-[10px] text-slate-400 mt-1 font-semibold">Để trống nếu không muốn công khai.</p></div>
+            </div>
+            <div className="grid grid-cols-3 items-start gap-4">
+              <label className="text-xs font-bold text-slate-700 text-right mt-2">Điện thoại</label>
+              <div className="col-span-2"><input value={sitePhone} onChange={(e) => setSitePhone(e.target.value)} placeholder="Để trống nếu không công khai" className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-slate-700 bg-white" /></div>
+            </div>
+            <div className="grid grid-cols-3 items-start gap-4">
+              <label className="text-xs font-bold text-slate-700 text-right mt-2">Địa chỉ</label>
+              <div className="col-span-2"><textarea value={siteAddress} onChange={(e) => setSiteAddress(e.target.value)} placeholder="Để trống nếu không công khai" rows={2} className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-slate-700 bg-white resize-y" /></div>
             </div>
             
             {/* Default Category Selector */}

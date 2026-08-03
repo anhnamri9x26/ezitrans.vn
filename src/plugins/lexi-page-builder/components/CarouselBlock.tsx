@@ -34,7 +34,7 @@ export interface CarouselBlockProps extends CommonLayoutProps {
   link?: string;
   captionType?: 'none' | 'title' | 'caption' | 'description';
   
-  // TÃ¹y chá»n bá»• sung (Additional Options)
+  // Tùy chọn bổ sung (Additional Options)
   lazyLoad?: 'yes' | 'no';
   autoplay?: 'yes' | 'no';
   pauseOnHover?: 'yes' | 'no';
@@ -77,7 +77,7 @@ export interface CarouselBlockProps extends CommonLayoutProps {
 export const CarouselBlock = (rawProps: CarouselBlockProps) => {
   const props = useResponsiveProps(rawProps) as typeof rawProps;
   const {
-    carouselName = 'BÄƒng chuyá»n hÃ¬nh áº£nh',
+    carouselName = 'Băng chuyền hình ảnh',
     images = [],
     imageResolution = 'large',
     slidesToShow = 'default',
@@ -349,7 +349,7 @@ export const CarouselBlock = (rawProps: CarouselBlockProps) => {
         <div className="bg-slate-100 hover:bg-slate-200/80 border border-dashed border-slate-300 rounded-lg py-8 px-4 flex flex-col items-center justify-center text-slate-400 text-center transition-colors cursor-pointer">
           <Images className="w-10 h-10 mb-2 opacity-50 text-slate-400" strokeWidth={1.5} />
           <span className="text-xs font-bold text-slate-600">{carouselName}</span>
-          <span className="text-[10px] text-slate-400 mt-1">ChÆ°a chá»n hÃ¬nh áº£nh. Vui lÃ²ng thÃªm áº£nh tá»« báº£ng cÃ i Ä‘áº·t bÃªn pháº£i.</span>
+          <span className="text-[10px] text-slate-400 mt-1">Chưa chọn hình ảnh. Vui lòng thêm ảnh từ bảng cài đặt bên phải.</span>
         </div>
       ) : (
         <div className={`relative w-full ${arrowsPosition === 'outside' && showArrows ? 'px-10' : ''}`}>
@@ -438,7 +438,7 @@ CarouselBlock.craft = {
   name: 'CarouselBlock',
   props: {
     ...defaultLayoutProps,
-    carouselName: 'BÄƒng chuyá»n hÃ¬nh áº£nh',
+    carouselName: 'Băng chuyền hình ảnh',
     images: [],
     imageResolution: 'large',
     slidesToShow: 'default',

@@ -1,7 +1,9 @@
-﻿import type { MenuLocationDefinition } from './types';
+import type { MenuLocationDefinition } from './types';
 
 export const FALLBACK_MENU_LOCATIONS: MenuLocationDefinition[] = [
-  { key: 'header-primary', label: 'Menu chính đầu trang', description: 'Điều hướng chính trên desktop và mobile.' },
+  { key: 'header-utility', label: 'Top Menu', description: 'Các liên kết tiện ích trên thanh đầu trang.' },
+  { key: 'header-primary', label: 'Menu chính (Desktop)', description: 'Điều hướng chính trên máy tính.' },
+  { key: 'mobile-primary', label: 'Menu Mobile', description: 'Menu riêng trong drawer mobile; nếu chưa gán sẽ dùng Menu chính.' },
   { key: 'footer-primary', label: 'Menu chính chân trang', description: 'Các liên kết chính trong chân trang.' },
 ];
 

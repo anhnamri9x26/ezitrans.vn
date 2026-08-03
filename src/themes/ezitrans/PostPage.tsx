@@ -203,11 +203,11 @@ export default async function PostPage({
               <div className="ezi-sidebar-contact-info">
                 <div className="ezi-sidebar-contact-row">
                   <Phone size={14} className="text-orange" />
-                  <span>Hotline: <strong>{settings.contact_hotline_1 || settings.footer_phone || '0868.375.300'}</strong></span>
+                  <span>Hotline: <strong>{settings.contact_hotline_1 || settings.site_phone || settings.footer_phone || ''}</strong></span>
                 </div>
                 <div className="ezi-sidebar-contact-row">
                   <Mail size={14} className="text-orange" />
-                  <span>{settings.footer_email || 'ezitrans.vn@gmail.com'}</span>
+                  <span>{settings.site_email || settings.footer_email || ''}</span>
                 </div>
               </div>
               <Link href="/lien-he" className="ezi-btn ezi-btn-orange" style={{ width: '100%' }}>

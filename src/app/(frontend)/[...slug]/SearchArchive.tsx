@@ -1,8 +1,8 @@
+import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { resolveTemplates } from '@/lib/templateResolver';
 import { loadTemplateComponent } from '@/lib/templateLoader';
 import TemplateShell from '@/components/TemplateShell';
-import NotFoundContent from './NotFoundContent';
 import type { Prisma } from '@prisma/client';
 import type { ElementType } from 'react';
 
@@ -45,7 +45,7 @@ export default async function SearchArchive({ query, settings, activeTheme, curr
     : [0, []];
 
   const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
-  if (safeCurrentPage > totalPages) return <NotFoundContent settings={settings} />;
+  if (safeCurrentPage > totalPages) notFound();
 
   const pagination = {
     currentPage: safeCurrentPage,
@@ -59,7 +59,7 @@ export default async function SearchArchive({ query, settings, activeTheme, curr
   const templateName = 'SearchPage';
   const DefaultTemplate = activeTheme === 'ezitrans'
     ? (await import('@/themes/ezitrans/SearchPage')).default
-    : (await import('@/themes/default/CategoryPage')).default;
+    : (await import('@/themes/default/SearchPage')).default;
   const context = { pageType: 'SEARCH' as const };
   const resolved = await resolveTemplates(context);
   const SearchTemplate: ElementType = resolved.body

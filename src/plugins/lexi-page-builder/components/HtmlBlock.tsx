@@ -18,7 +18,7 @@ export interface HtmlBlockProps extends CommonLayoutProps {
 export const HtmlBlock = (rawProps: HtmlBlockProps) => {
   const props = useResponsiveProps(rawProps) as typeof rawProps;
   const {
-    html = '<div style="padding: 24px; text-align: center; background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; font-family: sans-serif; color: #64748b;"><div style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">MÃ£ HTML TÃ¹y Chá»‰nh</div><div style="font-size: 11px;">Nháº¥p Ä‘Ãºp chuá»™t hoáº·c má»Ÿ báº£ng cÃ i Ä‘áº·t bÃªn pháº£i Ä‘á»ƒ chÃ¨n Iframe, Form liÃªn há»‡, hoáº·c Code nhÃºng tÃ¹y chá»‰nh cá»§a báº¡n.</div></div>',
+    html = '<div style="padding: 24px; text-align: center; background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; font-family: sans-serif; color: #64748b;"><div style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">Mã HTML Tùy Chỉnh</div><div style="font-size: 11px;">Nhấp đúp chuột hoặc mở bảng cài đặt bên phải để chèn Iframe, Form liên hệ, hoặc Code nhúng tùy chỉnh của bạn.</div></div>',
     className = '',
   } = props;
 
@@ -140,7 +140,7 @@ export const HtmlBlock = (rawProps: HtmlBlockProps) => {
 
       {enabled && (
         <div className="absolute top-2 left-2 pointer-events-none select-none px-2 py-0.5 rounded bg-slate-800/80 text-white text-[8px] font-bold font-sans flex items-center gap-1 z-10 backdrop-blur-sm border border-slate-700/50">
-          <Code size={10} /> MÃ£ HTML
+          <Code size={10} /> Mã HTML
         </div>
       )}
 
@@ -156,7 +156,7 @@ export const HtmlBlock = (rawProps: HtmlBlockProps) => {
 HtmlBlock.craft = {
   name: 'HtmlBlock',
   props: {
-    html: '<div style="padding: 24px; text-align: center; background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; font-family: sans-serif; color: #64748b;"><div style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">MÃ£ HTML TÃ¹y Chá»‰nh</div><div style="font-size: 11px;">Nháº¥p Ä‘Ãºp chuá»™t hoáº·c má»Ÿ báº£ng cÃ i Ä‘áº·t bÃªn pháº£i Ä‘á»ƒ chÃ¨n Iframe, Form liÃªn há»‡, hoáº·c Code nhÃºng tÃ¹y chá»‰nh cá»§a báº¡n.</div></div>',
+    html: '<div style="padding: 24px; text-align: center; background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; font-family: sans-serif; color: #64748b;"><div style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">Mã HTML Tùy Chỉnh</div><div style="font-size: 11px;">Nhấp đúp chuột hoặc mở bảng cài đặt bên phải để chèn Iframe, Form liên hệ, hoặc Code nhúng tùy chỉnh của bạn.</div></div>',
     ...defaultLayoutProps,
     width: '100%',
   },

@@ -1,6 +1,6 @@
 import type { ThemeCustomizerPanel, ThemeCustomizerField } from './manifest.schema';
 
-export const GLOBAL_CUSTOMIZER_KEYS = new Set(['site_title','site_tagline','site_logo','site_logo_id','site_favicon','site_favicon_id','footer_about_text','footer_phone','footer_email','footer_address','footer_copyright','site_url']);
+export const GLOBAL_CUSTOMIZER_KEYS = new Set(['site_title','site_tagline','site_url','site_logo','site_logo_id','site_favicon','site_favicon_id','site_email','site_phone','site_address','site_legal_name','footer_about_text','footer_phone','footer_email','footer_address','footer_copyright']);
 export function fieldStorageKey(themeId:string, field:ThemeCustomizerField){ if(field.scope==='global') return field.settingKey||field.id; return `theme_${themeId}_${field.settingKey||field.id}`; }
 export function flattenCustomizer(panels:ThemeCustomizerPanel[]){ return panels.flatMap(panel=>panel.sections.flatMap(section=>section.fields.map(field=>({panel,section,field})))); }
 export function normalizeCustomizerValue(field:ThemeCustomizerField,value:unknown):string{

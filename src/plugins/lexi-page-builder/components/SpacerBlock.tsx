@@ -147,7 +147,7 @@ export const SpacerBlock = (rawProps: SpacerBlockProps) => {
       )}
       {enabled && (
         <div className="text-[9px] text-slate-400 font-bold font-sans pointer-events-none select-none flex items-center gap-1">
-          <Move size={10} /> Khoáº£ng trá»‘ng: {heightProp}
+          <Move size={10} /> Khoảng trống: {heightProp}
         </div>
       )}
     </div>

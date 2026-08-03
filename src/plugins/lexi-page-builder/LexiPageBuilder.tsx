@@ -57,7 +57,7 @@ async function safeJson(res: Response) {
   const contentType = res.headers.get('content-type');
   if (!contentType || !contentType.includes('application/json')) {
     const text = await res.text();
-    throw new Error(`Pháº£n há»“i khÃ´ng pháº£i JSON há»£p lá»‡ (MÃ£ HTTP: ${res.status}). Báº¯t Ä‘áº§u báº±ng: ${text.substring(0, 200)}...`);
+    throw new Error(`Phản hồi không phải JSON hợp lệ (Mã HTTP: ${res.status}). Bắt đầu bằng: ${text.substring(0, 200)}...`);
   }
   return res.json();
 }
@@ -101,12 +101,12 @@ function TemplatePartFrame({
   disabled?: boolean;
 }) {
   const label = type === 'header' ? 'Header' : 'Footer';
-  const editLabel = type === 'header' ? 'Chá»‰nh sá»­a Header' : 'Chá»‰nh sá»­a Footer';
+  const editLabel = type === 'header' ? 'Chỉnh sửa Header' : 'Chỉnh sửa Footer';
 
   if (isLoading) {
     return (
       <div className="relative border-y border-slate-200 bg-slate-50 px-4 py-3 text-center text-[11px] font-bold uppercase tracking-wider text-slate-400">
-        Äang táº£i {label} template...
+        Đang tải {label} template...
       </div>
     );
   }
@@ -118,7 +118,7 @@ function TemplatePartFrame({
   if (!template.htmlContent) {
     return (
       <div className="relative border-y border-amber-200 bg-amber-50/70 px-4 py-3 text-center text-[11px] font-bold uppercase tracking-wider text-amber-600">
-        {label} active nhÆ°ng chÆ°a cÃ³ ná»™i dung Ä‘Ã£ lÆ°u
+        {label} active nhưng chưa có nội dung đã lưu
       </div>
     );
   }
@@ -151,7 +151,7 @@ function TemplatePartFrame({
           title={editLabel}
         >
           <Pencil size={10} strokeWidth={2.5} className="mr-0.5" />
-          Sá»­a {label}
+          Sửa {label}
         </button>
       )}
       {template.cssContent && <style dangerouslySetInnerHTML={{ __html: template.cssContent }} />}
@@ -163,13 +163,11 @@ function TemplatePartFrame({
 // Map of dynamic theme components for preview in Canvas
 const ThemeHeaders: Record<string, React.ComponentType<any>> = {
   ezitrans: dynamic(() => import('@/themes/ezitrans/Header').catch(() => () => null), { ssr: false }),
-  modern: dynamic(() => import('@/themes/modern/Header').catch(() => () => null), { ssr: false }),
   default: dynamic(() => import('@/themes/default/Header').catch(() => () => null), { ssr: false }),
 };
 
 const ThemeFooters: Record<string, React.ComponentType<any>> = {
   ezitrans: dynamic(() => import('@/themes/ezitrans/Footer').catch(() => () => null), { ssr: false }),
-  modern: dynamic(() => import('@/themes/modern/Footer').catch(() => () => null), { ssr: false }),
   default: dynamic(() => import('@/themes/default/Footer').catch(() => () => null), { ssr: false }),
 };
 
@@ -292,16 +290,16 @@ function getActionDescription(oldJsonStr: string, newJsonStr: string): string {
     const addedKeys = newKeys.filter((k) => !oldKeys.includes(k));
     if (addedKeys.length > 0) {
       const addedKey = addedKeys.find(k => k !== 'ROOT') || addedKeys[0];
-      const componentName = newObj[addedKey]?.displayName || newObj[addedKey]?.type?.resolvedName || "thÃ nh pháº§n";
-      return `ThÃªm ${componentName}`;
+      const componentName = newObj[addedKey]?.displayName || newObj[addedKey]?.type?.resolvedName || "thành phần";
+      return `Thêm ${componentName}`;
     }
 
     // 2. Check deleted nodes
     const deletedKeys = oldKeys.filter((k) => !newKeys.includes(k));
     if (deletedKeys.length > 0) {
       const deletedKey = deletedKeys.find(k => k !== 'ROOT') || deletedKeys[0];
-      const componentName = oldObj[deletedKey]?.displayName || oldObj[deletedKey]?.type?.resolvedName || "thÃ nh pháº§n";
-      return `XÃ³a ${componentName}`;
+      const componentName = oldObj[deletedKey]?.displayName || oldObj[deletedKey]?.type?.resolvedName || "thành phần";
+      return `Xóa ${componentName}`;
     }
 
     // 3. Check moves
@@ -311,15 +309,15 @@ function getActionDescription(oldJsonStr: string, newJsonStr: string): string {
       if (!oldNode || !newNode) continue;
 
       if (oldNode.parent !== newNode.parent) {
-        const componentName = newNode.displayName || newNode.type?.resolvedName || "thÃ nh pháº§n";
-        return `Di chuyá»ƒn ${componentName}`;
+        const componentName = newNode.displayName || newNode.type?.resolvedName || "thành phần";
+        return `Di chuyển ${componentName}`;
       }
 
       const oldNodes = oldNode.nodes || [];
       const newNodes = newNode.nodes || [];
       if (oldNodes.length === newNodes.length && JSON.stringify(oldNodes) !== JSON.stringify(newNodes)) {
-        const componentName = newNode.displayName || newNode.type?.resolvedName || "thÃ nh pháº§n";
-        return `Sáº¯p xáº¿p trong ${componentName}`;
+        const componentName = newNode.displayName || newNode.type?.resolvedName || "thành phần";
+        return `Sắp xếp trong ${componentName}`;
       }
     }
 
@@ -330,19 +328,19 @@ function getActionDescription(oldJsonStr: string, newJsonStr: string): string {
       if (!oldNode || !newNode) continue;
 
       if (JSON.stringify(oldNode.props) !== JSON.stringify(newNode.props)) {
-        const componentName = newNode.displayName || newNode.type?.resolvedName || "thÃ nh pháº§n";
+        const componentName = newNode.displayName || newNode.type?.resolvedName || "thành phần";
         const oldProps = oldNode.props || {};
         const newProps = newNode.props || {};
         if (oldProps.text !== newProps.text) {
-          return `Sá»­a chá»¯ ${componentName}`;
+          return `Sửa chữ ${componentName}`;
         }
-        return `Sá»­a Ä‘á»‹nh dáº¡ng ${componentName}`;
+        return `Sửa định dạng ${componentName}`;
       }
     }
 
-    return "Cáº­p nháº­t thiáº¿t káº¿";
+    return "Cập nhật thiết kế";
   } catch {
-    return "Cáº­p nháº­t thiáº¿t káº¿";
+    return "Cập nhật thiết kế";
   }
 }
 
@@ -966,7 +964,7 @@ function EditorInner({
         }
       } catch (err) {
         console.error("Failed to apply AI preview:", err);
-        alert("Lá»—i khi Ã¡p dá»¥ng báº£n xem trÆ°á»›c cá»§a AI.");
+        alert("Lỗi khi áp dụng bản xem trước của AI.");
       }
     };
     
@@ -984,7 +982,7 @@ function EditorInner({
       const target = e.target as HTMLElement;
       const inNavigator = Boolean(
         target.closest('.craft-layers-wrapper') ||
-        target.closest('[title="Cáº¥u trÃºc ná»™i dung"]') ||
+        target.closest('[title="Cấu trúc nội dung"]') ||
         target.closest('[data-context-menu="true"]')
       );
       lastClickWasInNavigatorRef.current = inNavigator;
@@ -1057,7 +1055,7 @@ function EditorInner({
 
       const ctrl = e.ctrlKey || e.metaKey;
 
-      // Escape â€” deselect and switch to widgets
+      // Escape — deselect and switch to widgets
       if (e.key === 'Escape') {
         e.preventDefault();
         actions.selectNode(undefined);
@@ -1065,21 +1063,21 @@ function EditorInner({
         return;
       }
 
-      // Ctrl+I â€” toggle navigator
+      // Ctrl+I — toggle navigator
       if (ctrl && !e.altKey && !e.shiftKey && e.key.toLowerCase() === 'i') {
         e.preventDefault();
         setShowNavigator(prev => !prev);
         return;
       }
 
-      // Ctrl+Z / Cmd+Z â€” undo, works even when no node is selected
+      // Ctrl+Z / Cmd+Z — undo, works even when no node is selected
       if (ctrl && !e.altKey && !e.shiftKey && e.key.toLowerCase() === 'z') {
         e.preventDefault();
         handleUndo();
         return;
       }
 
-      // Ctrl+Y or Ctrl+Shift+Z â€” redo, works even when no node is selected
+      // Ctrl+Y or Ctrl+Shift+Z — redo, works even when no node is selected
       if (
         ctrl &&
         !e.altKey &&
@@ -1102,7 +1100,7 @@ function EditorInner({
       const isContainer = (node.data.type as unknown as { resolvedName?: string })?.resolvedName === 'Container';
       const isLinkedNode = Boolean(parentNode && parentNode.data.linkedNodes && Object.values(parentNode.data.linkedNodes).includes(selectedId));
 
-      // Ctrl+D â€” duplicate
+      // Ctrl+D — duplicate
       if (ctrl && e.key === 'd') {
         e.preventDefault();
         if (isLocked || !parentId || isLinkedNode) return;
@@ -1120,7 +1118,7 @@ function EditorInner({
         return;
       }
 
-      // Ctrl+C â€” copy node
+      // Ctrl+C — copy node
       if (ctrl && !e.shiftKey && e.key === 'c') {
         e.preventDefault();
         if (isLinkedNode) return;
@@ -1139,7 +1137,7 @@ function EditorInner({
         return;
       }
 
-      // Ctrl+V â€” paste node
+      // Ctrl+V — paste node
       if (ctrl && !e.shiftKey && !e.altKey && e.key === 'v') {
         e.preventDefault();
         console.log('[DEBUG Paste] memoryNodeTreeClipboard:', memoryNodeTreeClipboard?.rootNodeId, 'isLocked:', isLocked);
@@ -1163,7 +1161,7 @@ function EditorInner({
         return;
       }
 
-      // Alt+Shift+V â€” paste style
+      // Alt+Shift+V — paste style
       if (e.altKey && e.shiftKey && (e.key === 'v' || e.key === 'V')) {
         e.preventDefault();
         const styleProps = readClipboard().styleProps;
@@ -1180,7 +1178,7 @@ function EditorInner({
         return;
       }
 
-      // Delete / Backspace â€” delete node
+      // Delete / Backspace — delete node
       if (e.key === 'Delete' || e.key === 'Backspace') {
         e.preventDefault();
         if (isLocked || selectedId === 'ROOT' || isLinkedNode) return;
@@ -1296,7 +1294,7 @@ function EditorInner({
           
           const jsonStr = JSON.stringify(sanitized);
           setTimeout(() => {
-            setRamHistory([{ json: jsonStr, description: "Khá»Ÿi táº¡o thiáº¿t káº¿", timestamp: new Date() }]);
+            setRamHistory([{ json: jsonStr, description: "Khởi tạo thiết kế", timestamp: new Date() }]);
             setHistoryPointer(0);
             prevJsonRef.current = jsonStr;
           }, 0);
@@ -1310,7 +1308,7 @@ function EditorInner({
       // Start empty canvas
       setTimeout(() => {
         const currentJson = query.serialize();
-        setRamHistory([{ json: currentJson, description: "Khá»Ÿi táº¡o thiáº¿t káº¿", timestamp: new Date() }]);
+        setRamHistory([{ json: currentJson, description: "Khởi tạo thiết kế", timestamp: new Date() }]);
         setHistoryPointer(0);
         prevJsonRef.current = currentJson;
       }, 50);
@@ -1399,7 +1397,7 @@ function EditorInner({
         actions.deserialize(sanitized);
         
         const jsonStr = JSON.stringify(sanitized);
-        setRamHistory([{ json: jsonStr, description: "KhÃ´i phá»¥c tá»« báº£n lÆ°u tá»± Ä‘á»™ng", timestamp: new Date() }]);
+        setRamHistory([{ json: jsonStr, description: "Khôi phục từ bản lưu tự động", timestamp: new Date() }]);
         setHistoryPointer(0);
         prevJsonRef.current = jsonStr;
         setHasUnsavedChanges(true);
@@ -1471,7 +1469,7 @@ function EditorInner({
       actions.deserialize(sanitized);
 
       const jsonStr = JSON.stringify(sanitized);
-      setRamHistory([{ json: jsonStr, description: "KhÃ´i phá»¥c tá»« báº£n lÆ°u lá»‹ch sá»­", timestamp: new Date() }]);
+      setRamHistory([{ json: jsonStr, description: "Khôi phục từ bản lưu lịch sử", timestamp: new Date() }]);
       setHistoryPointer(0);
       prevJsonRef.current = jsonStr;
       setHasUnsavedChanges(false);
@@ -1516,7 +1514,7 @@ function EditorInner({
           revisionName: backupName,
           builderData: aiOriginalData,
           htmlContent: preAiHtml,
-          commitMessage: `Backup tá»± Ä‘á»™ng trÆ°á»›c khi Ã¡p dá»¥ng AI (${aiPreviewActionType})`,
+          commitMessage: `Backup tự động trước khi áp dụng AI (${aiPreviewActionType})`,
         }),
       });
       
@@ -1528,7 +1526,7 @@ function EditorInner({
       // 2. Save the current canvas state to the server
       const currentJson = query.serialize();
       const currentHtml = renderCraftToHtml(currentJson, { templateType, pageId: postId || templateId || 'draft' });
-      await onSave(currentHtml, currentJson, getCurrentPageSettings(), `Ãp dá»¥ng AI ${aiPreviewActionType}`);
+      await onSave(currentHtml, currentJson, getCurrentPageSettings(), `Áp dụng AI ${aiPreviewActionType}`);
       
       setHasUnsavedChanges(false);
       setLastSavedAt(new Date());
@@ -1538,7 +1536,7 @@ function EditorInner({
       setAiOriginalData(null);
       setAiPreviewActionType(null);
     } catch (error) {
-      alert("Lá»—i khi Ã¡p dá»¥ng thiáº¿t káº¿ AI vÃ  lÆ°u vÃ o mÃ¡y chá»§!");
+      alert("Lỗi khi áp dụng thiết kế AI và lưu vào máy chủ!");
       console.error(error);
     } finally {
       setIsSaving(false);
@@ -1576,7 +1574,7 @@ function EditorInner({
       setHasUnsavedChanges(false);
       setLastSavedAt(new Date());
     } catch (error) {
-      alert("Lá»—i khi lÆ°u dá»¯ liá»‡u thiáº¿t káº¿!");
+      alert("Lỗi khi lưu dữ liệu thiết kế!");
       console.error(error);
     } finally {
       setIsSaving(false);
@@ -1596,7 +1594,7 @@ function EditorInner({
       setHasUnsavedChanges(false);
       setLastSavedAt(new Date());
     } catch (error) {
-      alert("Lá»—i khi lÆ°u nhÃ¡p thiáº¿t káº¿!");
+      alert("Lỗi khi lưu nháp thiết kế!");
       console.error(error);
     } finally {
       setIsSavingDraft(false);
@@ -1611,7 +1609,7 @@ function EditorInner({
       const html = renderCraftToHtml(json, { templateType, pageId: postId || templateId || 'draft' });
       await onPreview(html, json);
     } catch (error) {
-      alert("Lá»—i khi má»Ÿ xem trÆ°á»›c thiáº¿t káº¿!");
+      alert("Lỗi khi mở xem trước thiết kế!");
       console.error(error);
     } finally {
       setIsPreviewing(false);
@@ -1723,7 +1721,7 @@ function EditorInner({
                         ? 'text-slate-800 bg-slate-200' 
                         : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60'
                     }`}
-                    title="ThÃªm thÃ nh pháº§n"
+                    title="Thêm thành phần"
                   >
                     <Plus size={14} strokeWidth={2.5} />
                   </button>
@@ -1743,7 +1741,7 @@ function EditorInner({
                           ? 'text-slate-800 bg-slate-200 cursor-pointer'
                           : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 cursor-pointer'
                     }`}
-                    title="Thiáº¿t láº­p thÃ nh pháº§n"
+                    title="Thiết lập thành phần"
                   >
                     <Sliders size={14} />
                   </button>
@@ -1759,7 +1757,7 @@ function EditorInner({
                         ? 'text-slate-800 bg-slate-200'
                         : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60'
                     }`}
-                    title="Lá»‹ch sá»­ & PhiÃªn báº£n"
+                    title="Lịch sử & Phiên bản"
                   >
                     <History size={14} />
                   </button>
@@ -1774,7 +1772,7 @@ function EditorInner({
                         ? 'text-slate-800 bg-slate-200' 
                         : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60'
                     }`}
-                    title="Cáº¥u trÃºc ná»™i dung"
+                    title="Cấu trúc nội dung"
                   >
                     <Layers size={14} />
                   </button>
@@ -1783,7 +1781,7 @@ function EditorInner({
                   <button
                     onClick={() => setShowHelpModal(true)}
                     className="p-1.5 rounded transition-all cursor-pointer text-slate-500 hover:text-slate-800 hover:bg-slate-200/60"
-                    title="HÆ°á»›ng dáº«n & PhÃ­m táº¯t"
+                    title="Hướng dẫn & Phím tắt"
                   >
                     <MessageSquare size={14} />
                   </button>
@@ -1843,10 +1841,10 @@ function EditorInner({
                 <span className="w-2 h-2 rounded-full bg-brand-500 animate-ping inline-block" />
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-500 -ml-3.5 inline-block" />
                 <span className="font-bold text-slate-200 ml-1">
-                  Báº¡n Ä‘ang xem trÆ°á»›c phiÃªn báº£n #{previewingRevision.version}
+                  Bạn đang xem trước phiên bản #{previewingRevision.version}
                 </span>
                 <span className="text-slate-400">
-                  ({previewingRevision.revisionName || 'KhÃ´ng tÃªn'} - Táº¡o bá»Ÿi {previewingRevision.createdBy?.name || 'lexi'} {new Date(previewingRevision.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })})
+                  ({previewingRevision.revisionName || 'Không tên'} - Tạo bởi {previewingRevision.createdBy?.name || 'lexi'} {new Date(previewingRevision.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })})
                 </span>
               </div>
               
@@ -1856,7 +1854,7 @@ function EditorInner({
                   className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg text-[10px] transition-all flex items-center gap-1.5 cursor-pointer border border-slate-700 active:scale-[0.98]"
                 >
                   <X size={12} />
-                  Quay láº¡i báº£n hiá»‡n táº¡i
+                  Quay lại bản hiện tại
                 </button>
                 
                 <button
@@ -1868,7 +1866,7 @@ function EditorInner({
                   className="px-3.5 py-1.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-lg text-[10px] shadow-md shadow-brand-500/20 hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer border-none active:scale-[0.98]"
                 >
                   <Star size={12} fill="currentColor" />
-                  KhÃ´i phá»¥c phiÃªn báº£n nÃ y
+                  Khôi phục phiên bản này
                 </button>
               </div>
             </div>
@@ -1879,10 +1877,10 @@ function EditorInner({
               <div className="flex items-center gap-2 text-xs">
                 <Sparkles size={14} className="text-purple-400 animate-pulse shrink-0" />
                 <span className="font-bold text-slate-200">
-                  Báº¡n Ä‘ang xem trÆ°á»›c káº¿t quáº£ do AI thiáº¿t káº¿ ({aiPreviewActionType === 'Generate' ? 'Táº¡o Section' : aiPreviewActionType === 'Improve' ? 'Cáº£i tiáº¿n Layout' : 'Viáº¿t láº¡i ná»™i dung'})
+                  Bạn đang xem trước kết quả do AI thiết kế ({aiPreviewActionType === 'Generate' ? 'Tạo Section' : aiPreviewActionType === 'Improve' ? 'Cải tiến Layout' : 'Viết lại nội dung'})
                 </span>
                 <span className="text-slate-400 hidden lg:inline-block">
-                  â€” Nháº¥p "Ãp dá»¥ng" Ä‘á»ƒ lÆ°u báº£n thiáº¿t káº¿ nÃ y (há»‡ thá»‘ng sáº½ tá»± Ä‘á»™ng táº¡o má»™t báº£n sao lÆ°u Ä‘á»ƒ khÃ´i phá»¥c khi cáº§n).
+                  — Nhấp "Áp dụng" để lưu bản thiết kế này (hệ thống sẽ tự động tạo một bản sao lưu để khôi phục khi cần).
                 </span>
               </div>
               
@@ -1892,7 +1890,7 @@ function EditorInner({
                   className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg text-[10px] transition-all flex items-center gap-1.5 cursor-pointer border border-slate-700 active:scale-[0.98]"
                 >
                   <X size={12} />
-                  Há»§y bá» (Revert)
+                  Hủy bỏ (Revert)
                 </button>
                 
                 <button
@@ -1901,7 +1899,7 @@ function EditorInner({
                   className="px-3.5 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold rounded-lg text-[10px] shadow-md shadow-purple-500/20 hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer border-none active:scale-[0.98] disabled:opacity-50"
                 >
                   <Check size={12} />
-                  {isSaving ? 'Äang lÆ°u...' : 'Ãp dá»¥ng (Apply)'}
+                  {isSaving ? 'Đang lưu...' : 'Áp dụng (Apply)'}
                 </button>
               </div>
             </div>
@@ -1926,7 +1924,7 @@ function EditorInner({
               backgroundSize: '16px 16px',
             }}
           >
-            {/* Outer wrapper for header + content + footer â€” keeps them stacked vertically */}
+            {/* Outer wrapper for header + content + footer — keeps them stacked vertically */}
             <div
               style={{
                 width: device === 'mobile' ? '375px' : device === 'tablet' ? '768px' : '100%',
@@ -1938,7 +1936,7 @@ function EditorInner({
                   : 'my-4 rounded-2xl overflow-hidden ring-[12px] ring-slate-200/50 ring-offset-2 border border-slate-200 shadow-xl min-h-[600px]'
               }`}
             >
-              {/* Header Preview â€” OUTSIDE page-builder-content to avoid CSS resets */}
+              {/* Header Preview — OUTSIDE page-builder-content to avoid CSS resets */}
               {shouldShowThemeTemplates && (
                 headerTemplate || isLoadingThemeTemplates ? (
                   <TemplatePartFrame
@@ -1965,8 +1963,8 @@ function EditorInner({
                     <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-xl">
                       <div className="h-8 w-8 rounded-full border-2 border-brand-200 border-t-brand-600 animate-spin" />
                       <div className="text-center">
-                        <div className="text-[11px] font-bold text-slate-700">Äang chuyá»ƒn cháº¿ Ä‘á»™ hiá»ƒn thá»‹</div>
-                        <div className="text-[10px] text-slate-400">Äá»£i canvas cáº­p nháº­t responsive...</div>
+                        <div className="text-[11px] font-bold text-slate-700">Đang chuyển chế độ hiển thị</div>
+                        <div className="text-[10px] text-slate-400">Đợi canvas cập nhật responsive...</div>
                       </div>
                     </div>
                   </div>
@@ -1977,7 +1975,7 @@ function EditorInner({
                     {/* Welcome section - elements wrapped in a Container (not directly on ROOT) */}
                     <Element is={Container} paddingTop="40px" paddingBottom="40px" paddingLeft="20px" paddingRight="20px" canvas>
                       <HeadingBlock
-                        text="ChÃ o má»«ng tá»›i TrÃ¬nh thiáº¿t káº¿ má»›i!"
+                        text="Chào mừng tới Trình thiết kế mới!"
                         level="h2"
                         fontSize="28px"
                         fontWeight="800"
@@ -1986,17 +1984,17 @@ function EditorInner({
                         marginBottom="8px"
                       />
                       <TextBlock
-                        text="KÃ©o vÃ  tháº£ cÃ¡c khá»‘i tá»« báº£ng bÃªn trÃ¡i vÃ o Ä‘Ã¢y Ä‘á»ƒ xÃ¢y dá»±ng trang tÄ©nh cá»§a báº¡n."
+                        text="Kéo và thả các khối từ bảng bên trái vào đây để xây dựng trang tĩnh của bạn."
                         textAlign="center"
                         fontSize="14px"
                         textColor="#64748b"
                         marginBottom="24px"
                       />
                     <Element is={Container} backgroundColor="#f8fafc" borderRadius="8px" paddingLeft="20px" paddingRight="20px" paddingTop="20px" paddingBottom="20px" canvas>
-                      <HeadingBlock text="âš¡ HÆ°á»›ng dáº«n nhanh" level="h4" fontSize="16px" fontWeight="700" textColor="#0f172a" />
-                      <TextBlock text="1. KÃ©o <b>Khung chá»©a</b> hoáº·c cÃ¡c khá»‘i <b>2 Cá»™t / 3 Cá»™t</b> vÃ o mÃ n hÃ¬nh trÆ°á»›c Ä‘á»ƒ táº¡o lÆ°á»›i bá»‘ cá»¥c." fontSize="13px" textColor="#475569" />
-                      <TextBlock text="2. Tháº£ cÃ¡c thÃ nh pháº§n chi tiáº¿t (TiÃªu Ä‘á», VÄƒn báº£n, áº¢nh, NÃºt) vÃ o trong khung chá»©a Ä‘Ã³." fontSize="13px" textColor="#475569" />
-                      <TextBlock text="3. Click chá»n báº¥t ká»³ thÃ nh pháº§n nÃ o Ä‘á»ƒ má»Ÿ báº£ng chá»‰nh sá»­a khoáº£ng cÃ¡ch, mÃ u sáº¯c, font chá»¯ bÃªn pháº£i." fontSize="13px" textColor="#475569" />
+                      <HeadingBlock text="⚡ Hướng dẫn nhanh" level="h4" fontSize="16px" fontWeight="700" textColor="#0f172a" />
+                      <TextBlock text="1. Kéo <b>Khung chứa</b> hoặc các khối <b>2 Cột / 3 Cột</b> vào màn hình trước để tạo lưới bố cục." fontSize="13px" textColor="#475569" />
+                      <TextBlock text="2. Thả các thành phần chi tiết (Tiêu đề, Văn bản, Ảnh, Nút) vào trong khung chứa đó." fontSize="13px" textColor="#475569" />
+                      <TextBlock text="3. Click chọn bất kỳ thành phần nào để mở bảng chỉnh sửa khoảng cách, màu sắc, font chữ bên phải." fontSize="13px" textColor="#475569" />
                     </Element>
                   </Element>
                 </Element>
@@ -2006,7 +2004,7 @@ function EditorInner({
               <CustomDragIndicator />
             </div>
 
-            {/* Footer Preview â€” OUTSIDE page-builder-content to avoid CSS resets */}
+            {/* Footer Preview — OUTSIDE page-builder-content to avoid CSS resets */}
             {shouldShowThemeTemplates && (
               footerTemplate || isLoadingThemeTemplates ? (
                 <TemplatePartFrame
@@ -2076,10 +2074,10 @@ function EditorInner({
               </div>
               <div>
                 <h3 className="text-sm font-black text-slate-800 uppercase tracking-wide">
-                  {saveModalType === 'save' ? 'LÆ°u phiÃªn báº£n má»›i' : 'LÆ°u báº£n nhÃ¡p má»›i'}
+                  {saveModalType === 'save' ? 'Lưu phiên bản mới' : 'Lưu bản nháp mới'}
                 </h3>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
-                  LÆ°u vÃ o lá»‹ch sá»­ báº£n sá»­a Ä‘á»•i cá»§a há»‡ thá»‘ng
+                  Lưu vào lịch sử bản sửa đổi của hệ thống
                 </p>
               </div>
             </div>
@@ -2087,27 +2085,27 @@ function EditorInner({
             <div className="space-y-4 text-xs">
               <div className="space-y-1.5">
                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  TÃªn phiÃªn báº£n
+                  Tên phiên bản
                 </label>
                 <input
                   type="text"
                   value={saveRevisionName}
                   onChange={(e) => setSaveRevisionName(e.target.value)}
                   className="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 bg-slate-50 focus:bg-white transition-all"
-                  placeholder="vÃ­ dá»¥: Sá»­a Hero Banner, Landing IELTS v3..."
+                  placeholder="ví dụ: Sửa Hero Banner, Landing IELTS v3..."
                   autoFocus
                 />
               </div>
 
               <div className="space-y-1.5">
                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  Ghi chÃº thay Ä‘á»•i (khÃ´ng báº¯t buá»™c)
+                  Ghi chú thay đổi (không bắt buộc)
                 </label>
                 <textarea
                   value={saveCommitMessage}
                   onChange={(e) => setSaveCommitMessage(e.target.value)}
                   className="w-full text-xs font-medium px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 bg-slate-50 focus:bg-white h-20 resize-none transition-all"
-                  placeholder="vÃ­ dá»¥: Cáº­p nháº­t responsive vÃ  Ä‘á»•i mÃ u CTA..."
+                  placeholder="ví dụ: Cập nhật responsive và đổi màu CTA..."
                 />
               </div>
 
@@ -2121,7 +2119,7 @@ function EditorInner({
                 />
                 <label htmlFor="save-is-starred" className="text-[11px] font-bold text-slate-600 cursor-pointer flex items-center gap-1">
                   <Star size={11} fill={saveIsStarred ? 'currentColor' : 'none'} className="text-amber-500" />
-                  ÄÃ¡nh dáº¥u lÃ  phiÃªn báº£n Stable (Báº£n ghim cá»‘ Ä‘á»‹nh)
+                  Đánh dấu là phiên bản Stable (Bản ghim cố định)
                 </label>
               </div>
 
@@ -2130,7 +2128,7 @@ function EditorInner({
                   onClick={() => setSaveModalOpen(false)}
                   className="px-4 py-2 text-slate-500 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-xl font-bold transition-all cursor-pointer"
                 >
-                  Há»§y
+                  Hủy
                 </button>
                 <button
                   onClick={() => {
@@ -2138,7 +2136,7 @@ function EditorInner({
                   }}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-sm shadow-blue-600/30 cursor-pointer"
                 >
-                  {saveModalType === 'save' ? 'LÆ°u phiÃªn báº£n' : 'LÆ°u báº£n nhÃ¡p'}
+                  {saveModalType === 'save' ? 'Lưu phiên bản' : 'Lưu bản nháp'}
                 </button>
               </div>
             </div>
@@ -2166,7 +2164,7 @@ function EditorInner({
                 <HelpCircle size={18} />
               </div>
               <div>
-                <h3 className="text-sm font-black text-slate-800 uppercase tracking-wide">Trá»£ giÃºp & PhÃ­m táº¯t</h3>
+                <h3 className="text-sm font-black text-slate-800 uppercase tracking-wide">Trợ giúp & Phím tắt</h3>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Craft Builder Shortcuts</p>
               </div>
             </div>
@@ -2174,40 +2172,40 @@ function EditorInner({
             <div className="space-y-4">
               {/* Context menu note */}
               <div className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-slate-600 text-[11px] leading-relaxed">
-                ðŸ’¡ <span className="font-bold text-slate-700">Máº¹o nhanh:</span> Báº¡n cÃ³ thá»ƒ <b>Click chuá»™t pháº£i</b> vÃ o báº¥t ká»³ thÃ nh pháº§n nÃ o trÃªn mÃ n hÃ¬nh Canvas hoáº·c trong báº£ng <b>Cáº¥u trÃºc ná»™i dung (Navigator)</b> Ä‘á»ƒ má»Ÿ menu thao tÃ¡c nhanh (Sao chÃ©p, DÃ¡n, KhÃ³a, NhÃ¢n báº£n, XÃ³a).
+                💡 <span className="font-bold text-slate-700">Mẹo nhanh:</span> Bạn có thể <b>Click chuột phải</b> vào bất kỳ thành phần nào trên màn hình Canvas hoặc trong bảng <b>Cấu trúc nội dung (Navigator)</b> để mở menu thao tác nhanh (Sao chép, Dán, Khóa, Nhân bản, Xóa).
               </div>
 
               {/* Shortcuts Table */}
               <div>
-                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">PhÃ­m táº¯t nhanh</h4>
+                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Phím tắt nhanh</h4>
                 <div className="border border-slate-100 rounded-lg divide-y divide-slate-100 text-[11px]">
                   <div className="flex items-center justify-between p-2.5">
-                    <span className="text-slate-600 font-medium">Báº£ng thÃ nh pháº§n (Widgets)</span>
+                    <span className="text-slate-600 font-medium">Bảng thành phần (Widgets)</span>
                     <kbd className="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">Esc</kbd>
                   </div>
                   <div className="flex items-center justify-between p-2.5">
-                    <span className="text-slate-600 font-medium">Táº¡o báº£n sao (Duplicate)</span>
+                    <span className="text-slate-600 font-medium">Tạo bản sao (Duplicate)</span>
                     <div className="flex gap-1">
                       <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">Ctrl</kbd>
                       <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">D</kbd>
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-2.5">
-                    <span className="text-slate-600 font-medium">Sao chÃ©p (Copy)</span>
+                    <span className="text-slate-600 font-medium">Sao chép (Copy)</span>
                     <div className="flex gap-1">
                       <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">Ctrl</kbd>
                       <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">C</kbd>
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-2.5">
-                    <span className="text-slate-600 font-medium">DÃ¡n (Paste Node)</span>
+                    <span className="text-slate-600 font-medium">Dán (Paste Node)</span>
                     <div className="flex gap-1">
                       <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">Ctrl</kbd>
                       <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">V</kbd>
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-2.5">
-                    <span className="text-slate-600 font-medium">DÃ¡n Ä‘á»‹nh dáº¡ng (Paste Style)</span>
+                    <span className="text-slate-600 font-medium">Dán định dạng (Paste Style)</span>
                     <div className="flex gap-1">
                       <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">Alt</kbd>
                       <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">Shift</kbd>
@@ -2215,7 +2213,7 @@ function EditorInner({
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-2.5">
-                    <span className="text-slate-600 font-medium">Má»Ÿ cáº¥u trÃºc Navigator</span>
+                    <span className="text-slate-600 font-medium">Mở cấu trúc Navigator</span>
                     <div className="flex gap-1">
                       <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">Ctrl</kbd>
                       <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold shadow-sm">I</kbd>
@@ -2460,7 +2458,7 @@ function CustomDragIndicator() {
             pointerEvents: 'none',
           }}
         >
-          KhÃ´ng thá»ƒ tháº£ á»Ÿ Ä‘Ã¢y
+          Không thể thả ở đây
         </div>
       )}
     </div>

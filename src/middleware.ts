@@ -38,7 +38,12 @@ export function middleware(request: NextRequest) {
     '/templates'
   ];
 
-  // 1. Redirection for legacy paths to use the new /admin prefix
+  // 1. Redirect legacy admin paths and the imported duplicate homepage.
+  if (path === '/trang-chu' || path === '/trang-chu/') {
+    const homeUrl = new URL('/', request.url);
+    return NextResponse.redirect(homeUrl, 308);
+  }
+
   const matchingLegacy = legacyPaths.find(p => path === p || path.startsWith(p + '/'));
   if (matchingLegacy) {
     const relativePath = path.substring(matchingLegacy.length);
@@ -124,6 +129,8 @@ export const config = {
     '/forgot-password',
     '/reset-password',
     '/activate',
+    '/trang-chu',
+    '/trang-chu/',
     '/api/:path*'
   ]
 };

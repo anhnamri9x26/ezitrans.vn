@@ -126,6 +126,7 @@ export default function YoastSeoSettingsPage() {
       yandexVerification !== orig.seo_yandex_verification ||
       googleAnalytics !== orig.seo_google_analytics ||
       googleTagManager !== orig.seo_google_tag_manager ||
+      ahrefsAnalyticsKey !== orig.seo_ahrefs_analytics_key ||
       googleVerified !== (orig.seo_google_verified === 'true') ||
       bingVerified !== (orig.seo_bing_verified === 'true') ||
       yandexVerified !== (orig.seo_yandex_verified === 'true') ||
@@ -399,6 +400,7 @@ export default function YoastSeoSettingsPage() {
   const [yandexVerification, setYandexVerification] = useState('');
   const [googleAnalytics, setGoogleAnalytics] = useState('');
   const [googleTagManager, setGoogleTagManager] = useState('');
+  const [ahrefsAnalyticsKey, setAhrefsAnalyticsKey] = useState('');
   const [googleVerified, setGoogleVerified] = useState(false);
   const [bingVerified, setBingVerified] = useState(false);
   const [yandexVerified, setYandexVerified] = useState(false);
@@ -521,6 +523,7 @@ export default function YoastSeoSettingsPage() {
           if (s.seo_yandex_verification) setYandexVerification(s.seo_yandex_verification);
           if (s.seo_google_analytics) setGoogleAnalytics(s.seo_google_analytics);
           if (s.seo_google_tag_manager) setGoogleTagManager(s.seo_google_tag_manager);
+          if (s.seo_ahrefs_analytics_key) setAhrefsAnalyticsKey(s.seo_ahrefs_analytics_key);
           setGoogleVerified(s.seo_google_verified === 'true');
           setBingVerified(s.seo_bing_verified === 'true');
           setYandexVerified(s.seo_yandex_verified === 'true');
@@ -607,6 +610,7 @@ export default function YoastSeoSettingsPage() {
             seo_yandex_verification: s.seo_yandex_verification || '',
             seo_google_analytics: s.seo_google_analytics || '',
             seo_google_tag_manager: s.seo_google_tag_manager || '',
+            seo_ahrefs_analytics_key: s.seo_ahrefs_analytics_key || '',
             seo_google_verified: s.seo_google_verified || 'false',
             seo_bing_verified: s.seo_bing_verified || 'false',
             seo_yandex_verified: s.seo_yandex_verified || 'false',
@@ -733,6 +737,7 @@ export default function YoastSeoSettingsPage() {
           seo_yandex_verification: yandexVerification,
           seo_google_analytics: googleAnalytics,
           seo_google_tag_manager: googleTagManager,
+          seo_ahrefs_analytics_key: ahrefsAnalyticsKey,
           seo_google_verified: String(googleVerified),
           seo_bing_verified: String(bingVerified),
           seo_yandex_verified: String(yandexVerified),
@@ -821,6 +826,7 @@ export default function YoastSeoSettingsPage() {
           seo_yandex_verification: yandexVerification,
           seo_google_analytics: googleAnalytics,
           seo_google_tag_manager: googleTagManager,
+          seo_ahrefs_analytics_key: ahrefsAnalyticsKey,
           seo_google_verified: String(googleVerified),
           seo_bing_verified: String(bingVerified),
           seo_yandex_verified: String(yandexVerified),
@@ -936,7 +942,7 @@ export default function YoastSeoSettingsPage() {
           })
         });
 
-        alert(`Chúc mừng! Xác minh ${type === 'google' ? 'Google Search Console' : type === 'bing' ? 'Bing Webmaster' : 'Yandex Webmaster'} thành công! Giao diện đã chuyển sang ĐÃ XÁC MINH.`);
+        alert(`Đã kiểm tra thành công: thẻ meta ${type === 'google' ? 'Google Search Console' : type === 'bing' ? 'Bing Webmaster' : 'Yandex Webmaster'} đang xuất hiện đúng trong HTML public. Trạng thái xác minh property chính thức vẫn cần kiểm tra tại bảng điều khiển của nhà cung cấp.`);
       } else {
         alert(`Không tìm thấy thẻ meta xác minh của ${type === 'google' ? 'Google' : type === 'bing' ? 'Bing' : 'Yandex'} trên trang chủ. Vui lòng đảm bảo bạn đã nhập đúng mã và đã click nút "Lưu cấu hình" ở trên cùng trước khi xác minh!`);
       }
@@ -1334,10 +1340,11 @@ export default function YoastSeoSettingsPage() {
       { ok: llmsEnabled, text: llmsEnabled ? 'llms.txt đang bật' : 'llms.txt đang tắt' },
     ] },
     { group: 'Webmaster', rows: [
-      { ok: Boolean(googleVerification), text: googleVerification ? (googleVerified ? 'Google Search Console đã xác minh' : 'Google Search Console chưa xác minh') : 'Thiếu Google Search Console' },
+      { ok: Boolean(googleVerification), text: googleVerification ? (googleVerified ? 'Google Search Console: thẻ meta đã kiểm tra' : 'Google Search Console: chưa kiểm tra thẻ meta') : 'Thiếu Google Search Console' },
       { ok: Boolean(googleAnalytics), text: googleAnalytics ? 'Google Analytics đã cấu hình' : 'Thiếu Google Analytics' },
       { ok: Boolean(googleTagManager), text: googleTagManager ? 'Google Tag Manager đã cấu hình' : 'Thiếu Google Tag Manager' },
-      { ok: Boolean(bingVerification), warn: !bingVerification, text: bingVerification ? (bingVerified ? 'Bing Webmaster đã xác minh' : 'Bing Webmaster chưa xác minh') : 'Thiếu Bing Webmaster' },
+      { ok: Boolean(ahrefsAnalyticsKey), warn: !ahrefsAnalyticsKey, text: ahrefsAnalyticsKey ? 'Ahrefs Analytics đã cấu hình' : 'Thiếu Ahrefs Analytics' },
+      { ok: Boolean(bingVerification), warn: !bingVerification, text: bingVerification ? (bingVerified ? 'Bing Webmaster: thẻ meta đã kiểm tra' : 'Bing Webmaster: chưa kiểm tra thẻ meta') : 'Thiếu Bing Webmaster' },
       { ok: Boolean(yandexVerification), warn: !yandexVerification, text: yandexVerification ? (yandexVerified ? 'Yandex Webmaster đã xác minh' : 'Yandex Webmaster chưa xác minh') : 'Thiếu Yandex Webmaster' },
     ] },
   ];
@@ -3087,9 +3094,9 @@ export default function YoastSeoSettingsPage() {
                       Mã đo lường (Measurement ID)
                       <input 
                         type="text" 
-                        placeholder="G-XXXXXXXXXX hoặc UA-XXXXXX-X"
+                        placeholder="G-XXXXXXXXXX"
                         value={googleAnalytics}
-                        onChange={(e) => setGoogleAnalytics(e.target.value)}
+                        onChange={(e) => setGoogleAnalytics(e.target.value.trim().toUpperCase())}
                         className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:border-brand-500 outline-none font-mono text-slate-700 bg-white font-semibold shadow-sm"
                       />
                     </label>
@@ -3141,7 +3148,35 @@ export default function YoastSeoSettingsPage() {
                         className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:border-brand-500 outline-none font-mono text-slate-700 bg-white font-semibold shadow-sm"
                       />
                     </label>
+                    {googleAnalytics && googleTagManager && (
+                      <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[10px] font-semibold leading-relaxed text-amber-800">
+                        ⚠️ Cả GA4 trực tiếp và GTM đang bật. Nếu container GTM cũng gửi cùng GA4 Measurement ID, hãy xóa một trong hai cấu hình để tránh ghi nhận page_view hai lần.
+                      </div>
+                    )}
                   </div>
+                </div>
+
+                {/* Ahrefs Web Analytics */}
+                <div className="bg-slate-50/40 border border-slate-200/70 rounded-xl p-4.5 space-y-3.5 hover:shadow-sm transition-all flex flex-col justify-between md:col-span-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-extrabold text-slate-800 text-xs tracking-wide">Ahrefs Web Analytics</span>
+                    <span className={`inline-flex items-center text-[8.5px] font-bold px-2 py-0.5 rounded-full ${ahrefsAnalyticsKey ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-500 border border-slate-200'}`}>
+                      {ahrefsAnalyticsKey ? '✅ Đang hoạt động' : 'Chưa cấu hình'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 text-[9.5px]">
+                    <a href="https://app.ahrefs.com/web-analytics" target="_blank" rel="noopener noreferrer" className="text-slate-450 hover:text-brand-600 font-bold">🔗 Mở Ahrefs Analytics →</a>
+                  </div>
+                  <label className="flex flex-col gap-1 text-[9px] font-bold text-slate-500 uppercase tracking-wide">
+                    Data key
+                    <input
+                      type="text"
+                      placeholder="Ahrefs Analytics data-key"
+                      value={ahrefsAnalyticsKey}
+                      onChange={(event) => setAhrefsAnalyticsKey(event.target.value.trim())}
+                      className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:border-brand-500 outline-none font-mono text-slate-700 bg-white font-semibold shadow-sm"
+                    />
+                  </label>
                 </div>
 
               </div>

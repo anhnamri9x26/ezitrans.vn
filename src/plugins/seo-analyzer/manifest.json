@@ -2,8 +2,8 @@
   "id": "seo-analyzer",
   "name": "Lexi SEO plugin",
   "nameEn": "Lexi SEO plugin",
-  "description": "Tự động kích hoạt các trường SEO mở rộng trong trình biên soạn (Tiêu đề SEO, Thẻ mô tả, Từ khóa chính) kèm hệ thống đo lường, tính toán điểm SEO trực tuyến.",
-  "version": "1.2.0",
+  "description": "Bộ công cụ SEO kỹ thuật, metadata, schema, sitemap, webmaster verification và analytics cho website.",
+  "version": "1.3.0",
   "author": "DeepMind Team",
   "icon": "sparkles",
   "iconColor": "#10b981",
@@ -36,6 +36,15 @@
     "llms-txt"
   ],
   "changelog": [
+    {
+      "version": "1.3.0",
+      "date": "2026-08-03",
+      "changes": [
+        "Chuẩn hóa canonical, schema và sitemap theo site URL production",
+        "Thêm Ahrefs Web Analytics và validation server-side cho GA4/GTM",
+        "Làm rõ trạng thái kiểm tra meta so với xác minh property bên thứ ba"
+      ]
+    },
     {
       "version": "1.2.0",
       "date": "2026-05-31",

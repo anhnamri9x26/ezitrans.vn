@@ -405,7 +405,7 @@ export const VideoBlock = (rawProps: VideoBlockProps) => {
           >
             <button
               type="button"
-              aria-label="ÄÃ³ng lightbox"
+              aria-label="Đóng lightbox"
               onClick={() => setLightboxOpen(false)}
               style={{
                 position: 'absolute',
@@ -539,7 +539,7 @@ export const VideoBlock = (rawProps: VideoBlockProps) => {
             className="w-full h-full absolute inset-0 transition-transform duration-300 hover:scale-102"
             role="button"
             tabIndex={0}
-            aria-label="PhÃ¡t video"
+            aria-label="Phát video"
             onClick={(e) => {
               e.stopPropagation();
               if (lightbox) {
@@ -586,7 +586,7 @@ export const VideoBlock = (rawProps: VideoBlockProps) => {
         ) : (
           <div className="text-center text-slate-400 p-8 flex flex-col items-center justify-center">
             <PlayCircle className="w-10 h-10 mb-2 opacity-50 text-red-500 animate-pulse" strokeWidth={1.5} />
-            <span className="text-xs font-bold">ChÆ°a nháº­p Ä‘Æ°á»ng dáº«n video (YouTube hoáº·c Tá»± lÆ°u trá»¯)</span>
+            <span className="text-xs font-bold">Chưa nhập đường dẫn video (YouTube hoặc Tự lưu trữ)</span>
           </div>
         )}
       </div>

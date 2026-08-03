@@ -1,35 +1,301 @@
 {
-  "id": "default",
-  "name": "Classic WordPress Style",
-  "nameVi": "Giao diện Truyền thống",
-  "description": "Thiết kế phẳng tối giản cổ điển với Header phẳng, bài viết hiển thị theo lưới 3 cột truyền thống. Tối ưu cực tốt cho các trang tin tức, blog cá nhân hoặc tạp chí nội dung sạch sẽ.",
-  "version": "1.0.0",
-  "author": "Lexi Team",
-  "tags": ["classic", "light-mode", "minimal", "blog"],
-  "previewImage": "preview.png",
-  "supports": ["header", "footer", "homepage", "post", "page", "category", "tag"],
-  "templates": {
-    "fallback": "fallback",
-    "homepage": "homepage",
-    "post": "post",
-    "page": "page",
-    "category": "category",
-    "tag": "tag"
-  },
-  "menuLocations": [
-    { "key": "header-primary", "label": "Menu chính đầu trang", "description": "Điều hướng desktop và mobile." },
-    { "key": "footer-primary", "label": "Sản phẩm chính chân trang", "description": "Nhóm liên kết sản phẩm trong chân trang." },
-    { "key": "footer-support", "label": "Hỗ trợ khách hàng", "description": "Nhóm chính sách và hỗ trợ trong chân trang." }
-  ],
-  "changelog": [
-    {
-      "version": "1.0.0",
-      "date": "2026-05-15",
-      "changes": [
-        "Giao diện truyền thống với header phẳng",
-        "Lưới bài viết 3 cột responsive",
-        "Footer đầy đủ thông tin liên hệ"
-      ]
-    }
-  ]
+    "id":  "default",
+    "name":  "Lexi Starter",
+    "nameVi":  "Giao diá»‡n Khá»Ÿi Ä‘áº§u",
+    "description":  "Giao diá»‡n khá»Ÿi Ä‘áº§u trung tÃ­nh, hiá»‡n Ä‘áº¡i vÃ  linh hoáº¡t cho website má»›i.",
+    "version":  "2.0.0",
+    "author":  "Lexi Team",
+    "tags":  [
+                 "starter",
+                 "neutral",
+                 "premium",
+                 "responsive"
+             ],
+    "previewImage":  "preview.png",
+    "supports":  [
+                     "header",
+                     "footer",
+                     "homepage",
+                     "post",
+                     "page",
+                     "category",
+                     "tag",
+                     "search",
+                     "author",
+                     "product",
+                     "product-category"
+                 ],
+    "templates":  {
+                      "fallback":  "fallback",
+                      "homepage":  "homepage",
+                      "post":  "post",
+                      "page":  "page",
+                      "category":  "category",
+                      "tag":  "tag",
+                      "search":  "search",
+                      "author":  "author",
+                      "product":  "product",
+                      "productCategory":  "product-category"
+                  },
+    "menuLocations":  [
+                          {
+                              "key":  "header-primary",
+                              "label":  "Menu chÃ­nh",
+                              "description":  "Äiá»u hÆ°á»›ng desktop vÃ  mobile."
+                          },
+                          {
+                              "key":  "footer-primary",
+                              "label":  "Menu chÃ¢n trang",
+                              "description":  "CÃ¡c liÃªn káº¿t táº¡i chÃ¢n trang."
+                          },
+                          {
+                              "key":  "footer-support",
+                              "label":  "Menu há»— trá»£",
+                              "description":  "ChÃ­nh sÃ¡ch vÃ  há»— trá»£."
+                          }
+                      ],
+    "customizer":  [
+                       {
+                           "id":  "identity",
+                           "title":  "Nháº­n diá»‡n website",
+                           "description":  "ThÃ´ng tin dÃ¹ng chung giá»¯a cÃ¡c giao diá»‡n",
+                           "sections":  [
+                                            {
+                                                "id":  "site-identity",
+                                                "title":  "TÃªn, logo \u0026 liÃªn há»‡",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "site-header",
+                                                "fields":  [
+                                                               {
+                                                                   "id":  "site_title",
+                                                                   "label":  "TÃªn website",
+                                                                   "type":  "text",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_title"
+                                                               },
+                                                               {
+                                                                   "id":  "site_tagline",
+                                                                   "label":  "Tagline",
+                                                                   "type":  "text",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_tagline"
+                                                               },
+                                                               {
+                                                                   "id":  "site_logo",
+                                                                   "label":  "Logo",
+                                                                   "type":  "image",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_logo"
+                                                               },
+                                                               {
+                                                                   "id":  "site_email",
+                                                                   "label":  "Email website",
+                                                                   "type":  "text",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_email"
+                                                               },
+                                                               {
+                                                                   "id":  "site_phone",
+                                                                   "label":  "Äiá»‡n thoáº¡i",
+                                                                   "type":  "text",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_phone"
+                                                               },
+                                                               {
+                                                                   "id":  "site_address",
+                                                                   "label":  "Äá»‹a chá»‰",
+                                                                   "type":  "textarea",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_address"
+                                                               }
+                                                           ]
+                                            }
+                                        ]
+                       },
+                       {
+                           "id":  "appearance",
+                           "title":  "Thiáº¿t káº¿",
+                           "description":  "MÃ u sáº¯c vÃ  header cá»§a Lexi Starter",
+                           "sections":  [
+                                            {
+                                                "id":  "colors",
+                                                "title":  "MÃ u thÆ°Æ¡ng hiá»‡u",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "starter-hero",
+                                                "fields":  [
+                                                               {
+                                                                   "id":  "primary_color",
+                                                                   "label":  "MÃ u chÃ­nh",
+                                                                   "type":  "color",
+                                                                   "default":  "#6d5dfc"
+                                                               },
+                                                               {
+                                                                   "id":  "accent_color",
+                                                                   "label":  "MÃ u Ä‘iá»ƒm nháº¥n",
+                                                                   "type":  "color",
+                                                                   "default":  "#1bc5bd"
+                                                               }
+                                                           ]
+                                            },
+                                            {
+                                                "id":  "header",
+                                                "title":  "Header \u0026 CTA",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "site-header",
+                                                "fields":  [
+                                                               {
+                                                                   "id":  "header_cta_label",
+                                                                   "label":  "NhÃ£n CTA",
+                                                                   "type":  "text",
+                                                                   "default":  ""
+                                                               },
+                                                               {
+                                                                   "id":  "header_cta_url",
+                                                                   "label":  "URL CTA",
+                                                                   "type":  "url",
+                                                                   "default":  "/lien-he"
+                                                               }
+                                                           ]
+                                            }
+                                        ]
+                       },
+                       {
+                           "id":  "homepage",
+                           "title":  "Trang chá»§",
+                           "description":  "Ná»™i dung cÃ¡c khu vá»±c Starter",
+                           "sections":  [
+                                            {
+                                                "id":  "hero",
+                                                "title":  "Hero",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "starter-hero",
+                                                "fields":  [
+                                                               {
+                                                                   "id":  "hero_eyebrow",
+                                                                   "label":  "NhÃ£n nhá»",
+                                                                   "type":  "text",
+                                                                   "default":  "Ná»n táº£ng cho Ã½ tÆ°á»Ÿng cá»§a báº¡n"
+                                                               },
+                                                               {
+                                                                   "id":  "hero_heading",
+                                                                   "label":  "TiÃªu Ä‘á» chÃ­nh",
+                                                                   "type":  "textarea",
+                                                                   "default":  ""
+                                                               },
+                                                               {
+                                                                   "id":  "hero_description",
+                                                                   "label":  "MÃ´ táº£",
+                                                                   "type":  "textarea",
+                                                                   "default":  ""
+                                                               },
+                                                               {
+                                                                   "id":  "hero_cta_label",
+                                                                   "label":  "NhÃ£n nÃºt chÃ­nh",
+                                                                   "type":  "text",
+                                                                   "default":  ""
+                                                               },
+                                                               {
+                                                                   "id":  "hero_cta_url",
+                                                                   "label":  "URL nÃºt chÃ­nh",
+                                                                   "type":  "url",
+                                                                   "default":  "/lien-he"
+                                                               },
+                                                               {
+                                                                   "id":  "hero_secondary_label",
+                                                                   "label":  "NhÃ£n nÃºt phá»¥",
+                                                                   "type":  "text",
+                                                                   "default":  ""
+                                                               },
+                                                               {
+                                                                   "id":  "hero_secondary_url",
+                                                                   "label":  "URL nÃºt phá»¥",
+                                                                   "type":  "url",
+                                                                   "default":  "/bai-viet"
+                                                               }
+                                                           ]
+                                            },
+                                            {
+                                                "id":  "features",
+                                                "title":  "Äiá»ƒm ná»•i báº­t",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "starter-features",
+                                                "fields":  [
+                                                               {
+                                                                   "id":  "features_title",
+                                                                   "label":  "TiÃªu Ä‘á» khu vá»±c",
+                                                                   "type":  "text",
+                                                                   "default":  "Má»i thá»© cáº§n thiáº¿t Ä‘á»ƒ báº¯t Ä‘áº§u"
+                                                               },
+                                                               {
+                                                                   "id":  "features_description",
+                                                                   "label":  "MÃ´ táº£ khu vá»±c",
+                                                                   "type":  "textarea",
+                                                                   "default":  ""
+                                                               },
+                                                               {
+                                                                   "id":  "feature_1_title",
+                                                                   "label":  "Äiá»ƒm 1 - TiÃªu Ä‘á»",
+                                                                   "type":  "text",
+                                                                   "default":  "Tráº£i nghiá»‡m rÃµ rÃ ng"
+                                                               },
+                                                               {
+                                                                   "id":  "feature_1_description",
+                                                                   "label":  "Äiá»ƒm 1 - MÃ´ táº£",
+                                                                   "type":  "textarea",
+                                                                   "default":  ""
+                                                               },
+                                                               {
+                                                                   "id":  "feature_2_title",
+                                                                   "label":  "Äiá»ƒm 2 - TiÃªu Ä‘á»",
+                                                                   "type":  "text",
+                                                                   "default":  "Hiá»‡u suáº¥t tá»‘i Æ°u"
+                                                               },
+                                                               {
+                                                                   "id":  "feature_2_description",
+                                                                   "label":  "Äiá»ƒm 2 - MÃ´ táº£",
+                                                                   "type":  "textarea",
+                                                                   "default":  ""
+                                                               },
+                                                               {
+                                                                   "id":  "feature_3_title",
+                                                                   "label":  "Äiá»ƒm 3 - TiÃªu Ä‘á»",
+                                                                   "type":  "text",
+                                                                   "default":  "Ná»n táº£ng tin cáº­y"
+                                                               },
+                                                               {
+                                                                   "id":  "feature_3_description",
+                                                                   "label":  "Äiá»ƒm 3 - MÃ´ táº£",
+                                                                   "type":  "textarea",
+                                                                   "default":  ""
+                                                               }
+                                                           ]
+                                            },
+                                            {
+                                                "id":  "posts",
+                                                "title":  "BÃ i viáº¿t má»›i",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "starter-posts",
+                                                "fields":  [
+                                                               {
+                                                                   "id":  "posts_title",
+                                                                   "label":  "TiÃªu Ä‘á» khu vá»±c",
+                                                                   "type":  "text",
+                                                                   "default":  "BÃ i viáº¿t má»›i nháº¥t"
+                                                               }
+                                                           ]
+                                            }
+                                        ]
+                       }
+                   ],
+    "changelog":  [
+                      {
+                          "version":  "2.0.0",
+                          "date":  "2026-08-03",
+                          "changes":  [
+                                          "Lexi Starter trung tÃ­nh",
+                                          "Customizer theo theme",
+                                          "KhÃ´ng dÃ¹ng dá»¯ liá»‡u khÃ¡ch hÃ ng máº«u"
+                                      ]
+                      }
+                  ]
 }

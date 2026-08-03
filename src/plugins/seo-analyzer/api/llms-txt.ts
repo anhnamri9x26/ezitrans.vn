@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generatePostUrl } from '@/lib/permalink';
+import { resolveSiteIdentity } from '@/lib/site-identity';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,10 +21,12 @@ export async function GET() {
       return new NextResponse('llms.txt is disabled', { status: 404 });
     }
 
-    const siteTitle = settings['site_title'] || 'Lexi';
-    const siteTagline = settings['site_tagline'] || 'Vận Chuyển Hàng Quốc Tế';
+    const identity = resolveSiteIdentity(settings);
+    const siteTitle = identity.title || 'Website';
+    const siteTagline = identity.tagline;
     const permalinkStructure = settings['permalink_structure'] || '/%postname%.html';
-    const siteUrl = 'https://lexi.vn';
+    const siteUrl = identity.url;
+    if (!siteUrl) return new NextResponse('Website URL is not configured', { status: 503 });
 
     let txt = `# ${siteTitle}
 
@@ -86,7 +89,7 @@ Hệ thống quản lý nội dung và logistics thông minh của ${siteTitle}.
     posts.forEach(p => {
       const postUrl = `${siteUrl}${generatePostUrl(p, permalinkStructure)}`;
       const typeLabel = p.type === 'SERVICE' ? 'Dịch vụ' : 'Bài viết';
-      txt += `- [${p.title}](${postUrl}): [${typeLabel}] ${p.excerpt || 'Đọc chi tiết nội dung của bài viết trên Lexi.'}\n`;
+      txt += `- [${p.title}](${postUrl}): [${typeLabel}] ${p.excerpt || 'Đọc chi tiết nội dung của bài viết.'}\n`;
     });
 
     txt += `\n---

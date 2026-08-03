@@ -52,7 +52,7 @@ function FooterGroup({ title, items }: { title: string; items: NavigationMenuIte
 }
 
 export default function Footer({ settings = {} }: { settings?: Record<string, string> }) {
-  const title = settings.site_title || 'Ezitrans';
+  const title = settings.site_title || 'Website';
   const configuredItems = getMenuItemsForLocation(settings, 'footer-primary');
   const sourceItems = configuredItems.some((item) => item.indent > 0) ? configuredItems : fallbackFooterItems;
   const groups = sourceItems.reduce<Array<{ id: string; title: string; items: NavigationMenuItem[] }>>((result, item) => {
@@ -78,12 +78,12 @@ export default function Footer({ settings = {} }: { settings?: Record<string, st
           <Link href="/" className="ezi-brand" style={{ color: 'white' }}>
             {footerLogo ? <img src={footerLogo} alt={title} className="ezi-footer-logo" /> : <><span className="ezi-mark" style={{ background: 'var(--orange)' }}>E</span><span>{title}</span></>}
           </Link>
-          <p>{settings.footer_about_text || 'Ezitrans là một trong những công ty hàng đầu về lĩnh vực giao nhận vận tải tại Việt Nam. Chúng tôi cung cấp đầy đủ, toàn diện các dịch vụ và giải pháp tốt nhất trong lĩnh vực logistics.'}</p>
+          {settings.footer_about_text && <p>{settings.footer_about_text}</p>}
           <div className="ezi-footer-contacts">
-            <div className="ezi-footer-contact-item"><MapPin className="ezi-footer-contact-icon" size={16} /><span>{settings.footer_address || 'Address: Số 8, Ngõ 79/14 Đường Quảng Khánh, Tây Hồ, Hà Nội'}</span></div>
-            <div className="ezi-footer-contact-item"><Phone className="ezi-footer-contact-icon" size={16} /><span>Hotline: {settings.footer_phone || '0868.375.300 (Zalo)'}</span></div>
-            <div className="ezi-footer-contact-item"><Mail className="ezi-footer-contact-icon" size={16} /><span>Email: {settings.footer_email || 'ezitrans.vn@gmail.com'}</span></div>
-            <div className="ezi-footer-contact-item"><Globe className="ezi-footer-contact-icon" size={16} /><span>Website: {settings.site_url || 'www.ezitrans.vn'}</span></div>
+            {settings.footer_address && <div className="ezi-footer-contact-item"><MapPin className="ezi-footer-contact-icon" size={16} /><span>{settings.footer_address}</span></div>}
+            {settings.footer_phone && <div className="ezi-footer-contact-item"><Phone className="ezi-footer-contact-icon" size={16} /><span>Hotline: {settings.footer_phone}</span></div>}
+            {settings.footer_email && <div className="ezi-footer-contact-item"><Mail className="ezi-footer-contact-icon" size={16} /><span>Email: {settings.footer_email}</span></div>}
+            {settings.site_url && <div className="ezi-footer-contact-item"><Globe className="ezi-footer-contact-icon" size={16} /><span>Website: {settings.site_url}</span></div>}
           </div>
         </div>
         {groupColumns.map((column, columnIndex) => (
@@ -94,7 +94,7 @@ export default function Footer({ settings = {} }: { settings?: Record<string, st
       </div>
       <div className="ezi-footer-bottom">
         <div className="ezi-container ezi-footer-bottom-in">
-          <span>{settings.footer_copyright || `Copyright 2020 - ${new Date().getFullYear()} ${title} Logistics JSC. All Rights Reserved.`}</span>
+          <span>{settings.footer_copyright || `© ${new Date().getFullYear()} ${title}. All Rights Reserved.`}</span>
           {socialLinks.length > 0 && <div className="ezi-footer-socials">
             {socialLinks.map((item) => <a key={item.label} href={item.url} target="_blank" rel="noopener noreferrer" className="ezi-footer-social-link" aria-label={item.label}>{item.label.slice(0, 1)}</a>)}
           </div>}

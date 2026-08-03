@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useResponsiveProps } from './useResponsiveProps';
 
@@ -223,9 +223,9 @@ export const FormBlock = (rawProps: FormBlockProps) => {
     emailTo = 'pewnoy.com@gmail.com',
     emailSubject = 'New message from "Lexi"',
     emailMessage = '[all-fields]',
-    emailFromEmail = 'email@lexi.vn',
+    emailFromEmail = '',
     emailFromName = 'Lexi',
-    emailReplyTo = 'email@lexi.vn',
+    emailReplyTo = '',
     emailCc = '',
     emailBcc = '',
     emailMetadata = ['date', 'time', 'page_url', 'user_agent', 'remote_ip', 'credit'],
@@ -237,10 +237,10 @@ export const FormBlock = (rawProps: FormBlockProps) => {
     customFormId = '',
     formValidation = 'browser',
     customMessagesEnabled = false,
-    successMessage = 'Gá»­i form thÃ nh cÃ´ng!',
-    errorMessage = 'CÃ³ lá»—i xáº£y ra khi gá»­i form.',
-    requiredMessage = 'TrÆ°á»ng nÃ y lÃ  báº¯t buá»™c.',
-    invalidMessage = 'Dá»¯ liá»‡u khÃ´ng há»£p lá»‡.',
+    successMessage = 'Gửi form thành công!',
+    errorMessage = 'Có lỗi xảy ra khi gửi form.',
+    requiredMessage = 'Trường này là bắt buộc.',
+    invalidMessage = 'Dữ liệu không hợp lệ.',
 
     columnsGap = '10px',
     rowsGap = '10px',
@@ -706,8 +706,8 @@ export const FormBlock = (rawProps: FormBlockProps) => {
               <React.Fragment key={pageIdx}>
                 {enabled && stepField && (
                   <div className="w-full text-[10px] font-bold text-slate-400 border-b border-dashed border-slate-200 pb-1 mt-4 mb-2 flex items-center justify-between px-2">
-                    <span>Trang {pageIdx + 1}: {stepField.label || 'KhÃ´ng tÃªn'}</span>
-                    <span className="bg-slate-100 text-slate-500 px-1 py-0.5 rounded">NgÄƒn bÆ°á»›c</span>
+                    <span>Trang {pageIdx + 1}: {stepField.label || 'Không tên'}</span>
+                    <span className="bg-slate-100 text-slate-500 px-1 py-0.5 rounded">Ngăn bước</span>
                   </div>
                 )}
                 {page.map((field) => {
@@ -773,7 +773,7 @@ export const FormBlock = (rawProps: FormBlockProps) => {
                           className="craft-form-input"
                           required={field.required}
                           pattern={field.type === 'tel' ? "^[0-9+() -]{9,15}$" : field.type === 'url' ? "https?://.+" : undefined}
-                          title={field.type === 'tel' ? "Vui lÃ²ng nháº­p sá»‘ Ä‘iá»‡n thoáº¡i há»£p lá»‡" : field.type === 'url' ? "Vui lÃ²ng nháº­p Ä‘Æ°á»ng dáº«n há»£p lá»‡" : undefined}
+                          title={field.type === 'tel' ? "Vui lòng nhập số điện thoại hợp lệ" : field.type === 'url' ? "Vui lòng nhập đường dẫn hợp lệ" : undefined}
                         />
                       )}
                       
@@ -833,7 +833,7 @@ export const FormBlock = (rawProps: FormBlockProps) => {
         {/* Success/Error alert box for builder preview */}
         {enabled && (
           <div className="mt-4 text-[10px] text-slate-400 italic text-center border-t border-slate-100 pt-3">
-            HÃ nh Ä‘á»™ng: {actionsAfterSubmit.map(act => act === 'collect' ? 'LÆ°u DB' : act === 'email' ? 'Gá»­i Email' : act === 'webhook' ? 'Webhook' : 'Chuyá»ƒn hÆ°á»›ng').join(', ')}
+            Hành động: {actionsAfterSubmit.map(act => act === 'collect' ? 'Lưu DB' : act === 'email' ? 'Gửi Email' : act === 'webhook' ? 'Webhook' : 'Chuyển hướng').join(', ')}
           </div>
         )}
       </div>
@@ -870,7 +870,7 @@ FormBlock.craft = {
     emailTo: 'pewnoy.com@gmail.com',
     emailSubject: 'New Submission from {{formName}}',
     emailMessage: '',
-    emailFromEmail: 'noreply@lexi.vn',
+    emailFromEmail: '',
     emailFromName: 'Lexi System',
     emailReplyTo: '{{email}}',
     emailCc: '',

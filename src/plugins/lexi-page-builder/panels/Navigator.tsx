@@ -37,14 +37,11 @@ import {
   GalleryHorizontalEnd,
 } from 'lucide-react';
 
+import { repairMojibake } from '@/lib/text/repairMojibake';
+
 const repairMojibakeText = (value: unknown): string => {
   if (typeof value !== 'string') return '';
-  if (!/[ÃÄÂÆáºá»]/.test(value)) return value;
-  try {
-    return decodeURIComponent(escape(value));
-  } catch {
-    return value;
-  }
+  return repairMojibake(value);
 };
 
 const NavigatorContext = React.createContext<{
