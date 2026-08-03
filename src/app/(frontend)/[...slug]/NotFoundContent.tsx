@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import { Headphones, Home, Package } from 'lucide-react';
 import Header from '@/themes/ezitrans/Header';
 import Footer from '@/themes/ezitrans/Footer';
@@ -8,10 +8,10 @@ import Footer from '@/themes/ezitrans/Footer';
  * This bypasses the not-found boundary mechanism entirely, avoiding
  * client-side navigation issues where the old route stays visible.
  */
-export default function NotFoundContent() {
+export default function NotFoundContent({ settings = {} }: { settings?: Record<string, string> }) {
   return (
     <div className="ezi-theme min-h-screen flex flex-col justify-between" style={{ background: 'var(--paper)' }}>
-      <Header />
+      <Header settings={settings} />
       <main className="ezi-404-container">
         <div className="ezi-404-icon-wrapper">
           <Package className="ezi-404-icon" size={40} />
@@ -42,7 +42,7 @@ export default function NotFoundContent() {
           </Link>
         </div>
       </main>
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }

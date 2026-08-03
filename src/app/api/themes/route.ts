@@ -1,9 +1,11 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/session';
 import { userCan } from '@/lib/capabilities';
 import { scanAllThemes, syncInstalledPackage } from '@/lib/updates/runtimePackages';
 import type { ThemeManifest } from '@/lib/themes/manifest.schema';
+import { FALLBACK_MENU_LOCATIONS, normalizeMenuLocations } from '@/lib/navigation/locations';
+import { copyCompatibleThemeAssignments } from '@/lib/navigation/service';
 
 interface ThemeInfo extends ThemeManifest {
   isActive: boolean;
@@ -91,11 +93,18 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ success: false, error: theme.activationBlockReason || `Theme "${themeId}" chưa thể kích hoạt an toàn.` }, { status: 400 });
     }
 
+    const previousThemeSetting = await prisma.setting.findUnique({ where: { key: 'active_theme' } });
+    const previousThemeId = previousThemeSetting?.value || 'default';
+    const locations = theme.manifest.menuLocations
+      ? normalizeMenuLocations(theme.manifest.menuLocations)
+      : FALLBACK_MENU_LOCATIONS;
+
     await prisma.setting.upsert({
       where: { key: 'active_theme' },
       update: { value: themeId },
       create: { key: 'active_theme', value: themeId },
     });
+    await copyCompatibleThemeAssignments(previousThemeId, themeId, locations.map((location) => location.key));
 
     await prisma.installedPackage.updateMany({ where: { type: 'THEME', status: 'ACTIVE' }, data: { status: 'INSTALLED' } });
     await syncInstalledPackage({

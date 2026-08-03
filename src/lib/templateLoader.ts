@@ -3,6 +3,7 @@ import { Template } from '@prisma/client';
 import { resolveHtmlDynamicPlaceholders } from '../components/craft/utils/dynamicResolver';
 import PublicCommentsSection from '@/components/PublicCommentsSection';
 import DynamicPostGrid from '@/components/DynamicPostGrid';
+import ManagedMenuView from '@/components/navigation/ManagedMenuView';
 
 interface BuilderTemplateProps {
   post?: any;
@@ -61,36 +62,34 @@ export function createBuilderComponent(htmlContent: string, cssContent?: string 
       });
     }
 
-    // Split HTML by post_grid placeholder
-    const postGridRegex = /\{\{(post_grid|post_grid_config):([^}]+)\}\}/g;
-    if (postGridRegex.test(dynamicHtml)) {
-      const segments = dynamicHtml.split(postGridRegex);
+    // Split HTML by dynamic post grids and managed menu references.
+    const componentRegex = /\{\{(post_grid|post_grid_config|managed_menu):([^}]+)\}\}/g;
+    if (componentRegex.test(dynamicHtml)) {
+      const segments = dynamicHtml.split(componentRegex);
       const elements: React.ReactNode[] = [];
-      
+
       for (let i = 0; i < segments.length; i += 3) {
         const htmlSegment = segments[i];
         const type = segments[i + 1];
         const content = segments[i + 2];
-
-        // Process HTML part
         const commentParts = htmlSegment.split('{{comments_section}}');
         commentParts.forEach((part, cIndex) => {
-          if (part.trim() || cIndex > 0) {
-            elements.push(
-              React.createElement('div', { 
-                key: `html-${i}-${cIndex}`,
-                dangerouslySetInnerHTML: { __html: part },
-                suppressHydrationWarning: true
-              })
-            );
-          }
+          if (part.trim() || cIndex > 0) elements.push(React.createElement('div', { key: `html-${i}-${cIndex}`, dangerouslySetInnerHTML: { __html: part }, suppressHydrationWarning: true }));
           if (cIndex < commentParts.length - 1 && props.post?.type === 'POST' && props.post?.status === 'PUBLISHED') {
             elements.push(React.createElement(PublicCommentsSection, { key: `comments-${i}`, postId: props.post.id }));
           }
         });
 
-        // Process shortcode part if exists
-        if (type && content) {
+        if (type === 'managed_menu' && content) {
+          try {
+            const config = JSON.parse(decodeURIComponent(content));
+            const menus = JSON.parse(props.settings?.navigation_menus || '[]');
+            const menu = Array.isArray(menus) ? menus.find((entry: any) => entry.id === Number(config.menuId)) : null;
+            elements.push(React.createElement(ManagedMenuView, { key: `managed-menu-${i}`, items: menu?.items || [], config }));
+          } catch (error) {
+            console.error('[TemplateLoader] Failed to resolve managed menu:', error);
+          }
+        } else if (type && content) {
           let args: any = {};
           if (type === 'post_grid_config') {
             try {
@@ -100,21 +99,16 @@ export function createBuilderComponent(htmlContent: string, cssContent?: string 
               console.error('[TemplateLoader] Failed to parse post_grid_config base64:', e);
             }
           } else {
-            // Legacy post_grid:limit=3:columns=3
             args = content.split(':').reduce((acc: Record<string, string>, curr) => {
               const [k, v] = curr.split('=');
               if (k && v !== undefined) acc[k] = v;
               return acc;
             }, {});
           }
-          
-          elements.push(React.createElement(DynamicPostGrid as any, { 
-            key: `postgrid-${i}`, 
-            ...args
-          }));
+          elements.push(React.createElement(DynamicPostGrid as any, { key: `postgrid-${i}`, ...args }));
         }
       }
-      
+
       return React.createElement(
         'div',
         { className: 'template-builder-content w-full' },

@@ -141,7 +141,9 @@ export default function CategoryPage({
                         <div className="ezi-archive-card-meta">
                           <span className="ezi-archive-card-meta-item">
                             <User size={13} />
-                            {post.author?.name || 'Admin'}
+                            {post.author?.username ? (
+                              <Link href={`/author/${post.author.username}`}>{post.author.name || post.author.username}</Link>
+                            ) : (post.author?.name || 'Admin')}
                           </span>
                           <span className="ezi-archive-card-meta-item">
                             <Calendar size={13} />
@@ -183,19 +185,20 @@ export default function CategoryPage({
                     )}
 
                     {/* Page Numbers */}
-                    {Array.from({ length: pagination.totalPages }, (_, index) => {
-                      const pageNum = index + 1;
-                      const isActive = pageNum === pagination.currentPage;
-                      return (
-                        <Link 
-                          href={getPageUrl(pageNum)} 
-                          className={`ezi-pagination-item ${isActive ? 'active' : ''}`}
-                          key={pageNum}
-                        >
-                          {pageNum}
-                        </Link>
-                      );
-                    })}
+                    {Array.from({ length: pagination.totalPages }, (_, index) => index + 1)
+                      .filter((pageNum) => Math.abs(pageNum - pagination.currentPage) <= 2 || pageNum === 1 || pageNum === pagination.totalPages)
+                      .map((pageNum) => {
+                        const isActive = pageNum === pagination.currentPage;
+                        return (
+                          <Link
+                            href={getPageUrl(pageNum)}
+                            className={`ezi-pagination-item ${isActive ? 'active' : ''}`}
+                            key={pageNum}
+                          >
+                            {pageNum}
+                          </Link>
+                        );
+                      })}
 
                     {/* Next Button */}
                     {pagination.currentPage < pagination.totalPages ? (

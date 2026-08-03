@@ -61,11 +61,17 @@ const getIconComponent = (iconName?: string) => {
 export default function AdminNavigationMenusPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'header' | 'footer'>('header');
-
-  const [settings, setSettings] = useState<any>({});
-  const [headerMenu, setHeaderMenu] = useState<MenuItem[]>([]);
-  const [footerMenu, setFooterMenu] = useState<MenuItem[]>([]);
+  const [workspaceTab, setWorkspaceTab] = useState<'edit' | 'locations'>('edit');
+  const [menus, setMenus] = useState<any[]>([]);
+  const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
+  const [menuName, setMenuName] = useState('');
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [expectedUpdatedAt, setExpectedUpdatedAt] = useState('');
+  const [locations, setLocations] = useState<any[]>([]);
+  const [assignments, setAssignments] = useState<Record<string, number | null>>({});
+  const [themeId, setThemeId] = useState('default');
+  const [isDirty, setIsDirty] = useState(false);
+  const [notice, setNotice] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const [newLabel, setNewLabel] = useState('');
   const [newUrl, setNewUrl] = useState('');
@@ -96,50 +102,56 @@ export default function AdminNavigationMenusPage() {
     return `menu_item_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
   };
 
-  const normalizeMenu = (menuJsonString: string): MenuItem[] => {
-    if (!menuJsonString) return [];
-    try {
-      const raw = JSON.parse(menuJsonString);
-      if (!Array.isArray(raw)) return [];
-      
-      return raw.map((item: any, index: number) => ({
-        id: item.id || `menu_item_${Date.now()}_${index}_${Math.random().toString(36).substr(2, 5)}`,
-        label: item.label || '',
-        url: item.url || '',
-        indent: typeof item.indent === 'number' ? Math.min(2, Math.max(0, item.indent)) : 0,
-        isMega: item.isMega === true || item.isMega === 'true',
-        description: item.description || '',
-        icon: item.icon || ''
-      }));
-    } catch (e) {
-      console.error("Failed to parse menu:", e);
-      return [];
+  const selectMenu = (menu: any) => {
+    setSelectedMenuId(menu.id);
+    setMenuName(menu.name);
+    setMenuItems(Array.isArray(menu.items) ? menu.items : []);
+    setExpectedUpdatedAt(new Date(menu.updatedAt).toISOString());
+    setEditingItemId(null);
+    setIsDirty(false);
+  };
+
+  const loadWorkspace = async (preferredMenuId?: number) => {
+    const [menusResponse, locationsResponse] = await Promise.all([
+      fetch('/api/navigation/menus', { cache: 'no-store' }),
+      fetch('/api/navigation/locations', { cache: 'no-store' }),
+    ]);
+    const menusData = await menusResponse.json();
+    const locationsData = await locationsResponse.json();
+    if (!menusData.success) throw new Error(menusData.error || 'Không thể tải menu');
+    if (!locationsData.success) throw new Error(locationsData.error || 'Không thể tải vị trí menu');
+    setMenus(menusData.menus || []);
+    setLocations(locationsData.locations || []);
+    setAssignments(locationsData.assignments || {});
+    setThemeId(locationsData.themeId || 'default');
+    const next = (menusData.menus || []).find((menu: any) => menu.id === preferredMenuId)
+      || (menusData.menus || [])[0];
+    if (next) selectMenu(next);
+    else {
+      setSelectedMenuId(null);
+      setMenuName('');
+      setMenuItems([]);
+      setExpectedUpdatedAt('');
+      setIsDirty(false);
     }
   };
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const response = await fetch('/api/settings');
-        const data = await response.json();
-        if (data.success && data.settings) {
-          setSettings(data.settings);
-          
-          if (data.settings.theme_menu_header) {
-            setHeaderMenu(normalizeMenu(data.settings.theme_menu_header));
-          }
-          if (data.settings.theme_menu_footer) {
-            setFooterMenu(normalizeMenu(data.settings.theme_menu_footer));
-          }
-        }
-      } catch (error) {
-        console.error("Failed to load settings:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadData();
+    loadWorkspace().catch((error) => {
+      console.error('Failed to load navigation workspace:', error);
+      setNotice({ type: 'error', message: error.message });
+    }).finally(() => setIsLoading(false));
   }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (!isDirty) return;
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
   // Load dynamic data for linking (Posts, Pages, Categories)
   useEffect(() => {
     async function fetchSelectorData() {
@@ -213,16 +225,11 @@ export default function AdminNavigationMenusPage() {
     ];
     setActiveMenu(updated);
   };
-  const getActiveMenu = () => {
-    return activeTab === 'header' ? headerMenu : footerMenu;
-  };
+  const getActiveMenu = () => menuItems;
 
   const setActiveMenu = (updated: MenuItem[]) => {
-    if (activeTab === 'header') {
-      setHeaderMenu(updated);
-    } else {
-      setFooterMenu(updated);
-    }
+    setMenuItems(updated);
+    setIsDirty(true);
   };
 
   // 1. Thêm mục menu mới
@@ -361,30 +368,82 @@ export default function AdminNavigationMenusPage() {
   };
 
   const handleSaveMenu = async () => {
+    if (!selectedMenuId) return;
     setIsSaving(true);
+    setNotice(null);
     try {
-      const res = await fetch('/api/settings', {
-        method: 'POST',
+      const res = await fetch(`/api/navigation/menus/${selectedMenuId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...settings,
-          theme_menu_header: JSON.stringify(headerMenu),
-          theme_menu_footer: JSON.stringify(footerMenu)
-        })
+        body: JSON.stringify({ name: menuName, items: menuItems, expectedUpdatedAt }),
       });
-
       const data = await res.json();
-      if (data.success) {
-        alert('Đã lưu cấu hình Thanh Menu 3 cấp Kéo Thả thành công!');
-      } else {
-        alert('Lỗi: ' + data.error);
-      }
-    } catch (error) {
-      alert('Lỗi kết nối máy chủ!');
-      console.error(error);
+      if (!res.ok || !data.success) throw new Error(data.error || 'Không thể lưu menu');
+      await loadWorkspace(selectedMenuId);
+      setNotice({ type: 'success', message: 'Đã lưu menu và cập nhật các vị trí đang sử dụng.' });
+    } catch (error: any) {
+      setNotice({ type: 'error', message: error.message || 'Lỗi kết nối máy chủ' });
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleChooseMenu = (id: number) => {
+    if (isDirty && !window.confirm('Menu hiện tại có thay đổi chưa lưu. Bạn vẫn muốn chuyển menu?')) return;
+    const menu = menus.find((entry) => entry.id === id);
+    if (menu) selectMenu(menu);
+  };
+
+  const handleCreateMenu = async (clone = false) => {
+    const name = window.prompt(clone ? 'Tên cho bản sao menu:' : 'Tên menu mới:', clone ? `${menuName} - Bản sao` : '');
+    if (!name?.trim()) return;
+    const response = await fetch('/api/navigation/menus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, ...(clone && selectedMenuId ? { cloneFromId: selectedMenuId } : {}) }),
+    });
+    const data = await response.json();
+    if (!response.ok || !data.success) {
+      setNotice({ type: 'error', message: data.error || 'Không thể tạo menu' });
+      return;
+    }
+    await loadWorkspace(data.menu.id);
+    setNotice({ type: 'success', message: clone ? 'Đã sao chép menu.' : 'Đã tạo menu mới.' });
+  };
+
+  const handleDeleteMenu = async () => {
+    if (!selectedMenuId) return;
+    const selected = menus.find((menu) => menu.id === selectedMenuId);
+    const usedAt = selected?.assignments?.map((assignment: any) => `${assignment.themeId}: ${assignment.locationKey}`).join('\n');
+    if (!window.confirm(`Xóa menu “${menuName}”?${usedAt ? `\n\nCác vị trí sẽ được gỡ:\n${usedAt}` : ''}`)) return;
+    const response = await fetch(`/api/navigation/menus/${selectedMenuId}`, { method: 'DELETE' });
+    const data = await response.json();
+    if (!response.ok || !data.success) {
+      setNotice({ type: 'error', message: data.error || 'Không thể xóa menu' });
+      return;
+    }
+    await loadWorkspace();
+    setNotice({ type: 'success', message: 'Đã xóa menu và gỡ các vị trí liên quan.' });
+  };
+
+  const handleSaveLocations = async () => {
+    setIsSaving(true);
+    const response = await fetch('/api/navigation/locations', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        themeId,
+        assignments: locations.map((location) => ({ locationKey: location.key, menuId: assignments[location.key] ?? null })),
+      }),
+    });
+    const data = await response.json();
+    setIsSaving(false);
+    if (!response.ok || !data.success) {
+      setNotice({ type: 'error', message: data.error || 'Không thể lưu vị trí' });
+      return;
+    }
+    await loadWorkspace(selectedMenuId || undefined);
+    setNotice({ type: 'success', message: 'Đã cập nhật các vị trí menu của theme.' });
   };
 
   if (isLoading) {
@@ -399,60 +458,70 @@ export default function AdminNavigationMenusPage() {
 
   return (
     <div className="max-w-5xl mx-auto font-sans pb-16 text-xs select-none">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8 border-b border-slate-200 pb-5">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-5 mb-6 border-b border-slate-200 pb-5">
         <div>
           <h1 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-            <Menu className="text-indigo-600" size={26} /> Quản lý Menu Đa Cấp & Kéo Thả
+            <Menu className="text-indigo-600" size={26} /> Thư viện Menu
           </h1>
-          <p className="text-slate-500 text-xs mt-1">
-            Hỗ trợ kéo thả sắp xếp vị trí và điều hướng thụt lề 3 cấp để tạo Mega Menu chia cột tùy chỉnh linh hoạt.
-          </p>
+          <p className="text-slate-500 text-xs mt-1">Tạo nhiều menu độc lập, tái sử dụng và phân công theo từng vị trí của theme.</p>
         </div>
-        <button 
-          onClick={handleSaveMenu}
-          disabled={isSaving}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-extrabold flex items-center gap-2 shadow-md shadow-indigo-600/10 hover:shadow-indigo-600/20 active:translate-y-0.5 disabled:opacity-50 cursor-pointer border-none outline-none transition-all text-xs"
-        >
-          <Save size={16} /> {isSaving ? 'Đang lưu...' : 'Lưu cài đặt'}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button type="button" onClick={() => handleCreateMenu(false)} className="bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-extrabold flex items-center gap-2 hover:border-indigo-300 hover:text-indigo-600 transition-all"><Plus size={15} /> Tạo menu</button>
+          <button type="button" onClick={() => handleCreateMenu(true)} disabled={!selectedMenuId} className="bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-extrabold flex items-center gap-2 disabled:opacity-40"><Layers size={15} /> Sao chép</button>
+          {workspaceTab === 'edit' ? (
+            <button onClick={handleSaveMenu} disabled={isSaving || !selectedMenuId || !isDirty} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-extrabold flex items-center gap-2 shadow-md disabled:opacity-50 border-none transition-all"><Save size={16} /> {isSaving ? 'Đang lưu...' : 'Lưu menu'}</button>
+          ) : (
+            <button onClick={handleSaveLocations} disabled={isSaving} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-extrabold flex items-center gap-2 shadow-md disabled:opacity-50 border-none transition-all"><Save size={16} /> {isSaving ? 'Đang lưu...' : 'Lưu vị trí'}</button>
+          )}
+        </div>
       </div>
 
-      {/* Tabs Switcher */}
-      <div className="flex border-b border-slate-200 mb-8 gap-1.5 bg-slate-100 p-1.5 rounded-2xl w-fit">
-        <button
-          type="button"
-          onClick={() => {
-            setActiveTab('header');
-            setNewLabel('');
-            setNewUrl('');
-            setEditingItemId(null);
-          }}
-          className={`px-6 py-2.5 rounded-xl font-extrabold text-[11px] uppercase tracking-wider transition-all cursor-pointer border-none ${
-            activeTab === 'header' 
-              ? 'bg-white text-indigo-600 shadow-sm font-black' 
-              : 'text-slate-500 hover:text-slate-700 hover:bg-white/40'
-          }`}
-        >
-          Menu Header (Đầu trang)
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setActiveTab('footer');
-            setNewLabel('');
-            setNewUrl('');
-            setEditingItemId(null);
-          }}
-          className={`px-6 py-2.5 rounded-xl font-extrabold text-[11px] uppercase tracking-wider transition-all cursor-pointer border-none ${
-            activeTab === 'footer' 
-              ? 'bg-white text-indigo-600 shadow-sm font-black' 
-              : 'text-slate-500 hover:text-slate-700 hover:bg-white/40'
-          }`}
-        >
-          Menu Footer (Chân trang)
-        </button>
+      {notice && (
+        <div className={`mb-5 rounded-xl border px-4 py-3 font-semibold ${notice.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-rose-50 border-rose-200 text-rose-700'}`}>{notice.message}</div>
+      )}
+
+      <div className="bg-slate-950 rounded-2xl p-4 mb-6 shadow-xl shadow-slate-900/10">
+        <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
+          <label className="flex-1 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
+            Chọn menu để chỉnh sửa
+            <select id="managed-menu-selector" value={selectedMenuId || ''} onChange={(event) => handleChooseMenu(Number(event.target.value))} className="mt-2 w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-indigo-400">
+              {menus.length === 0 && <option value="">Chưa có menu</option>}
+              {menus.map((menu) => <option key={menu.id} value={menu.id}>{menu.name} · {menu.itemCount} mục</option>)}
+            </select>
+          </label>
+          <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
+            <button type="button" onClick={() => setWorkspaceTab('edit')} className={`px-5 py-2.5 rounded-lg font-extrabold transition-all ${workspaceTab === 'edit' ? 'bg-indigo-500 text-white' : 'text-slate-400'}`}>Sửa menu</button>
+            <button type="button" onClick={() => setWorkspaceTab('locations')} className={`px-5 py-2.5 rounded-lg font-extrabold transition-all ${workspaceTab === 'locations' ? 'bg-indigo-500 text-white' : 'text-slate-400'}`}>Quản lý vị trí</button>
+          </div>
+        </div>
       </div>
+
+      {workspaceTab === 'locations' ? (
+        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-indigo-50 to-white">
+            <h2 className="text-lg font-black text-slate-800">Vị trí menu của theme <span className="text-indigo-600">{themeId}</span></h2>
+            <p className="text-slate-500 mt-1">Một menu có thể được sử dụng ở nhiều vị trí. “Chưa gán” sẽ dùng fallback của theme.</p>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {locations.map((location) => (
+              <div key={location.key} className="p-6 grid md:grid-cols-[1fr_320px] gap-5 items-center hover:bg-slate-50/60 transition-colors">
+                <div><h3 className="font-black text-slate-800">{location.label}</h3><p className="text-slate-500 mt-1">{location.description || location.key}</p><code className="inline-block mt-2 text-[10px] bg-slate-100 text-slate-600 rounded px-2 py-1">{location.key}</code></div>
+                <select id={`menu-location-${location.key}`} value={assignments[location.key] ?? ''} onChange={(event) => setAssignments((current) => ({ ...current, [location.key]: event.target.value ? Number(event.target.value) : null }))} className="w-full border border-slate-200 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400">
+                  <option value="">— Chưa gán —</option>
+                  {menus.map((menu) => <option key={menu.id} value={menu.id}>{menu.name}</option>)}
+                </select>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : !selectedMenuId ? (
+        <div className="bg-white rounded-2xl border border-dashed border-slate-300 py-20 text-center"><Menu size={40} className="mx-auto text-slate-300 mb-4" /><h2 className="text-lg font-black text-slate-700">Chưa có menu nào</h2><p className="text-slate-500 mt-2 mb-5">Tạo menu đầu tiên để bắt đầu xây dựng điều hướng.</p><button onClick={() => handleCreateMenu(false)} className="bg-indigo-600 text-white rounded-xl px-5 py-3 font-bold"><Plus size={15} className="inline mr-2" />Tạo menu</button></div>
+      ) : (
+        <>
+          <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end mb-6 bg-white border border-slate-200 rounded-2xl p-5">
+            <label className="flex-1 font-extrabold text-slate-700">Tên menu<input id="managed-menu-name" value={menuName} onChange={(event) => { setMenuName(event.target.value); setIsDirty(true); }} className="mt-2 w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-indigo-400" /></label>
+            <button type="button" onClick={handleDeleteMenu} className="text-rose-600 bg-rose-50 border border-rose-100 hover:bg-rose-100 rounded-xl px-4 py-3 font-extrabold flex items-center justify-center gap-2"><Trash2 size={15} /> Xóa menu</button>
+          </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
@@ -462,7 +531,7 @@ export default function AdminNavigationMenusPage() {
             <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-3">
               <h2 className="text-sm font-extrabold text-slate-800 flex items-center gap-2">
                 <Layers size={18} className="text-indigo-500" />
-                Cấu trúc {activeTab === 'header' ? 'Menu Header' : 'Menu Footer'}
+                Cấu trúc {menuName}
               </h2>
               <span className="text-[10px] bg-slate-100 text-slate-500 font-extrabold px-2 py-0.5 rounded-md">
                 {activeMenuList.length} Mục
@@ -859,6 +928,8 @@ export default function AdminNavigationMenusPage() {
         </div>
 
       </div>
+        </>
+      )}
     </div>
   );
 }

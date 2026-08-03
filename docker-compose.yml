@@ -14,9 +14,11 @@ services:
       LEXI_UPDATE_REGISTRY_URL: ${LEXI_UPDATE_REGISTRY_URL:-http://update-registry:4580}
       LEXI_UPDATE_CHANNEL: ${LEXI_UPDATE_CHANNEL:-canary}
     ports:
-      - "${APP_PORT:-3000}:3000"
+      - "${DOCKER_APP_PORT:-3000}:3000"
     volumes:
       - site-content:/app/content
+      - ./public/wp-content:/app/public/wp-content:ro
+      - ./public/uploads:/app/public/uploads:ro
     depends_on:
       content-init:
         condition: service_completed_successfully
@@ -32,6 +34,24 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.7.3
+    restart: unless-stopped
+    command:
+      - tunnel
+      - --no-autoupdate
+      - --protocol
+      - http2
+      - --url
+      - http://app:3000
+    depends_on:
+      app:
+        condition: service_healthy
+    logging:
+      options:
+        max-size: "5m"
+        max-file: "2"
 
   content-init:
     image: alpine:3.20

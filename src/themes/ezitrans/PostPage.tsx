@@ -10,6 +10,7 @@ import { getSiteUrl } from '@/lib/technicalSeo';
 import { generatePostUrl } from '@/lib/permalink';
 import TableOfContents from '@/plugins/table-of-contents/components/TableOfContents';
 import { buildTableOfContents, getTocOptions } from '@/plugins/table-of-contents/lib/toc';
+import ConsultationForm from './ConsultationForm';
 
 export default async function PostPage({ 
   post, 
@@ -88,7 +89,7 @@ export default async function PostPage({
           <div className="ezi-post-meta">
             <div className="ezi-post-meta-item">
               <User className="ezi-post-meta-icon" size={14} />
-              <span>{post.author?.name || 'Administrator'}</span>
+              {post.author?.username ? <Link href={`/author/${post.author.username}`}>{post.author.name || post.author.username}</Link> : <span>{post.author?.name || 'Administrator'}</span>}
             </div>
             <div className="ezi-post-meta-item">
               <Calendar className="ezi-post-meta-icon" size={14} />
@@ -124,6 +125,8 @@ export default async function PostPage({
               className="ezi-post-body ql-editor-view"
               dangerouslySetInnerHTML={{ __html: tocResult.html || '<p className="italic text-slate-400">Bài viết này chưa có nội dung.</p>' }}
             />
+
+            {post.type === 'SERVICE' && <ConsultationForm serviceTitle={post.title} />}
 
             {/* Comments Section */}
             {isPost && post.status === 'PUBLISHED' && (
@@ -200,11 +203,11 @@ export default async function PostPage({
               <div className="ezi-sidebar-contact-info">
                 <div className="ezi-sidebar-contact-row">
                   <Phone size={14} className="text-orange" />
-                  <span>Hotline: <strong>0868.375.300</strong></span>
+                  <span>Hotline: <strong>{settings.contact_hotline_1 || settings.footer_phone || '0868.375.300'}</strong></span>
                 </div>
                 <div className="ezi-sidebar-contact-row">
                   <Mail size={14} className="text-orange" />
-                  <span>ezitrans.vn@gmail.com</span>
+                  <span>{settings.footer_email || 'ezitrans.vn@gmail.com'}</span>
                 </div>
               </div>
               <Link href="/lien-he" className="ezi-btn ezi-btn-orange" style={{ width: '100%' }}>

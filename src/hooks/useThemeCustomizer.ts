@@ -1,51 +1,6 @@
 "use client";
-
-import { useState, useEffect } from 'react';
-
-/**
- * Hook cho live preview trong Customizer.
- * 
- * Dùng BroadcastChannel API — hoạt động giữa tất cả tabs/iframes cùng origin
- * mà không cần reference đến window khác.
- */
-const CHANNEL_NAME = 'lexi_theme_customizer';
-
-export function useThemeCustomizer(initialSettings: Record<string, string>) {
-  const [liveSettings, setLiveSettings] = useState<Record<string, string>>(initialSettings || {});
-
-  useEffect(() => {
-    setLiveSettings(initialSettings || {});
-
-    // Dùng BroadcastChannel để nhận settings từ Customizer
-    let channel: BroadcastChannel | null = null;
-    try {
-      channel = new BroadcastChannel(CHANNEL_NAME);
-      channel.onmessage = (event) => {
-        if (event.data?.type === 'SETTINGS_UPDATE' && event.data.settings) {
-          setLiveSettings(prev => ({ ...prev, ...event.data.settings }));
-        }
-      };
-    } catch {
-      // BroadcastChannel not supported (fallback: do nothing)
-    }
-
-    return () => {
-      try { channel?.close(); } catch { /* ignore */ }
-    };
-  }, [initialSettings]);
-
-  return liveSettings;
-}
-
-/**
- * Gửi settings từ Customizer sang tất cả iframes/tabs cùng origin.
- */
-export function broadcastSettings(settings: Record<string, string>) {
-  try {
-    const channel = new BroadcastChannel(CHANNEL_NAME);
-    channel.postMessage({ type: 'SETTINGS_UPDATE', settings });
-    channel.close();
-  } catch {
-    // BroadcastChannel not supported
-  }
-}
+import { useState,useEffect } from 'react';
+const CHANNEL_NAME='lexi_theme_customizer';
+type Meta={themeId:string;sessionId:string};
+export function useThemeCustomizer(initialSettings:Record<string,string>){const [draft,setDraft]=useState<Record<string,string>>({});useEffect(()=>{const params=new URLSearchParams(location.search);const enabled=params.get('customize_preview')==='1';const expected=params.get('customizer_session');if(!enabled||!expected)return;let channel:BroadcastChannel|null=null;try{channel=new BroadcastChannel(CHANNEL_NAME);channel.onmessage=event=>{if(event.data?.type==='SETTINGS_UPDATE'&&event.data.sessionId===expected&&event.data.settings)setDraft(prev=>({...prev,...event.data.settings}))}}catch{}return()=>{try{channel?.close()}catch{}}},[]);useEffect(()=>{const listener=(event:MessageEvent)=>{if(event.origin!==location.origin||event.data?.type!=='CUSTOMIZER_SCROLL')return;const target=document.getElementById(event.data.anchor);target?.scrollIntoView({behavior:'smooth',block:'start'})};addEventListener('message',listener);return()=>removeEventListener('message',listener)},[]);const themeId=typeof location==='undefined'?'':new URLSearchParams(location.search).get('theme')||'';const globalIds=new Set(['site_title','site_tagline','site_logo','site_favicon','footer_about_text','footer_phone','footer_email','footer_address','footer_copyright','site_url']);const aliases=Object.fromEntries(Object.entries(draft).filter(([key])=>themeId&&!globalIds.has(key)&&!key.startsWith('home_')).map(([key,value])=>[`theme_${themeId}_${key}`,value]));return {...initialSettings,...draft,...aliases}}
+export function broadcastSettings(settings:Record<string,string>,meta?:Meta){try{const channel=new BroadcastChannel(CHANNEL_NAME);channel.postMessage({type:'SETTINGS_UPDATE',settings,...meta});setTimeout(()=>channel.close(),50)}catch{}}

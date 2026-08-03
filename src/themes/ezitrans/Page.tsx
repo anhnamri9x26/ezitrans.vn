@@ -26,6 +26,11 @@ export default async function Page({
   skipFooter?: boolean 
 }) {
   const siteLanguage = settings.site_language || 'vi';
+  const showContentCta = settings.theme_ezitrans_content_cta_enabled !== 'false';
+  const contentCtaTitle = settings.theme_ezitrans_content_cta_title || 'Bạn cần hỗ trợ thêm thông tin?';
+  const contentCtaDescription = settings.theme_ezitrans_content_cta_description || 'Vui lòng liên hệ trực tiếp với chuyên viên chăm sóc khách hàng của Ezitrans.';
+  const contentCtaLabel = settings.theme_ezitrans_content_cta_label || 'Liên Hệ Ngay';
+  const contentCtaUrl = settings.theme_ezitrans_content_cta_url || '/lien-he';
 
   const banners = {
     vi: {
@@ -163,7 +168,7 @@ export default async function Page({
             />
 
             {/* Support CTA Block */}
-            <div style={{
+            {showContentCta && <div style={{
               marginTop: 40,
               padding: '24px 30px',
               borderRadius: 8,
@@ -176,13 +181,13 @@ export default async function Page({
               flexWrap: 'wrap'
             }}>
               <div>
-                <h4 style={{ margin: '0 0 4px', fontWeight: 800, color: 'var(--navy)', fontSize: 15 }}>Bạn cần hỗ trợ thêm thông tin?</h4>
-                <p style={{ margin: 0, fontSize: 13, color: 'var(--ink-muted)' }}>Vui lòng liên hệ trực tiếp với chuyên viên chăm sóc khách hàng của Ezitrans.</p>
+                <h4 style={{ margin: '0 0 4px', fontWeight: 800, color: 'var(--navy)', fontSize: 15 }}>{contentCtaTitle}</h4>
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--ink-muted)' }}>{contentCtaDescription}</p>
               </div>
-              <Link href="/lien-he" className="ezi-btn ezi-btn-primary">
-                Liên Hệ Ngay
+              <Link href={contentCtaUrl} className="ezi-btn ezi-btn-primary">
+                {contentCtaLabel}
               </Link>
-            </div>
+            </div>}
           </article>
 
         </div>

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Database, Wrench, X, ChevronDown, Image as ImageIcon, Trash2, GripVertical, Monitor, ArrowRight, ArrowDown, ArrowLeft, ArrowUp, Link2, Unlink, Copy } from 'lucide-react';
 import * as Lucide from 'lucide-react';
 import { DynamicInput } from '../shared/DynamicInput';
@@ -89,6 +89,14 @@ export function ContentPanel({ ctx }: { ctx: Record<string, any> }) {
   };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [managedMenus, setManagedMenus] = useState<Array<{ id: number; name: string; itemCount: number }>>([]);
+  useEffect(() => {
+    if (name !== 'Menu') return;
+    fetch('/api/navigation/menus')
+      .then((response) => response.json())
+      .then((data) => setManagedMenus(data?.success && Array.isArray(data.menus) ? data.menus : []))
+      .catch(() => setManagedMenus([]));
+  }, [name]);
   const [isUploading, setIsUploading] = useState(false);
   const insertText = (text: string) => {
     const editor = quillRef?.current?.getEditor?.();
@@ -2654,16 +2662,32 @@ export function ContentPanel({ ctx }: { ctx: Record<string, any> }) {
 
           {props._expandLayout !== false && (
             <div className="space-y-4 pl-1 mt-2">
-              {/* Menu Name */}
-              {renderStyleRow('Menu Name', (
+              {/* Menu Source */}
+              {renderStyleRow('Nguồn menu', (
                 <select
                   value={props.menuSource || 'header'}
-                  onChange={(e) => updateProp('menuSource', e.target.value)}
+                  onChange={(e) => {
+                    const source = e.target.value;
+                    updateProp('menuSource', source);
+                    if (source === 'managed' && !props.menuId && managedMenus[0]) updateProp('menuId', managedMenus[0].id);
+                  }}
                   className="w-full h-7 text-xs border border-slate-200 rounded px-1.5 focus:outline-none focus:border-brand-500 bg-white"
                 >
-                  <option value="header">Header Menu</option>
-                  <option value="footer">Footer Menu</option>
+                  <option value="managed">Menu đã quản lý</option>
                   <option value="custom">Tự chọn (Custom Menu)</option>
+                  <option value="header">Header cũ (tương thích)</option>
+                  <option value="footer">Footer cũ (tương thích)</option>
+                </select>
+              ))}
+
+              {props.menuSource === 'managed' && renderStyleRow('Chọn menu', (
+                <select
+                  value={props.menuId || ''}
+                  onChange={(e) => updateProp('menuId', e.target.value ? Number(e.target.value) : undefined)}
+                  className="w-full h-7 text-xs border border-slate-200 rounded px-1.5 focus:outline-none focus:border-brand-500 bg-white"
+                >
+                  <option value="">— Chọn menu —</option>
+                  {managedMenus.map((menu) => <option key={menu.id} value={menu.id}>{menu.name} ({menu.itemCount} mục)</option>)}
                 </select>
               ))}
 

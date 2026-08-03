@@ -18,9 +18,11 @@ if (prismaInstance && (
   !('securityScan' in prismaInstance) ||
   !('securityFinding' in prismaInstance) ||
   !('fileIntegritySnapshot' in prismaInstance) ||
-  !('productMeta' in prismaInstance)
+  !('productMeta' in prismaInstance) ||
+  !('navigationMenu' in prismaInstance) ||
+  !('navigationMenuAssignment' in prismaInstance)
 )) {
-  console.log('Clearing cached global prisma client to load new models (including productMeta)...');
+  console.log('Clearing cached global prisma client to load current models...');
   try {
     prismaInstance.$disconnect();
   } catch (err) {}
@@ -35,4 +37,3 @@ const adapter = new PrismaPg(pool);
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
-

@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { ThemeManifest } from './manifest.schema';
+import { normalizeMenuLocations } from '@/lib/navigation/locations';
+import { validateCustomizerSchema } from './customizer';
 
 export interface ValidationResult {
   valid: boolean;
@@ -107,6 +109,33 @@ export function validateThemeManifest(params: {
         errors.push(`Template path cho "${key}" không được bắt đầu bằng http.`);
       } else if (tplPath.includes('../')) {
         errors.push(`Template path cho "${key}" không được trỏ ra ngoài thư mục theme.`);
+      }
+    }
+  }
+
+  // 9. menuLocations check (optional for legacy themes)
+  if (manifest.menuLocations !== undefined) {
+    if (!Array.isArray(manifest.menuLocations)) {
+      errors.push('menuLocations phải là mảng (array).');
+    } else {
+      const normalizedLocations = normalizeMenuLocations(manifest.menuLocations);
+      if (normalizedLocations.length !== manifest.menuLocations.length) {
+        errors.push('menuLocations chứa key/label không hợp lệ hoặc key bị trùng.');
+      } else {
+        manifest.menuLocations = normalizedLocations;
+      }
+    }
+  }
+
+  // 10. customizer schema check
+  if (manifest.customizer !== undefined) {
+    if (!Array.isArray(manifest.customizer)) {
+      errors.push('customizer phải là mảng panel.');
+    } else {
+      try {
+        validateCustomizerSchema(manifest.id, manifest.customizer);
+      } catch (error) {
+        errors.push(error instanceof Error ? error.message : 'Customizer schema không hợp lệ.');
       }
     }
   }

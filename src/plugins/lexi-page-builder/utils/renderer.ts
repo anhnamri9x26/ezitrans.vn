@@ -2824,6 +2824,28 @@ function renderNodeInternal(state: CraftState, nodeId: string, context: RenderCo
       const idCss = props.idCss || `menu-${nodeId}`;
 
       const menuSource = props.menuSource || 'header';
+      if (menuSource === 'managed' && props.menuId) {
+        const managedConfig = {
+          menuId: Number(props.menuId),
+          menuLayout: props.menuLayout || 'horizontal',
+          align: props.align || 'left',
+          itemGap: props.itemGap || '20px',
+          fontSize: props.fontSize || '14px',
+          fontWeight: props.fontWeight || '600',
+          textColor: props.textColor || '#334155',
+          textColorHover: props.textColorHover || '#3b82f6',
+          itemBgColor: props.itemBgColor || 'transparent',
+          itemBgColorHover: props.itemBgColorHover || 'transparent',
+          itemPaddingTop: props.itemPaddingTop || '8px',
+          itemPaddingRight: props.itemPaddingRight || '12px',
+          itemPaddingBottom: props.itemPaddingBottom || '8px',
+          itemPaddingLeft: props.itemPaddingLeft || '12px',
+          itemBorderRadius: props.itemBorderRadius || '0px',
+          dropdownBgColor: props.dropdownItemBgColor || '#ffffff',
+          dropdownTextColor: props.dropdownTextColor || '#334155',
+        };
+        return `{{managed_menu:${encodeURIComponent(JSON.stringify(managedConfig))}}}`;
+      }
       const menuItems = props.resolvedItems || props.customItems || [];
       const menuLayout = props.menuLayout || 'horizontal';
       const align = props.align || 'left';

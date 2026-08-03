@@ -16,6 +16,10 @@
     "category": "category",
     "tag": "tag"
   },
+  "menuLocations": [
+    { "key": "header-primary", "label": "Menu chính đầu trang", "description": "Điều hướng chính desktop và mobile." },
+    { "key": "footer-primary", "label": "Các nhóm chân trang", "description": "Menu phân cấp tạo các cột liên kết chân trang." }
+  ],
   "changelog": [
     {
       "version": "1.0.0",

@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import FloatingContactButtons from '@/components/FloatingContactButtons';
 import MaintenanceScreen from '@/components/MaintenanceScreen';
 import { getMaintenanceState } from '@/lib/updates/maintenance';
+import { loadHydratedSettings } from '@/lib/navigation/settings';
 
 export default async function FrontendLayout({
   children,
@@ -18,11 +19,7 @@ export default async function FrontendLayout({
   }
 
   try {
-    const dbSettings = await prisma.setting.findMany();
-    settings = dbSettings.reduce<Record<string, string>>((acc: Record<string, string>, cur: { key: string; value: string }) => {
-      acc[cur.key] = cur.value;
-      return acc;
-    }, {});
+    settings = await loadHydratedSettings();
   } catch (e) {
     console.error("Failed to load settings in FrontendLayout:", e);
   }

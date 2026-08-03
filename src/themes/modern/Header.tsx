@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import * as Icons from 'lucide-react';
+import { getMenuItemsForLocation } from '@/lib/navigation/client';
 
 interface MenuItem {
   id?: string;
@@ -104,12 +105,7 @@ export default function ModernHeader({ settings }: { settings: any }) {
   const [trackingResult, setTrackingResult] = useState<any>(null);
   const [trackingLoading, setTrackingLoading] = useState(false);
 
-  let rawMenuItems: MenuItem[] = [];
-  try {
-    rawMenuItems = settings.theme_menu_header ? JSON.parse(settings.theme_menu_header) : [];
-  } catch (e) {
-    console.error("Failed to parse header menu JSON:", e);
-  }
+  const rawMenuItems = getMenuItemsForLocation(settings, 'header-primary');
 
   const menuTree = buildMenuTree(rawMenuItems);
 

@@ -178,6 +178,32 @@ model Setting {
   updatedAt DateTime @updatedAt
 }
 
+model NavigationMenu {
+  id          Int                        @id @default(autoincrement())
+  name        String
+  slug        String                     @unique
+  items       String                     @db.Text
+  createdAt   DateTime                   @default(now())
+  updatedAt   DateTime                   @updatedAt
+  assignments NavigationMenuAssignment[]
+
+  @@index([name])
+}
+
+model NavigationMenuAssignment {
+  id          Int            @id @default(autoincrement())
+  themeId     String
+  locationKey String
+  menuId      Int
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  menu        NavigationMenu @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@unique([themeId, locationKey])
+  @@index([menuId])
+  @@index([themeId])
+}
+
 model Revision {
   id        Int      @id @default(autoincrement())
   postId    Int

@@ -214,6 +214,35 @@ export default function Header({ settings }: { settings: any }) { ... }
 export default function Footer({ settings }: { settings: any }) { ... }
 ```
 
+#### Khai báo vị trí Menu
+
+Theme đăng ký các vị trí ổn định trong `theme.json`. Không đổi `key` giữa các
+phiên bản nếu vẫn là cùng một vị trí, vì assignment được lưu theo key này.
+
+```json
+{
+  "menuLocations": [
+    {
+      "key": "header-primary",
+      "label": "Menu chính đầu trang",
+      "description": "Điều hướng desktop và mobile"
+    },
+    {
+      "key": "footer-primary",
+      "label": "Menu chính chân trang"
+    }
+  ]
+}
+```
+
+Trong component, dùng helper chung để giữ fallback cho theme cũ:
+
+```tsx
+import { getMenuItemsForLocation } from '@/lib/navigation/client';
+
+const items = getMenuItemsForLocation(settings, 'header-primary');
+```
+
 ### 2.4 Settings Keys — Dữ liệu có sẵn trong `settings`
 
 Theme có quyền truy cập toàn bộ settings từ DB. Các key quan trọng:
@@ -226,8 +255,10 @@ Theme có quyền truy cập toàn bộ settings từ DB. Các key quan trọng:
 | `site_language` | Ngôn ngữ | `'vi'`, `'en'`, `'zh'`, `'ja'` |
 | `permalink_structure` | Cấu trúc URL | `'/%postname%.html'` |
 | `date_format` | Định dạng ngày | `'j F, Y'` |
-| `theme_menu_header` | JSON menu header | `'[{"label":"Home","url":"/"}]'` |
-| `theme_menu_footer` | JSON menu footer | `'[{"label":"Privacy","url":"/privacy"}]'` |
+| `navigation_locations` | JSON menu đã resolve theo location key | `'{'header-primary':{...}}'` |
+| `navigation_menus` | JSON thư viện menu dùng cho template/builder | `'[{"id":1,"name":"Main",...}]'` |
+| `theme_menu_header` | Alias tương thích của `header-primary` | `'[{"label":"Home","url":"/"}]'` |
+| `theme_menu_footer` | Alias tương thích của `footer-primary` | `'[{"label":"Privacy","url":"/privacy"}]'` |
 | `footer_copyright` | Bản quyền | `'© 2026 Lexi'` |
 | `footer_about_text` | Giới thiệu footer | `'...'` |
 | `footer_phone` | Điện thoại | `'0968.xxx.xxx'` |
@@ -442,7 +473,7 @@ my-plugin.zip
    Page-{slug}.tsx → Page.tsx → PostPage.tsx (fallback)
    ```
 
-3. **Settings là string**: Tất cả giá trị trong `settings` đều là `string`. Parse JSON khi cần (ví dụ `theme_menu_header`).
+3. **Settings là string**: Tất cả giá trị trong `settings` đều là `string`. Dùng `getMenuItemsForLocation()` cho menu; chỉ parse JSON trực tiếp đối với dữ liệu khác.
 
 4. **Preview Mode**: CMS hỗ trợ `?preview_theme={id}` để xem trước theme chưa kích hoạt.
 

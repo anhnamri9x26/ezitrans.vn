@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Phone, Mail, MapPin, Factory, ArrowRight } from 'lucide-react';
+import { getMenuItemsForLocation } from '@/lib/navigation/client';
 
 const Facebook = ({ size }: { size: number }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>;
 const Twitter = ({ size }: { size: number }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>;
@@ -13,18 +14,8 @@ export default function FengYangFooter({ settings }: { settings: any }) {
   const email = settings.footer_email || 'info@fengyang.com';
   const address = settings.footer_address || 'Số 123 Đường Công Nghiệp, Khu Công Nghiệp ABC, TP.HCM';
   
-  let menuItems = [];
-  try {
-    menuItems = settings.theme_menu_footer ? JSON.parse(settings.theme_menu_footer) : [
-      { label: 'Thép không gỉ', url: '/danh-muc-san-pham/thep-khong-gi' },
-      { label: 'Thép hợp kim', url: '/danh-muc-san-pham/thep-hop-kim' },
-      { label: 'Thép Carbon', url: '/danh-muc-san-pham/thep-carbon' },
-      { label: 'Thép làm khuôn', url: '/danh-muc-san-pham/thep-lam-khuon' },
-      { label: 'Thép rèn', url: '/danh-muc-san-pham/thep-ren' },
-    ];
-  } catch (e) {
-    console.error("Failed to parse footer menu JSON:", e);
-  }
+  const menuItems = getMenuItemsForLocation(settings, 'footer-primary');
+  const supportItems = getMenuItemsForLocation(settings, 'footer-support');
 
   return (
     <footer className="bg-[#2D3753] text-slate-300 font-sans text-[14px] mt-auto">
@@ -92,36 +83,20 @@ export default function FengYangFooter({ settings }: { settings: any }) {
         <div className="space-y-6">
           <h3 className="text-white font-extrabold text-lg tracking-wide uppercase border-l-4 border-[#E31B23] pl-3">Hỗ trợ khách hàng</h3>
           <ul className="space-y-3">
-            <li>
-              <Link href="/gioi-thieu.html" className="flex items-center gap-3 hover:text-[#E31B23] transition-colors group">
-                <ArrowRight size={14} className="text-[#E31B23] shrink-0 transition-transform group-hover:translate-x-1" />
-                <span>Giới thiệu công ty</span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/quy-dinh-mua-hang.html" className="flex items-center gap-3 hover:text-[#E31B23] transition-colors group">
-                <ArrowRight size={14} className="text-[#E31B23] shrink-0 transition-transform group-hover:translate-x-1" />
-                <span>Quy định mua hàng</span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/chinh-sach-bao-hanh.html" className="flex items-center gap-3 hover:text-[#E31B23] transition-colors group">
-                <ArrowRight size={14} className="text-[#E31B23] shrink-0 transition-transform group-hover:translate-x-1" />
-                <span>Chính sách bảo hành</span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/bang-bao-gia.html" className="flex items-center gap-3 hover:text-[#E31B23] transition-colors group">
-                <ArrowRight size={14} className="text-[#E31B23] shrink-0 transition-transform group-hover:translate-x-1" />
-                <span>Bảng báo giá</span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/tin-tuc" className="flex items-center gap-3 hover:text-[#E31B23] transition-colors group">
-                <ArrowRight size={14} className="text-[#E31B23] shrink-0 transition-transform group-hover:translate-x-1" />
-                <span>Tin tức chuyên ngành</span>
-              </Link>
-            </li>
+            {(supportItems.length > 0 ? supportItems : [
+              { label: 'Giới thiệu công ty', url: '/gioi-thieu.html' },
+              { label: 'Quy định mua hàng', url: '/quy-dinh-mua-hang.html' },
+              { label: 'Chính sách bảo hành', url: '/chinh-sach-bao-hanh.html' },
+              { label: 'Bảng báo giá', url: '/bang-bao-gia.html' },
+              { label: 'Tin tức chuyên ngành', url: '/tin-tuc' },
+            ]).slice(0, 6).map((item, idx) => (
+              <li key={'id' in item && item.id ? String(item.id) : `${item.label}-${idx}`}>
+                <Link href={item.url} className="flex items-center gap-3 hover:text-[#E31B23] transition-colors group">
+                  <ArrowRight size={14} className="text-[#E31B23] shrink-0 transition-transform group-hover:translate-x-1" />
+                  <span>{item.label}</span>
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 

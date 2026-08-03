@@ -1,1 +1,865 @@
-{"id":"ezitrans","name":"Ezitrans Global","nameVi":"Ezitrans Toàn Cầu","description":"Giao diện logistics quốc tế hiện đại, cao cấp dành riêng cho Ezitrans.","version":"2.0.0","author":"Ezitrans","tags":["logistics","premium","modern","responsive"],"previewImage":"preview.png","supports":["header","footer","homepage","post","page","category","tag"],"templates":{"fallback":"fallback","homepage":"homepage","post":"post","page":"page","category":"category","tag":"tag"}}
+{
+    "id":  "ezitrans",
+    "name":  "Ezitrans Global",
+    "nameVi":  "Ezitrans ToÃ n Cáº§u",
+    "description":  "Giao diá»‡n logistics quá»‘c táº¿ hiá»‡n Ä‘áº¡i, cao cáº¥p dÃ nh riÃªng cho Ezitrans.",
+    "version":  "2.0.0",
+    "author":  "Ezitrans",
+    "tags":  [
+                 "logistics",
+                 "premium",
+                 "modern",
+                 "responsive"
+             ],
+    "previewImage":  "preview.png",
+    "supports":  [
+                     "header",
+                     "footer",
+                     "homepage",
+                     "post",
+                     "page",
+                     "category",
+                     "tag"
+                 ],
+    "templates":  {
+                      "fallback":  "fallback",
+                      "homepage":  "homepage",
+                      "post":  "post",
+                      "page":  "page",
+                      "category":  "category",
+                      "tag":  "tag"
+                  },
+    "menuLocations":  [
+                          {
+                              "key":  "header-utility",
+                              "label":  "LiÃªn káº¿t tiá»‡n Ã­ch Ä‘áº§u trang",
+                              "description":  "Thanh liÃªn káº¿t nhá» phÃ­a trÃªn header."
+                          },
+                          {
+                              "key":  "header-primary",
+                              "label":  "Menu chÃ­nh Ä‘áº§u trang",
+                              "description":  "Äiá»u hÆ°á»›ng thÆ°Æ¡ng hiá»‡u chÃ­nh."
+                          },
+                          {
+                              "key":  "footer-primary",
+                              "label":  "Menu Footer",
+                              "description":  "Má»™t menu phÃ¢n cáº¥p: má»¥c cáº¥p 0 lÃ  tiÃªu Ä‘á» nhÃ³m, má»¥c cáº¥p 1 lÃ  liÃªn káº¿t trong nhÃ³m."
+                          }
+                      ],
+    "customizer":  [
+                       {
+                           "title":  "Trang chủ",
+                           "description":  "Nội dung các khu vực trên trang chủ",
+                           "sections":  [
+                                            {
+                                                "title":  "Hero \u0026 báo giá nhanh",
+                                                "fields":  [
+                                                               {
+                                                                   "id":  "home_hero_enabled",
+                                                                   "label":  "Hiển thị khu vực",
+                                                                   "configPath":  "hero.enabled",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "toggle",
+                                                                   "default":  "true"
+                                                               },
+                                                               {
+                                                                   "id":  "home_hero_heading",
+                                                                   "label":  "Tiêu đề chính",
+                                                                   "configPath":  "hero.heading",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "textarea",
+                                                                   "default":  ""
+                                                               },
+                                                               {
+                                                                   "id":  "home_hero_bullets",
+                                                                   "label":  "Các ý nổi bật",
+                                                                   "configPath":  "hero.bullets",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Nội dung",
+                                                                                          "id":  "text",
+                                                                                          "type":  "textarea"
+                                                                                      }
+                                                                                  ],
+                                                                   "maxItems":  5
+                                                               },
+                                                               {
+                                                                   "label":  "Nhãn nút chính",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "hero.primaryLabel",
+                                                                   "id":  "home_hero_primary_label",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Liên kết nút chính",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "hero.primaryUrl",
+                                                                   "id":  "home_hero_primary_url",
+                                                                   "type":  "url"
+                                                               },
+                                                               {
+                                                                   "label":  "Tiêu đề form báo giá",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "hero.formTitle",
+                                                                   "id":  "home_hero_form_title",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Mô tả form",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "hero.formDescription",
+                                                                   "id":  "home_hero_form_description",
+                                                                   "type":  "textarea"
+                                                               },
+                                                               {
+                                                                   "id":  "home_hero_quick",
+                                                                   "label":  "Tiện ích truy cập nhanh",
+                                                                   "configPath":  "hero.quickActions",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Dòng trên",
+                                                                                          "id":  "title",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Dòng dưới",
+                                                                                          "id":  "subtitle",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "URL",
+                                                                                          "id":  "url",
+                                                                                          "type":  "url"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Icon",
+                                                                                          "id":  "icon",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                   "maxItems":  8
+                                                               }
+                                                           ],
+                                                "id":  "hero",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "ezi-home-hero"
+                                            },
+                                            {
+                                                "title":  "Lý do chọn Ezitrans",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Hiển thị khu vực",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "why.enabled",
+                                                                   "id":  "home_why_enabled",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Tiêu đề",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "why.title",
+                                                                   "id":  "home_why_title",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Mô tả",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "why.description",
+                                                                   "id":  "home_why_description",
+                                                                   "type":  "textarea"
+                                                               },
+                                                               {
+                                                                   "id":  "home_why_items",
+                                                                   "label":  "Các lợi ích",
+                                                                   "configPath":  "why.items",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Tiêu đề",
+                                                                                          "id":  "title",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Mô tả",
+                                                                                          "id":  "description",
+                                                                                          "type":  "textarea"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Icon",
+                                                                                          "id":  "icon",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                   "maxItems":  8
+                                                               }
+                                                           ],
+                                                "id":  "why",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "ezi-home-why"
+                                            },
+                                            {
+                                                "title":  "Dịch vụ Mua hộ \u0026 Ship hộ",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Hiển thị Mua hộ",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "buy.enabled",
+                                                                   "id":  "home_buy_enabled",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Tiêu đề Mua hộ",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "buy.title",
+                                                                   "id":  "home_buy_title",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "id":  "home_buy_paragraphs",
+                                                                   "label":  "Nội dung Mua hộ",
+                                                                   "configPath":  "buy.paragraphs",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Đoạn văn",
+                                                                                          "id":  "text",
+                                                                                          "type":  "textarea"
+                                                                                      }
+                                                                                  ]
+                                                               },
+                                                               {
+                                                                   "id":  "home_buy_marketplaces",
+                                                                   "label":  "Sàn mua sắm",
+                                                                   "configPath":  "buy.marketplaces",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Tên sàn",
+                                                                                          "id":  "text",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ]
+                                                               },
+                                                               {
+                                                                   "label":  "Hiển thị Ship hộ",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "ship.enabled",
+                                                                   "id":  "home_ship_enabled",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Tiêu đề Ship hộ",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "ship.title",
+                                                                   "id":  "home_ship_title",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "id":  "home_ship_paragraphs",
+                                                                   "label":  "Nội dung Ship hộ",
+                                                                   "configPath":  "ship.paragraphs",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Đoạn văn",
+                                                                                          "id":  "text",
+                                                                                          "type":  "textarea"
+                                                                                      }
+                                                                                  ]
+                                                               },
+                                                               {
+                                                                   "id":  "home_ship_warehouses",
+                                                                   "label":  "Kho quốc tế",
+                                                                   "configPath":  "ship.warehouses",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Tên kho",
+                                                                                          "id":  "name",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Địa điểm",
+                                                                                          "id":  "location",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ]
+                                                               }
+                                                           ],
+                                                "id":  "services",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "ezi-home-services"
+                                            },
+                                            {
+                                                "title":  "Xuất khẩu",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Hiển thị khu vực",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "export.enabled",
+                                                                   "id":  "home_export_enabled",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Tiêu đề",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "export.title",
+                                                                   "id":  "home_export_title",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Mô tả",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "export.description",
+                                                                   "id":  "home_export_description",
+                                                                   "type":  "textarea"
+                                                               },
+                                                               {
+                                                                   "id":  "home_export_features",
+                                                                   "label":  "Lợi ích",
+                                                                   "configPath":  "export.features",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Tiêu đề",
+                                                                                          "id":  "title",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Mô tả",
+                                                                                          "id":  "description",
+                                                                                          "type":  "textarea"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Icon",
+                                                                                          "id":  "icon",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ]
+                                                               },
+                                                               {
+                                                                   "id":  "home_export_steps",
+                                                                   "label":  "Các bước xuất khẩu",
+                                                                   "configPath":  "export.steps",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Tiêu đề",
+                                                                                          "id":  "title",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Mô tả",
+                                                                                          "id":  "description",
+                                                                                          "type":  "textarea"
+                                                                                      }
+                                                                                  ]
+                                                               }
+                                                           ],
+                                                "id":  "export",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "ezi-home-export"
+                                            },
+                                            {
+                                                "title":  "Quy trình \u0026 thị trường",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Hiển thị khu vực",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "process.enabled",
+                                                                   "id":  "home_process_enabled",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Tiêu đề",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "process.title",
+                                                                   "id":  "home_process_title",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "id":  "home_process_steps",
+                                                                   "label":  "Các bước mua hộ",
+                                                                   "configPath":  "process.steps",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Tiêu đề",
+                                                                                          "id":  "title",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Mô tả",
+                                                                                          "id":  "description",
+                                                                                          "type":  "textarea"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Icon",
+                                                                                          "id":  "icon",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ],
+                                                                   "maxItems":  10
+                                                               },
+                                                               {
+                                                                   "id":  "home_process_markets",
+                                                                   "label":  "Thị trường phổ biến",
+                                                                   "configPath":  "process.markets",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Quốc gia",
+                                                                                          "id":  "name",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "URL",
+                                                                                          "id":  "url",
+                                                                                          "type":  "url"
+                                                                                      }
+                                                                                  ]
+                                                               }
+                                                           ],
+                                                "id":  "process",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "ezi-home-process"
+                                            },
+                                            {
+                                                "title":  "Phản hồi khách hàng",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Hiển thị khu vực",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "testimonials.enabled",
+                                                                   "id":  "home_testimonials_enabled",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Tiêu đề",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "testimonials.title",
+                                                                   "id":  "home_testimonials_title",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Mô tả",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "testimonials.description",
+                                                                   "id":  "home_testimonials_description",
+                                                                   "type":  "textarea"
+                                                               },
+                                                               {
+                                                                   "id":  "home_testimonials_stats",
+                                                                   "label":  "Số liệu",
+                                                                   "configPath":  "testimonials.stats",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Giá trị",
+                                                                                          "id":  "value",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Nhãn",
+                                                                                          "id":  "label",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ]
+                                                               },
+                                                               {
+                                                                   "id":  "home_testimonials_items",
+                                                                   "label":  "Đánh giá",
+                                                                   "configPath":  "testimonials.items",
+                                                                   "settingKey":  "home_config",
+                                                                   "type":  "repeater",
+                                                                   "itemFields":  [
+                                                                                      {
+                                                                                          "label":  "Nội dung",
+                                                                                          "id":  "quote",
+                                                                                          "type":  "textarea"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Tên",
+                                                                                          "id":  "name",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Vai trò",
+                                                                                          "id":  "role",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Loại",
+                                                                                          "id":  "badge",
+                                                                                          "type":  "text"
+                                                                                      },
+                                                                                      {
+                                                                                          "label":  "Viết tắt",
+                                                                                          "id":  "initials",
+                                                                                          "type":  "text"
+                                                                                      }
+                                                                                  ]
+                                                               }
+                                                           ],
+                                                "id":  "testimonials",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "ezi-home-testimonials"
+                                            },
+                                            {
+                                                "title":  "Tin tức mới nhất",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Hiển thị khu vực",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "news.enabled",
+                                                                   "id":  "home_news_enabled",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Tiêu đề",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "news.title",
+                                                                   "id":  "home_news_title",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Nhãn nhỏ",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "news.kicker",
+                                                                   "id":  "home_news_kicker",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Nhãn xem tất cả",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "news.allLabel",
+                                                                   "id":  "home_news_all_label",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Liên kết xem tất cả",
+                                                                   "settingKey":  "home_config",
+                                                                   "configPath":  "news.allUrl",
+                                                                   "id":  "home_news_all_url",
+                                                                   "type":  "url"
+                                                               }
+                                                           ],
+                                                "id":  "news",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "ezi-home-news"
+                                            }
+                                        ],
+                           "id":  "homepage"
+                       },
+                       {
+                           "title":  "Trang nội dung",
+                           "sections":  [
+                                            {
+                                                "title":  "CTA hỗ trợ cuối trang",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Hiển thị CTA",
+                                                                   "default":  "true",
+                                                                   "id":  "content_cta_enabled",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Tiêu đề",
+                                                                   "default":  "Bạn cần hỗ trợ thêm thông tin?",
+                                                                   "id":  "content_cta_title",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Mô tả",
+                                                                   "default":  "Vui lòng liên hệ trực tiếp với chuyên viên chăm sóc khách hàng của Ezitrans.",
+                                                                   "id":  "content_cta_description",
+                                                                   "type":  "textarea"
+                                                               },
+                                                               {
+                                                                   "label":  "Nhãn nút",
+                                                                   "default":  "Liên Hệ Ngay",
+                                                                   "id":  "content_cta_label",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "URL",
+                                                                   "default":  "/lien-he",
+                                                                   "id":  "content_cta_url",
+                                                                   "type":  "url"
+                                                               }
+                                                           ],
+                                                "id":  "content-cta",
+                                                "previewPath":  "/gioi-thieu"
+                                            },
+                                            {
+                                                "title":  "Quản lý nội dung",
+                                                "id":  "content-shortcuts",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Quản lý Trang",
+                                                                   "shortcutUrl":  "/admin/pages",
+                                                                   "id":  "manage_pages",
+                                                                   "type":  "shortcut"
+                                                               },
+                                                               {
+                                                                   "label":  "Quản lý Bài viết",
+                                                                   "shortcutUrl":  "/admin/posts",
+                                                                   "id":  "manage_posts",
+                                                                   "type":  "shortcut"
+                                                               }
+                                                           ]
+                                            }
+                                        ],
+                           "id":  "content-pages"
+                       },
+                       {
+                           "title":  "Cài đặt chung",
+                           "sections":  [
+                                            {
+                                                "title":  "Nhận diện website",
+                                                "id":  "identity",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Tên website",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_title",
+                                                                   "id":  "site_title",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Khẩu hiệu",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_tagline",
+                                                                   "id":  "site_tagline",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Logo chính",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_logo",
+                                                                   "id":  "site_logo",
+                                                                   "type":  "image"
+                                                               },
+                                                               {
+                                                                   "label":  "Favicon",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_favicon",
+                                                                   "id":  "site_favicon",
+                                                                   "type":  "image"
+                                                               }
+                                                           ]
+                                            },
+                                            {
+                                                "title":  "Màu sắc \u0026 kiểu chữ",
+                                                "id":  "design",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Màu thương hiệu",
+                                                                   "default":  "#0c64d0",
+                                                                   "id":  "primary_color",
+                                                                   "type":  "color"
+                                                               },
+                                                               {
+                                                                   "label":  "Màu CTA",
+                                                                   "default":  "#f58220",
+                                                                   "id":  "accent_color",
+                                                                   "type":  "color"
+                                                               },
+                                                               {
+                                                                   "label":  "Màu Footer",
+                                                                   "default":  "#082b4d",
+                                                                   "id":  "footer_color",
+                                                                   "type":  "color"
+                                                               },
+                                                               {
+                                                                   "id":  "container_width",
+                                                                   "label":  "Chiều rộng nội dung",
+                                                                   "min":  960,
+                                                                   "type":  "number",
+                                                                   "default":  "1180",
+                                                                   "max":  1440
+                                                               },
+                                                               {
+                                                                   "label":  "Font chữ",
+                                                                   "default":  "Plus Jakarta Sans",
+                                                                   "id":  "font_family",
+                                                                   "type":  "select",
+                                                                   "options":  [
+                                                                                   {
+                                                                                       "value":  "Plus Jakarta Sans",
+                                                                                       "label":  "Plus Jakarta Sans"
+                                                                                   },
+                                                                                   {
+                                                                                       "value":  "Inter",
+                                                                                       "label":  "Inter"
+                                                                                   },
+                                                                                   {
+                                                                                       "value":  "Roboto",
+                                                                                       "label":  "Roboto"
+                                                                                   }
+                                                                               ]
+                                                               }
+                                                           ]
+                                            }
+                                        ],
+                           "id":  "general"
+                       },
+                       {
+                           "title":  "Đầu trang (Header)",
+                           "sections":  [
+                                            {
+                                                "title":  "Bố cục Header",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Header bám trên",
+                                                                   "default":  "true",
+                                                                   "id":  "header_sticky",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Hiện thanh menu trên",
+                                                                   "default":  "true",
+                                                                   "id":  "header_show_utility",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Hiện nút CTA",
+                                                                   "default":  "true",
+                                                                   "id":  "header_cta_enabled",
+                                                                   "type":  "toggle"
+                                                               },
+                                                               {
+                                                                   "label":  "Nhãn CTA",
+                                                                   "default":  "Gửi báo giá",
+                                                                   "id":  "header_cta_label",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "URL CTA",
+                                                                   "default":  "/lien-he",
+                                                                   "id":  "header_cta_url",
+                                                                   "type":  "url"
+                                                               },
+                                                               {
+                                                                   "label":  "Quản lý Menu Header",
+                                                                   "shortcutUrl":  "/admin/settings/navigation",
+                                                                   "id":  "header_menu_shortcut",
+                                                                   "type":  "shortcut"
+                                                               }
+                                                           ],
+                                                "id":  "header-layout",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "site-header"
+                                            }
+                                        ],
+                           "id":  "header"
+                       },
+                       {
+                           "title":  "Chân trang (Footer)",
+                           "sections":  [
+                                            {
+                                                "title":  "Thương hiệu \u0026 liên hệ",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Logo Footer riêng",
+                                                                   "id":  "footer_logo",
+                                                                   "type":  "image"
+                                                               },
+                                                               {
+                                                                   "label":  "Giới thiệu",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "footer_about_text",
+                                                                   "id":  "footer_about_text",
+                                                                   "type":  "textarea"
+                                                               },
+                                                               {
+                                                                   "label":  "Địa chỉ",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "footer_address",
+                                                                   "id":  "footer_address",
+                                                                   "type":  "textarea"
+                                                               },
+                                                               {
+                                                                   "label":  "Hotline",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "footer_phone",
+                                                                   "id":  "footer_phone",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Email",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "footer_email",
+                                                                   "id":  "footer_email",
+                                                                   "type":  "text"
+                                                               },
+                                                               {
+                                                                   "label":  "Website hiển thị",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "site_url",
+                                                                   "id":  "site_url",
+                                                                   "type":  "url"
+                                                               },
+                                                               {
+                                                                   "label":  "Copyright",
+                                                                   "scope":  "global",
+                                                                   "settingKey":  "footer_copyright",
+                                                                   "id":  "footer_copyright",
+                                                                   "type":  "text"
+                                                               }
+                                                           ],
+                                                "id":  "footer-brand",
+                                                "previewPath":  "/",
+                                                "previewAnchor":  "site-footer"
+                                            },
+                                            {
+                                                "title":  "Mạng xã hội",
+                                                "id":  "footer-social",
+                                                "fields":  [
+                                                               {
+                                                                   "label":  "Facebook URL",
+                                                                   "id":  "footer_facebook",
+                                                                   "type":  "url"
+                                                               },
+                                                               {
+                                                                   "label":  "YouTube URL",
+                                                                   "id":  "footer_youtube",
+                                                                   "type":  "url"
+                                                               },
+                                                               {
+                                                                   "label":  "TikTok URL",
+                                                                   "id":  "footer_tiktok",
+                                                                   "type":  "url"
+                                                               },
+                                                               {
+                                                                   "label":  "Instagram URL",
+                                                                   "id":  "footer_instagram",
+                                                                   "type":  "url"
+                                                               },
+                                                               {
+                                                                   "label":  "Quản lý Menu Footer",
+                                                                   "shortcutUrl":  "/admin/settings/navigation",
+                                                                   "id":  "footer_menu_shortcut",
+                                                                   "type":  "shortcut"
+                                                               }
+                                                           ]
+                                            }
+                                        ],
+                           "id":  "footer"
+                       }
+                   ]
+}

@@ -1,12 +1,12 @@
 {
   "id": "contact-widget",
-  "name": "Lexi Contact plugin",
-  "nameEn": "Lexi Contact plugin",
-  "description": "Tự động kích hoạt hiển thị thanh nút liên hệ nhanh gồm gọi điện thoại hotline, chat Zalo, Facebook Messenger và các mạng xã hội khác trực quan ở góc dưới màn hình. Cho phép thay đổi màu sắc và quản lý đường dẫn từ admin.",
-  "version": "1.0.0",
+  "name": "Contact Hub",
+  "nameEn": "Contact Hub",
+  "description": "Trung tâm liên hệ đa kênh với live preview, sắp xếp kênh, Contact Hub thu gọn, stack buttons và thanh CTA mobile.",
+  "version": "2.0.0",
   "author": "DeepMind Team",
   "icon": "message-circle",
-  "iconColor": "#ec4899",
+  "iconColor": "#0c64d0",
   "settingKey": "plugin_contact_enabled",
   "category": "engagement",
   "requires": [],
@@ -16,24 +16,38 @@
   "files": [
     "index.ts",
     "manifest.json",
+    "lib/contactWidgetTypes.ts",
+    "lib/contactWidgetConfig.ts",
     "components/FloatingContactButtons.tsx",
+    "components/contact-widget.css",
     "admin/ContactSettingsPage.tsx"
   ],
   "capabilities": [
+    "contact-hub",
     "floating-buttons",
-    "hotline-bar",
+    "mobile-contact-bar",
     "social-links",
-    "custom-colors"
+    "channel-ordering",
+    "live-preview",
+    "custom-colors",
+    "legacy-migration"
   ],
   "changelog": [
     {
+      "version": "2.0.0",
+      "date": "2026-08-02",
+      "changes": [
+        "Contact Hub và Stack mode",
+        "Quản lý, sắp xếp và bật tắt từng kênh",
+        "Live preview desktop/mobile",
+        "Bổ sung Facebook, Instagram, TikTok, YouTube và Email",
+        "Migration tự động từ cấu hình 1.x"
+      ]
+    },
+    {
       "version": "1.0.0",
       "date": "2026-05-20",
-      "changes": [
-        "Hotline, Zalo, Messenger, WhatsApp, Viber",
-        "Thanh gọi điện nhanh tùy chỉnh",
-        "Hỗ trợ tùy biến màu sắc từ admin"
-      ]
+      "changes": ["Hotline, Zalo, Messenger, WhatsApp, Viber"]
     }
   ]
 }

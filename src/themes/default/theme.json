@@ -16,6 +16,11 @@
     "category": "category",
     "tag": "tag"
   },
+  "menuLocations": [
+    { "key": "header-primary", "label": "Menu chính đầu trang", "description": "Điều hướng desktop và mobile." },
+    { "key": "footer-primary", "label": "Sản phẩm chính chân trang", "description": "Nhóm liên kết sản phẩm trong chân trang." },
+    { "key": "footer-support", "label": "Hỗ trợ khách hàng", "description": "Nhóm chính sách và hỗ trợ trong chân trang." }
+  ],
   "changelog": [
     {
       "version": "1.0.0",

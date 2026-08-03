@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { hooks, HOOK_NAMES } from '@/lib/hooks';
 import { getCurrentUser } from '@/lib/session';
 import { userCan } from '@/lib/capabilities';
+import { getHydratedNavigation } from '@/lib/navigation/service';
+import { hydrateSettingsWithNavigation } from '@/lib/navigation/settings';
 
 export async function GET(req: Request) {
   try {
@@ -127,6 +129,7 @@ export async function GET(req: Request) {
       contact_map_color: '#10b981',
       contact_link: '',
       contact_link_color: '#3b82f6',
+      contact_widget_config_v2: '',
       // Yoast SEO & Frontend settings
       seo_sitemap_enabled: 'true',
       seo_breadcrumbs_enabled: 'true',
@@ -220,29 +223,6 @@ export async function GET(req: Request) {
       }
     }
 
-    const headerMenuHasBrokenLinks =
-      settingsMap['theme_menu_header']?.includes('/san-pham/thep-tron-dac') ||
-      settingsMap['theme_menu_header']?.includes('/dich-vu') ||
-      settingsMap['theme_menu_header']?.includes('/san-pham/thep-khuon-mau');
-    const footerMenuHasBrokenLinks =
-      settingsMap['theme_menu_footer']?.includes('/privacy') ||
-      settingsMap['theme_menu_footer']?.includes('/terms');
-
-    if (headerMenuHasBrokenLinks) {
-      await prisma.setting.update({
-        where: { key: 'theme_menu_header' },
-        data: { value: defaultCommentSettings.theme_menu_header }
-      });
-      settingsMap['theme_menu_header'] = defaultCommentSettings.theme_menu_header;
-    }
-
-    if (footerMenuHasBrokenLinks) {
-      await prisma.setting.update({
-        where: { key: 'theme_menu_footer' },
-        data: { value: defaultCommentSettings.theme_menu_footer }
-      });
-      settingsMap['theme_menu_footer'] = defaultCommentSettings.theme_menu_footer;
-    }
 
     // Fetch actual counts dynamically from the DB ONLY if requested
     const url = new URL(req.url);
@@ -266,9 +246,12 @@ export async function GET(req: Request) {
       };
     }
 
+    const navigation = await getHydratedNavigation(settingsMap.active_theme || 'default');
+    const hydratedSettings = hydrateSettingsWithNavigation(settingsMap, navigation);
+
     return NextResponse.json({ 
       success: true, 
-      settings: settingsMap,
+      settings: hydratedSettings,
       counts
     });
   } catch (error: any) {
@@ -366,6 +349,7 @@ export async function POST(req: Request) {
       contact_map_color,
       contact_link,
       contact_link_color,
+      contact_widget_config_v2,
       // Yoast SEO & Frontend Settings
       seo_sitemap_enabled,
       seo_breadcrumbs_enabled,
@@ -540,6 +524,7 @@ export async function POST(req: Request) {
       contact_map_color: contact_map_color !== undefined ? String(contact_map_color) : undefined,
       contact_link: contact_link !== undefined ? String(contact_link) : undefined,
       contact_link_color: contact_link_color !== undefined ? String(contact_link_color) : undefined,
+      contact_widget_config_v2: contact_widget_config_v2 !== undefined ? String(contact_widget_config_v2) : undefined,
       // Yoast SEO & Frontend Settings
       seo_sitemap_enabled: seo_sitemap_enabled !== undefined ? String(seo_sitemap_enabled) : undefined,
       seo_breadcrumbs_enabled: seo_breadcrumbs_enabled !== undefined ? String(seo_breadcrumbs_enabled) : undefined,

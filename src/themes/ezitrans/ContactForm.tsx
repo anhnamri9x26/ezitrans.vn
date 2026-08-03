@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { useEffect, useState } from 'react';
 import { CheckCircle2, Loader2, Send, AlertCircle } from 'lucide-react';
 
@@ -6,7 +6,12 @@ export default function ContactForm() {
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState<'idle'|'success'|'error'>('idle');
   const [request, setRequest] = useState('');
-  useEffect(() => { setRequest(new URLSearchParams(window.location.search).get('link') || ''); }, []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setRequest(new URLSearchParams(window.location.search).get('link') || '');
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); setPending(true); setStatus('idle');
@@ -31,8 +36,10 @@ export default function ContactForm() {
       <label>Chủ đề<select name="chu_de" defaultValue="Tư vấn dịch vụ"><option>Tư vấn dịch vụ</option><option>Yêu cầu báo giá</option><option>Tra cứu đơn hàng</option><option>Hợp tác doanh nghiệp</option></select></label>
       <label className="ezi-contact-field-wide">Nội dung yêu cầu *<textarea name="noi_dung" required minLength={10} rows={5} value={request} onChange={e=>setRequest(e.target.value)} placeholder="Hãy mô tả nhu cầu của bạn..." /></label>
     </div>
-    <button id="contact-submit-button" className="ezi-btn ezi-btn-primary ezi-contact-submit" disabled={pending}>{pending?<Loader2 className="ezi-spin" size={16}/>:<Send size={16}/>} {pending?'Đang gửi...':'Gửi yêu cầu ngay'}</button>
-    {status==='success'&&<p className="ezi-contact-notice success"><CheckCircle2 size={17}/> Yêu cầu đã được gửi thành công. Chúng tôi sẽ sớm liên hệ!</p>}
-    {status==='error'&&<p className="ezi-contact-notice error"><AlertCircle size={17}/> Chưa thể gửi yêu cầu. Vui lòng thử lại hoặc gọi hotline.</p>}
+    <button id="contact-submit-button" type="submit" className="ezi-btn ezi-btn-primary ezi-contact-submit" disabled={pending} aria-busy={pending}>{pending?<Loader2 className="ezi-spin" size={16}/>:<Send size={16}/>} {pending?'Đang gửi...':'Gửi yêu cầu ngay'}</button>
+    <div className="ezi-form-status" aria-live="polite">
+      {status==='success'&&<p className="ezi-contact-notice success"><CheckCircle2 size={17}/> Yêu cầu đã được gửi thành công. Chúng tôi sẽ sớm liên hệ!</p>}
+      {status==='error'&&<p className="ezi-contact-notice error"><AlertCircle size={17}/> Chưa thể gửi yêu cầu. Vui lòng thử lại hoặc gọi hotline.</p>}
+    </div>
   </form>;
 }

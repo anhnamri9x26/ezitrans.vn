@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useResponsiveProps } from './useResponsiveProps';
 
@@ -32,8 +32,9 @@ export interface Level0Item extends MenuItem {
 }
 
 export interface MenuBlockProps extends CommonLayoutProps {
-  // === TAB Ná»˜I DUNG ===
-  menuSource?: 'header' | 'footer' | 'custom';
+  // === TAB NỘI DUNG ===
+  menuSource?: 'managed' | 'header' | 'footer' | 'custom';
+  menuId?: number;
   customItems?: MenuItem[];
   resolvedItems?: MenuItem[];
   menuLayout?: 'horizontal' | 'vertical' | 'dropdown';
@@ -198,6 +199,7 @@ export const MenuBlock = (rawProps: MenuBlockProps) => {
   const props = useResponsiveProps(rawProps) as typeof rawProps;
   const {
     menuSource = 'header',
+    menuId,
     customItems = [
       { id: '1', label: 'Trang chá»§', url: '/', indent: 0 },
       { id: '2', label: 'Dá»‹ch vá»¥', url: '#', indent: 0 },
@@ -353,36 +355,34 @@ export const MenuBlock = (rawProps: MenuBlockProps) => {
       if (enabled && JSON.stringify(resolvedItems) !== JSON.stringify(customItems)) {
         setProp((p: any) => { p.resolvedItems = customItems; }, 500);
       }
-    } else {
-      // Fetch settings
-      fetch('/api/settings')
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && data.settings) {
-            const key = menuSource === 'header' ? 'theme_menu_header' : 'theme_menu_footer';
-            const rawVal = data.settings[key];
-            if (rawVal) {
-              try {
-                const parsed = JSON.parse(rawVal);
-                setMenuItems(parsed);
-                if (enabled && JSON.stringify(resolvedItems) !== JSON.stringify(parsed)) {
-                  setProp((p: any) => { p.resolvedItems = parsed; }, 500);
-                }
-              } catch (e) {
-                console.error(`Error parsing ${key}:`, e);
-                setMenuItems([]);
-              }
-            } else {
-              setMenuItems([]);
-            }
-          }
-        })
-        .catch((err) => {
-          console.error("Error fetching menu settings:", err);
-          setMenuItems([]);
-        });
+      return;
     }
-  }, [menuSource, customItems, enabled]);
+
+    if (menuSource === 'managed' && menuId) {
+      fetch(`/api/navigation/menus/${menuId}`)
+        .then((res) => res.json())
+        .then((data) => setMenuItems(data?.success ? data.menu.items || [] : []))
+        .catch(() => setMenuItems([]));
+      return;
+    }
+
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data?.settings) return setMenuItems([]);
+        const key = menuSource === 'header' ? 'theme_menu_header' : 'theme_menu_footer';
+        try {
+          const parsed = JSON.parse(data.settings[key] || '[]');
+          setMenuItems(parsed);
+          if (enabled && JSON.stringify(resolvedItems) !== JSON.stringify(parsed)) {
+            setProp((p: any) => { p.resolvedItems = parsed; }, 500);
+          }
+        } catch {
+          setMenuItems([]);
+        }
+      })
+      .catch(() => setMenuItems([]));
+  }, [menuSource, menuId, customItems, enabled]);
 
   // 5. Build tree
   const menuTree = buildMenuTree(menuItems);
@@ -943,6 +943,7 @@ MenuBlock.craft = {
   name: 'MenuBlock',
   props: {
     menuSource: 'header',
+    menuId: undefined,
     customItems: [
       { id: '1', label: 'Trang chá»§', url: '/', indent: 0 },
       { id: '2', label: 'Dá»‹ch vá»¥', url: '#', indent: 0 },

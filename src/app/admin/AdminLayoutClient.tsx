@@ -196,6 +196,7 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
       path: '/admin/settings/themes',
       icon: <Palette size={16} />,
       submenu: [
+        { name: 'Customize', path: '/admin/customize' },
         { name: 'Giao diện', path: '/admin/settings/themes' },
         { name: 'Thanh Menu', path: '/admin/settings/navigation' },
         { name: 'Chân trang', path: '/admin/settings/footer' },
@@ -334,6 +335,7 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
     if (pathname.startsWith('/admin/settings/discussion')) return userCan('manage_settings');
     if (pathname.startsWith('/admin/settings/email')) return userCan('manage_settings');
     if (pathname.startsWith('/admin/settings/plugins')) return userCan('manage_plugins');
+    if (pathname.startsWith('/admin/customize')) return userCan('manage_themes');
     if (pathname.startsWith('/admin/settings/themes')) return userCan('manage_themes');
     if (pathname.startsWith('/admin/settings/navigation')) return userCan('manage_themes');
     if (pathname.startsWith('/admin/settings/footer')) return userCan('manage_themes');
@@ -403,9 +405,10 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
                        pathname.startsWith('/admin/settings/roles');
               }
               if (item.path === '/admin/settings/themes') {
-                return pathname.startsWith('/admin/settings/themes') || 
-                       pathname.startsWith('/admin/settings/navigation') || 
-                       pathname.startsWith('/admin/settings/footer') || 
+                return pathname.startsWith('/admin/customize') ||
+                       pathname.startsWith('/admin/settings/themes') ||
+                       pathname.startsWith('/admin/settings/navigation') ||
+                       pathname.startsWith('/admin/settings/footer') ||
                        pathname.startsWith('/admin/settings/contact');
               }
               if (pathname === item.path || pathname.startsWith(item.path + '/')) {

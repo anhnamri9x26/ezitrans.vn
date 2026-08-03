@@ -6,13 +6,10 @@ import { getRobotsDirectives, getSiteUrl } from '@/lib/technicalSeo';
 import { resolveTemplates } from '@/lib/templateResolver';
 import { loadTemplateComponent } from '@/lib/templateLoader';
 import TemplateShell from '@/components/TemplateShell';
+import { loadHydratedSettings } from '@/lib/navigation/settings';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const dbSettings = await prisma.setting.findMany();
-  const settings: { [key: string]: string } = dbSettings.reduce<Record<string, string>>((acc: Record<string, string>, cur: { key: string; value: string }) => {
-    acc[cur.key] = cur.value;
-    return acc;
-  }, {});
+  const settings = await loadHydratedSettings();
 
   const siteTitle = settings['site_title'] || 'Lexi';
   const siteTagline = settings['site_tagline'] || 'Vận Chuyển Hàng Quốc Tế';
@@ -61,12 +58,14 @@ export default async function PublicHomepage({
 }) {
   const params = await searchParams;
 
-  // 1. Lấy tất cả cài đặt hệ thống
-  const dbSettings = await prisma.setting.findMany();
-  const settings: { [key: string]: string } = dbSettings.reduce<Record<string, string>>((acc: Record<string, string>, cur: { key: string; value: string }) => {
-    acc[cur.key] = cur.value;
-    return acc;
-  }, {});
+  const legacySearch = Array.isArray(params.s) ? params.s[0] : params.s;
+  if (legacySearch && legacySearch.trim()) {
+    const { redirect } = await import('next/navigation');
+    redirect(`/tim-kiem?q=${encodeURIComponent(legacySearch.trim().slice(0, 120))}`);
+  }
+
+  // 1. Lấy tất cả cài đặt hệ thống và menu đã phân công
+  const settings = await loadHydratedSettings();
 
   // Hỗ trợ preview theme qua query param ?preview_theme=modern
   const previewTheme = typeof params.preview_theme === 'string' ? params.preview_theme : null;

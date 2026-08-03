@@ -10,6 +10,7 @@ import {
   Clock,
   Truck
 } from 'lucide-react';
+import { getMenuItemsForLocation } from '@/lib/navigation/client';
 
 export default function ModernFooter({ settings }: { settings: any }) {
   const copyright = settings.footer_copyright || `Copyright 2020 - 2026 Lexi Logistics JSC. All Rights Reserved.`;
@@ -18,13 +19,7 @@ export default function ModernFooter({ settings }: { settings: any }) {
   const email = settings.footer_email || "lexi.vn@gmail.com";
   const address = settings.footer_address || "Số 8, Ngõ 79/14 Dương Quảng Hàm, Cầu Giấy, Hà Nội";
 
-  // Parse custom menu from Drag-and-drop settings dynamically
-  let menuItems: any[] = [];
-  try {
-    menuItems = settings.theme_menu_footer ? JSON.parse(settings.theme_menu_footer) : [];
-  } catch (e) {
-    console.error("Failed to parse footer menu JSON:", e);
-  }
+  const menuItems = getMenuItemsForLocation(settings, 'footer-primary');
 
   // Smart Parser: Supports 3 structure types
   const hasHierarchy = menuItems.some((item: any) => item.indent && item.indent > 0);

@@ -15,6 +15,9 @@ import DefaultPageTemplate from '@/themes/default/Page';
 import DefaultPostTemplate from '@/themes/default/PostPage';
 import DefaultProductTemplate from '@/themes/default/ProductPage';
 import { cache } from 'react';
+import { loadHydratedSettings } from '@/lib/navigation/settings';
+import SearchArchive from './SearchArchive';
+import AuthorArchive from './AuthorArchive';
 
 interface CatchAllProps {
   params: Promise<{ slug: string[] }>;
@@ -30,13 +33,7 @@ import {
   getSocialImageUrl,
 } from '@/lib/technicalSeo';
 
-const getCachedSettings = cache(async () => {
-  const dbSettings = await prisma.setting.findMany();
-  return dbSettings.reduce<Record<string, string>>((acc: Record<string, string>, cur: { key: string; value: string }) => {
-    acc[cur.key] = cur.value;
-    return acc;
-  }, {});
-});
+const getCachedSettings = cache(loadHydratedSettings);
 
 const getCachedPostFromUrl = cache(async (urlPath: string, structure: string, productStructure: string) => {
   return resolvePostFromUrl(urlPath, structure, productStructure, prisma);
@@ -77,6 +74,28 @@ export async function generateMetadata({ params }: CatchAllProps): Promise<Metad
   }
 
   // Archive routes are valid pages, not missing-content pages.
+  if (slug.length === 1 && slug[0] === 'tim-kiem') {
+    return {
+      title: `Tìm kiếm | ${siteTitle}`,
+      description: `Tìm kiếm bài viết và dịch vụ trên ${siteTitle}`,
+      robots: getRobotsDirectives(settings, { index: false }),
+    };
+  }
+
+  if (slug.length === 2 && slug[0] === 'author') {
+    const author = await prisma.user.findUnique({
+      where: { username: slug[1] },
+      select: { name: true, username: true }
+    });
+    if (author) {
+      const authorName = author.name || author.username;
+      return {
+        title: `Tác giả: ${authorName} | ${siteTitle}`,
+        description: `Các bài viết được xuất bản bởi ${authorName} trên ${siteTitle}`,
+      };
+    }
+  }
+
   if (slug.length === 1 && slug[0] === 'tin-tuc') {
     return {
       title: `Tất cả bài viết | ${siteTitle}`,
@@ -364,21 +383,30 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
 
   const taxonomyBases = new Set([categoryBase, tagBase, productCategoryBase]);
   if (taxonomyBases.has(slug[0]) && slug.length !== 2) {
-    return <NotFoundContent />;
+    return <NotFoundContent settings={settings} />;
   }
 
   if (slug.length === 2) {
     if (slug[0] === categoryBase) {
       return <CategoryArchive slug={slug[1]} type="POST" settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
     } else if (slug[0] === tagBase) {
-      return <TagArchive slug={slug[1]} settings={settings} activeTheme={settings['active_theme'] || 'default'} />;
+      return <TagArchive slug={slug[1]} settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
     } else if (slug[0] === productCategoryBase) {
       return <CategoryArchive slug={slug[1]} type="PRODUCT" settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
     }
   }
 
-  // --- Step 3.6: Intercept Post Type Archive Routing ---
+  // --- Step 3.6: Intercept Search, Author and Post Type Archive Routing ---
   const postArchiveBase = 'tin-tuc'; // Standard news archive base
+
+  if (slug.length === 1 && slug[0] === 'tim-kiem') {
+    const rawQuery = Array.isArray(query.q) ? query.q[0] : query.q;
+    return <SearchArchive query={rawQuery || ''} settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
+  }
+
+  if (slug.length === 2 && slug[0] === 'author') {
+    return <AuthorArchive username={slug[1]} settings={settings} activeTheme={settings['active_theme'] || 'default'} currentPage={currentPage} />;
+  }
 
   if (slug.length === 1) {
     if (slug[0] === productBaseSetting) {
@@ -409,7 +437,7 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
   // awaiting the analytics upsert keeps the transition pending and leaves the
   // previous route visible and non-interactive until a hard reload.
   if (!post) {
-    return <NotFoundContent />;
+    return <NotFoundContent settings={settings} />;
   }
 
   // User session authorization (for previewing Draft/Trash)
@@ -418,13 +446,13 @@ export default async function CatchAllPage({ params, searchParams }: CatchAllPro
 
   // Hide draft or trashed posts from guests
   if (post.status === 'TRASH' && !isAuthorizedUser) {
-    return <NotFoundContent />;
+    return <NotFoundContent settings={settings} />;
   }
   if (post.status === 'DRAFT' && !isAuthorizedUser) {
-    return <NotFoundContent />;
+    return <NotFoundContent settings={settings} />;
   }
   if (post.status === 'PUBLISHED' && new Date(post.publishedAt) > new Date() && !isAuthorizedUser) {
-    return <NotFoundContent />;
+    return <NotFoundContent settings={settings} />;
   }
 
   if (post.type === 'PRODUCT') {
