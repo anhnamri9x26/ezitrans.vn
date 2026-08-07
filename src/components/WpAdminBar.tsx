@@ -1,9 +1,9 @@
 import React from 'react';
 import Script from 'next/script';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { resolveTemplates, ResolveContext } from '@/lib/templateResolver';
 import { getCurrentUser } from '@/lib/session';
+import { getGravatarUrl } from '@/lib/auth';
 
 interface WpAdminBarProps {
   context?: ResolveContext;
@@ -20,6 +20,8 @@ export default async function WpAdminBar({
   const user = await getCurrentUser();
   const isAuthorizedUser = !!(user && (user.role === 'ADMIN' || user.role === 'EDITOR'));
   const username = user?.username || user?.name || 'lexi';
+  const avatarUrl = user?.email ? getGravatarUrl(user.email) : null;
+  const userInitial = (user?.name || user?.username || 'L').trim().charAt(0).toUpperCase();
 
   // Hide bar entirely from anonymous visitors (unless in preview mode)
   if (!isAuthorizedUser && !isPreview) {
@@ -106,6 +108,45 @@ export default async function WpAdminBar({
         }
         #wpadminbar .wp-logo-link:hover {
           color: #60a5fa !important;
+        }
+        #wpadminbar .ab-user-link {
+          display:flex;
+          align-items:center;
+          gap:8px;
+          color:#cbd5e1;
+          text-decoration:none;
+        }
+        #wpadminbar .ab-user-avatar {
+          position:relative;
+          width:24px;
+          height:24px;
+          flex:none;
+          display:grid;
+          place-items:center;
+          overflow:visible;
+          border:1.5px solid #818cf8;
+          border-radius:50%;
+          background:linear-gradient(135deg,#334155,#4f46e5);
+          color:#fff;
+          font-size:10px;
+          font-weight:800;
+        }
+        #wpadminbar .ab-user-avatar img {
+          width:100%;
+          height:100%;
+          display:block;
+          border-radius:inherit;
+          object-fit:cover;
+        }
+        #wpadminbar .ab-user-avatar i {
+          position:absolute;
+          right:-2px;
+          bottom:-2px;
+          width:8px;
+          height:8px;
+          border:2px solid rgba(15,23,42,.95);
+          border-radius:50%;
+          background:#10b981;
         }
 
         /* Hover Submenus CSS */
@@ -220,10 +261,10 @@ export default async function WpAdminBar({
           color: #fca5a5 !important;
         }
 
-        /* Mobile Adjustments */
+        /* Compact mobile Admin Bar */
         @media screen and (max-width: 782px) {
           html.has-admin-bar body {
-            padding-top: 48px !important;
+            padding-top: 44px !important;
           }
           html.has-admin-bar header[class*="fixed"],
           html.has-admin-bar header[class*="sticky"],
@@ -231,30 +272,114 @@ export default async function WpAdminBar({
           html.has-admin-bar div[class*="sticky-header"],
           html.has-admin-bar .fixed-header,
           html.has-admin-bar .sticky-header {
-            top: 48px !important;
+            top: 44px !important;
           }
           #wpadminbar {
-            height: 48px;
-            padding: 0 8px;
+            height: 44px;
+            min-height: 44px;
+            padding: 0 6px;
+            gap: 3px;
+            overflow: visible;
           }
-          #wpadminbar a, #wpadminbar .ab-item, #wpadminbar .menupop > .ab-label {
-            height: 48px;
-            padding: 0 10px;
-            font-size: 12px;
+          #wpadminbar .ab-left {
+            flex: 1 1 auto;
+            min-width: 0;
+            gap: 3px;
           }
-          #wpadminbar .builder-btn {
-            height: 32px !important;
+          #wpadminbar .ab-right {
+            flex: 0 0 auto;
+            gap: 2px;
+          }
+          #wpadminbar a,
+          #wpadminbar .ab-item,
+          #wpadminbar .menupop > .ab-label {
+            height: 36px;
+            min-width: 36px;
+            padding: 0 9px;
+            border-radius: 9px;
+            justify-content: center;
             font-size: 11px;
-            padding: 0 10px !important;
+          }
+          #wpadminbar .ab-brand-menu {
+            padding: 0;
+            background: rgba(255,255,255,.06);
+          }
+          #wpadminbar .wp-logo-link {
+            width: 38px;
+            min-width: 38px;
+            padding: 0 !important;
+            justify-content: center;
+          }
+          #wpadminbar .wp-logo-link .ab-icon {
+            width: 18px;
+            height: 18px;
+          }
+          #wpadminbar .wp-logo-link > span,
+          #wpadminbar .ab-primary-action > span,
+          #wpadminbar .ab-primary-action > .ab-label > span,
+          #wpadminbar #hide-admin-bar-btn > span,
+          #wpadminbar .exit-preview-btn > span,
+          #wpadminbar .ab-user-link > span:first-child {
+            display: none;
+          }
+          #wpadminbar .ab-user-link {
+            width:38px;
+            min-width:38px;
+            height:36px;
+            padding:0;
+            justify-content:center;
+          }
+          #wpadminbar .ab-primary-action,
+          #wpadminbar #hide-admin-bar-btn {
+            width: 38px;
+            min-width: 38px;
+            padding: 0;
+          }
+          #wpadminbar .ab-primary-action .ab-icon,
+          #wpadminbar #hide-admin-bar-btn .ab-icon {
+            width: 17px;
+            height: 17px;
+            margin: 0 !important;
+          }
+          #wpadminbar .ab-customize {
+            color: #93c5fd;
+          }
+          #wpadminbar .ab-edit-current {
+            color: #c4b5fd;
+          }
+          #wpadminbar .ab-builder-action,
+          #wpadminbar .ab-theme-builder-menu,
+          #wpadminbar .ab-user-menu,
+          #wpadminbar .ab-preview-status {
+            display: none;
           }
           #wpadminbar .ab-sub-wrapper {
-            min-width: 160px;
+            top: calc(100% + 3px);
+            min-width: 190px;
           }
           #wpadminbar .ab-sub-wrapper a {
-            padding: 10px 14px !important;
+            min-width: 0;
+            height: auto;
+            padding: 10px 12px !important;
+            justify-content: flex-start;
           }
-          #wpadminbar .user-greeting span {
+          #wpadminbar .exit-preview-btn {
+            width: 38px;
+            min-width: 38px;
+            height: 34px !important;
+            padding: 0 !important;
+            justify-content: center;
+          }
+        }
+        @media screen and (max-width: 480px) {
+          #wpadminbar .ab-create-menu {
             display: none;
+          }
+          #wpadminbar .ab-left {
+            justify-content: flex-start;
+          }
+          #wpadminbar .ab-right {
+            margin-left: auto;
           }
         }
         #wpadminbar-restore:hover {
@@ -317,8 +442,8 @@ export default async function WpAdminBar({
       <div id="wpadminbar">
         <div className="ab-left">
           {/* Logo Menu */}
-          <div className="ab-item menupop">
-            <a href="/admin/dashboard" className="wp-logo-link" title="Bảng quản trị Lexi">
+          <div className="ab-brand-menu">
+            <a href="/admin/dashboard" className="wp-logo-link" title="Vào Bảng quản trị Lexi">
               <svg 
                 viewBox="0 0 24 24" 
                 width="16" 
@@ -342,50 +467,18 @@ export default async function WpAdminBar({
               </svg>
               <span>Lexi CMS</span>
             </a>
-            <div className="ab-sub-wrapper">
-              <a href="/admin/dashboard">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
-                  <rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" />
-                </svg>
-                <span>Bảng điều khiển</span>
-              </a>
-              <a href="/admin/posts">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" />
-                </svg>
-                <span>Quản lý bài viết</span>
-              </a>
-              <a href="/admin/pages">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                </svg>
-                <span>Quản lý trang tĩnh</span>
-              </a>
-              <a href="/admin/templates">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
-                  <polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" />
-                </svg>
-                <span>Theme Builder</span>
-              </a>
-              <a href="/admin/settings">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
-                  <circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                </svg>
-                <span>Cài đặt hệ thống</span>
-              </a>
-            </div>
           </div>
           
-          {/* View Home Link */}
-          <a href="/" title="Xem trang chủ">
+          {/* Open Admin Dashboard */}
+          <a href="/admin/dashboard" title="Vào trang quản trị" className="ab-primary-action ab-view-site">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+              <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
             </svg>
-            <span>Xem site</span>
+            <span>Quản trị</span>
           </a>
 
           {/* Customize Theme Link */}
-          <a href={`/admin/settings/themes/${activeThemeId}/customize`} title="Tùy biến giao diện (Theme Customizer)">
+          <a href={`/admin/settings/themes/${activeThemeId}/customize`} title="Tùy biến giao diện (Theme Customizer)" className="ab-primary-action ab-customize">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
               <circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
             </svg>
@@ -393,7 +486,7 @@ export default async function WpAdminBar({
           </a>
 
           {/* New Dropdown Menu */}
-          <div className="ab-item menupop">
+          <div className="ab-item menupop ab-primary-action ab-create-menu">
             <span className="ab-label">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
                 <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
@@ -437,6 +530,7 @@ export default async function WpAdminBar({
                 `/admin/posts/edit/${context.postId}`
               } 
               title="Chỉnh sửa nội dung văn bản & cài đặt"
+              className="ab-primary-action ab-edit-current"
             >
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z" />
@@ -451,7 +545,7 @@ export default async function WpAdminBar({
 
           {/* Edit current page/post with Builder directly */}
           {context?.postId && context?.postType && (
-            <div className="builder-btn-container">
+            <div className="builder-btn-container ab-builder-action">
               <a 
                 href={
                   context.postType === 'PAGE' ? `/admin/pages/edit/${context.postId}?builder=true` : 
@@ -474,7 +568,7 @@ export default async function WpAdminBar({
 
           {/* Theme Builder templates menu */}
           {hasTemplates && (
-            <div className="ab-item menupop">
+            <div className="ab-item menupop ab-theme-builder-menu">
               <span className="ab-label">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
                   <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5 3 15 3 16.5C3 18 1.5 19 1.5 20.5C1.5 22 3.5 22 5.5 22C7 22 8 20.5 9.5 20.5C11 20.5 12 22 12 22Z" />
@@ -516,7 +610,7 @@ export default async function WpAdminBar({
         <div className="ab-right">
           {/* Preview banner state */}
           {isPreview && (
-            <div className="ab-item" style={{ color: '#fbbf24', fontWeight: '700', gap: '6px' }}>
+            <div className="ab-item ab-preview-status" style={{ color: '#fbbf24', fontWeight: '700', gap: '6px' }}>
               <span className="preview-pulse-dot" style={{
                 width: '8px',
                 height: '8px',
@@ -556,42 +650,13 @@ export default async function WpAdminBar({
           </div>
 
           {/* User profile dropdown */}
-          <div className="ab-item menupop">
-            <div className="user-greeting" style={{ display: 'flex', alignItems: 'center', gap: '8px', height: '38px', padding: '0 8px' }}>
-              <span>Xin chào, <strong style={{ color: '#fff', fontWeight: '600' }}>{username}</strong></span>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <img 
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=40&h=40&q=80" 
-                  alt="avatar" 
-                  style={{ width: '22px', height: '22px', borderRadius: '50%', border: '1.5px solid #818cf8', display: 'block' }} 
-                />
-                <span style={{
-                  position: 'absolute',
-                  bottom: '-1px',
-                  right: '-1px',
-                  width: '7px',
-                  height: '7px',
-                  backgroundColor: '#10b981',
-                  border: '1.5px solid rgba(15, 23, 42, 0.95)',
-                  borderRadius: '50%'
-                }} />
-              </div>
-            </div>
-            <div className="ab-sub-wrapper" style={{ right: 0, left: 'auto' }}>
-              <a href="/admin/users">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                <span>Quản lý tài khoản</span>
-              </a>
-              <a href="/api/auth/logout" className="logout-link" style={{ color: '#f87171' }}>
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ab-icon" style={{ color: '#f87171' }}>
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                <span>Đăng xuất</span>
-              </a>
-            </div>
-          </div>
+          <a href="/admin/users" className="ab-user-link" title="Vào quản lý tài khoản">
+            <span>Xin chào, <strong style={{ color: '#fff', fontWeight: '600' }}>{username}</strong></span>
+            <span className="ab-user-avatar" title={user?.email || username}>
+              {avatarUrl ? <img src={avatarUrl} alt="" /> : <span>{userInitial}</span>}
+              <i aria-hidden="true" />
+            </span>
+          </a>
         </div>
       </div>
 

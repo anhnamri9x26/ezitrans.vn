@@ -4058,20 +4058,8 @@ function renderNodeInternal(state: CraftState, nodeId: string, context: RenderCo
         pages.push(fields);
       }
 
-      // Action Configuration stringified for JS to parse
       const actionsConfig = {
-        actions: props.actionsAfterSubmit || ['collect', 'email'],
-        collectMetadata: props.collectMetaData !== false,
-        email: {
-          to: props.emailTo || '[admin-email]',
-          subject: props.emailSubject || `Phản hồi mới từ ${formName}`,
-          message: props.emailMessage || '[all-fields]',
-          from: props.emailFrom || '[admin-email]',
-          fromName: props.emailFromName || '[site-title]',
-          replyTo: props.emailReplyTo || ''
-        },
-        redirectUrl: props.redirectUrl || '',
-        webhookUrl: props.webhookUrl || '',
+        actions: ['collect'],
         messages: props.customMessagesEnabled ? {
           success: props.successMessage || 'Gửi form thành công!',
           error: props.errorMessage || 'Có lỗi xảy ra khi gửi form.',
@@ -4331,6 +4319,7 @@ function renderNodeInternal(state: CraftState, nodeId: string, context: RenderCo
         <div${getStyleAttr(containerStyles)}>
           ${stepsStyleBlock}
           <form class="craft-form-element" data-craft-form="true" data-form-id="${formId}" data-form-name="${encodeURIComponent(formName)}" data-config="${encodedConfig}" novalidate>
+            <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden" />
             ${stepsHtml}
             ${formContentHtml}
           </form>

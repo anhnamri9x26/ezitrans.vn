@@ -66,6 +66,9 @@ export default function CraftScriptsInitializer() {
     // the document and intercepting clicks causes stale fixed overlays and
     // breaks scrolling/interactions when transitions overlap.
     document.getElementById('lexi-route-snapshot')?.remove();
+    document.querySelectorAll<HTMLFormElement>('.craft-form-element').forEach((form) => {
+      form.dataset.startedAt = String(Date.now());
+    });
 
     // Form Interactions
     const handleFormClick = (e: MouseEvent) => {
@@ -237,6 +240,9 @@ export default function CraftScriptsInitializer() {
         submitBtn.style.opacity = '0.7';
       }
 
+      const website = String(data.website || '');
+      delete (data as Record<string, FormDataEntryValue>).website;
+
       try {
         const res = await fetch('/api/forms/submit', {
           method: 'POST',
@@ -246,12 +252,13 @@ export default function CraftScriptsInitializer() {
             formName: decodeURIComponent(form.getAttribute('data-form-name') || ''),
             pageUrl: window.location.href,
             fields: data,
-            config: config
+            website,
+            startedAt: Number(form.getAttribute('data-started-at') || 0),
           })
         });
 
         const result = await res.json();
-        if (res.ok) {
+        if (res.ok && result.success) {
           if (statusMsg) {
             statusMsg.textContent = config.messages?.success || 'Gửi form thành công!';
             statusMsg.style.backgroundColor = '#ecfdf5';
@@ -259,10 +266,6 @@ export default function CraftScriptsInitializer() {
             statusMsg.style.display = 'block';
           }
           form.reset();
-          
-          if (result.redirectUrl) {
-            window.location.href = result.redirectUrl;
-          }
         } else {
           throw new Error(result.error || 'Submit failed');
         }

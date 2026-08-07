@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { Database, Search, Download, Trash2, Eye, X } from 'lucide-react';
-import Link from 'next/link';
 import CapabilityGuard from '@/components/CapabilityGuard';
 
 interface Submission {
@@ -19,7 +18,6 @@ interface Submission {
 export default function SubmissionsPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPluginActive, setIsPluginActive] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedSub, setSelectedSub] = useState<Submission | null>(null);
 
@@ -29,14 +27,6 @@ export default function SubmissionsPage() {
 
   const fetchSubmissions = async () => {
     try {
-      // Check plugin status first
-      const pluginsRes = await fetch('/api/plugins');
-      const pluginsData = await pluginsRes.json();
-      if (pluginsData.success && pluginsData.plugins) {
-        const plugin = pluginsData.plugins.find((p: any) => p.id === 'lexi-page-builder');
-        setIsPluginActive(plugin ? plugin.isActive !== false : true);
-      }
-
       const res = await fetch('/api/forms/submissions');
       const data = await res.json();
       if (data.success) {
@@ -90,10 +80,14 @@ export default function SubmissionsPage() {
     });
 
     const headers = Array.from(headersSet);
+    const safeCsv = (value: unknown) => {
+      const text = String(value ?? '');
+      return /^[=+@-]/.test(text) ? `'${text}` : text;
+    };
     const csvContent = [
       headers.join(','),
-      ...parsedData.map(row => 
-        headers.map(h => `"${String(row[h] || '').replace(/"/g, '""')}"`).join(',')
+      ...parsedData.map(row =>
+        headers.map(h => `"${safeCsv(row[h]).replace(/"/g, '""')}"`).join(',')
       )
     ].join('\\n');
 
@@ -106,6 +100,7 @@ export default function SubmissionsPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const filtered = submissions.filter(s => {
@@ -121,27 +116,6 @@ export default function SubmissionsPage() {
     );
   }
 
-  if (!isPluginActive) {
-    return (
-      <div className="max-w-2xl mx-auto font-sans pt-12 pb-24 text-center">
-        <div className="bg-white rounded-2xl border border-slate-200 p-10 shadow-sm flex flex-col items-center">
-          <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 mb-6 shrink-0 shadow-sm border border-indigo-100">
-            <Database size={32} />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight mb-2">Lexi Page Builder Chưa Kích Hoạt</h1>
-          <p className="text-slate-500 text-sm max-w-md mx-auto leading-relaxed mb-8">
-            Trình dựng trang kéo thả và các tính năng biểu mẫu đi kèm hiện đang bị tắt. Vui lòng kích hoạt lại plugin trong Plugin Manager để xem danh sách phản hồi Form.
-          </p>
-          <Link 
-            href="/admin/settings/plugins" 
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-indigo-500/10 hover:shadow-indigo-500/20 active:scale-98"
-          >
-            Kích hoạt Plugin ngay
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <CapabilityGuard capability="view_form_submissions">

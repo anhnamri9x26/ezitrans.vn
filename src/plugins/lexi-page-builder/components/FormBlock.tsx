@@ -218,9 +218,9 @@ export const FormBlock = (rawProps: FormBlockProps) => {
     buttonIconPosition = 'left',
     buttonIconSpacing = '8px',
     buttonId = '',
-    actionsAfterSubmit = ['collect', 'email'],
+    actionsAfterSubmit = ['collect'],
     collectMetadata = ['ip', 'user_agent'],
-    emailTo = 'pewnoy.com@gmail.com',
+    emailTo = '',
     emailSubject = 'New message from "Lexi"',
     emailMessage = '[all-fields]',
     emailFromEmail = '',
@@ -833,7 +833,7 @@ export const FormBlock = (rawProps: FormBlockProps) => {
         {/* Success/Error alert box for builder preview */}
         {enabled && (
           <div className="mt-4 text-[10px] text-slate-400 italic text-center border-t border-slate-100 pt-3">
-            Hành động: {actionsAfterSubmit.map(act => act === 'collect' ? 'Lưu DB' : act === 'email' ? 'Gửi Email' : act === 'webhook' ? 'Webhook' : 'Chuyển hướng').join(', ')}
+            Hành động: Lưu vào Phản hồi Form
           </div>
         )}
       </div>
@@ -865,9 +865,9 @@ FormBlock.craft = {
     buttonIconPosition: 'left',
     buttonIconSpacing: '8px',
     buttonId: '',
-    actionsAfterSubmit: ['collect', 'email'],
+    actionsAfterSubmit: ['collect'],
     collectMetadata: ['ip', 'user_agent'],
-    emailTo: 'pewnoy.com@gmail.com',
+    emailTo: '',
     emailSubject: 'New Submission from {{formName}}',
     emailMessage: '',
     emailFromEmail: '',

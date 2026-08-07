@@ -2741,9 +2741,13 @@
 .ezi-mobile-menu-row button { min-width:44px; min-height:44px; cursor:pointer; }
 .ezi-mobile-submenu { overflow:hidden; }
 .ezi-theme img,.ezi-theme video,.ezi-theme iframe { max-width:100%; }
+.ezi-post-body img,.ql-editor-view img { display:block; width:auto!important; max-width:100%!important; height:auto!important; margin-inline:auto; object-fit:contain; }
+.ezi-post-body figure,.ql-editor-view figure,.ezi-post-body p,.ql-editor-view p { max-width:100%; }
+.ezi-post-body figure,.ql-editor-view figure { margin-inline:0; }
+.ezi-post-body a:has(>img),.ql-editor-view a:has(>img) { display:block; max-width:100%; }
 .ezi-post-body table,.ql-editor-view table { display:block; max-width:100%; overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch; }
 .ezi-post-body pre,.ql-editor-view pre { max-width:100%; overflow-x:auto; }
-.ezi-post-body { overflow-wrap:anywhere; }
+.ezi-post-body,.ql-editor-view { overflow-wrap:anywhere; min-width:0; }
 .ezi-breadcrumbs-nav { flex-wrap:nowrap!important; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }.ezi-breadcrumbs-nav::-webkit-scrollbar { display:none; }.ezi-breadcrumbs-nav>* { flex:none; }.ezi-breadcrumbs-nav>span:last-of-type { max-width:min(70vw,420px)!important; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
 @media (max-width:1100px) {
@@ -2823,3 +2827,314 @@
 .ezi-nav-static{position:relative!important;top:auto!important}
 .ezi-brand-logo{display:block;max-height:44px;width:auto;max-width:190px;object-fit:contain}
 .ezi-footer-logo{display:block;max-height:58px;width:auto;max-width:220px;object-fit:contain}
+
+/* Compact premium mobile navigation */
+@media (max-width:1100px) {
+  .ezi-mobile-overlay {
+    background:rgba(7,18,38,.64);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+  }
+  .ezi-mobile-drawer {
+    width:min(360px,88vw);
+    background:#f6f8fc;
+    border-left:1px solid rgba(255,255,255,.65);
+    box-shadow:-24px 0 70px rgba(2,12,27,.28);
+  }
+  .ezi-mobile-head {
+    position:sticky;
+    top:0;
+    min-height:72px;
+    padding:12px 14px;
+    border-bottom:1px solid #e7ecf3;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(14px);
+  }
+  .ezi-mobile-head>div {
+    min-width:0;
+    display:grid;
+    gap:3px;
+  }
+  .ezi-mobile-head>div>span {
+    color:var(--blue);
+    font-size:10px;
+    font-weight:850;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+  }
+  .ezi-mobile-head>div>strong {
+    overflow:hidden;
+    color:var(--navy);
+    font-size:16px;
+    line-height:1.2;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .ezi-mobile-head .ezi-icon-button {
+    width:40px;
+    min-width:40px;
+    height:40px;
+    min-height:40px;
+    border:0;
+    border-radius:12px;
+    background:#f1f4f8;
+  }
+  .ezi-mobile-scroll {
+    padding:12px 0 8px;
+    scrollbar-width:thin;
+    scrollbar-color:#cad3df transparent;
+  }
+  .ezi-mobile-search {
+    height:48px;
+    margin:0 14px 10px;
+    padding:5px 5px 5px 13px;
+    gap:9px;
+    border-color:#dce3ed;
+    border-radius:14px;
+    box-shadow:0 5px 18px rgba(15,23,42,.045);
+  }
+  .ezi-mobile-search input {
+    min-height:36px!important;
+    padding:0;
+    font-size:15px!important;
+  }
+  .ezi-mobile-search button {
+    min-width:60px;
+    height:38px;
+    padding:0 13px;
+    border-radius:10px;
+    font-size:13px;
+  }
+  .ezi-mobile-bank {
+    margin:0 14px 12px;
+    border-color:#e0e6ef;
+    border-radius:13px;
+    background:#fff;
+    box-shadow:0 3px 12px rgba(15,23,42,.035);
+  }
+  .ezi-mobile-bank>button {
+    min-height:44px;
+    padding:0 12px;
+    font-size:12px;
+  }
+  .ezi-mobile-bank-panel .ezi-bank-card {
+    margin-top:6px;
+    padding:10px;
+    border-radius:10px;
+    font-size:11px;
+  }
+  .ezi-mobile-menu {
+    display:grid;
+    gap:5px;
+    padding:0 14px 12px;
+    overflow:visible;
+  }
+  .ezi-mobile-menu-group {
+    overflow:hidden;
+    border:1px solid transparent;
+    border-bottom-color:#e7ecf3;
+    border-radius:11px;
+    background:transparent;
+    transition:border-color .2s ease,background .2s ease,box-shadow .2s ease;
+  }
+  .ezi-mobile-menu-group.is-expanded {
+    border-color:#dbe7f8;
+    background:#fff;
+    box-shadow:0 7px 20px rgba(12,100,208,.06);
+  }
+  .ezi-mobile-menu-row {
+    min-height:47px;
+    padding-left:12px;
+  }
+  .ezi-mobile-menu-row>a {
+    min-height:47px;
+    padding:0;
+    font-size:14px;
+    font-weight:760;
+    letter-spacing:-.01em;
+  }
+  .ezi-mobile-menu-row button {
+    width:36px;
+    min-width:36px;
+    height:36px;
+    min-height:36px;
+    margin-right:5px;
+    border-radius:10px;
+    color:#536277;
+    background:#f1f4f8;
+    transition:color .2s ease,background .2s ease;
+  }
+  .ezi-mobile-menu-group.is-expanded .ezi-mobile-menu-row button {
+    color:var(--blue);
+    background:var(--blue-light);
+  }
+  .ezi-mobile-submenu {
+    margin:0 10px 9px;
+    padding:5px 0 5px 10px;
+    border-left:2px solid var(--blue);
+    border-radius:0;
+    background:#f8faff;
+  }
+  .ezi-mobile-submenu a {
+    min-height:38px;
+    padding:7px 9px;
+    border-radius:8px;
+    color:#43516a;
+    font-size:12px;
+  }
+  .ezi-mobile-submenu a:active {
+    color:var(--blue);
+    background:#edf5ff;
+  }
+  .ezi-mobile-submenu .ezi-mobile-grandchild {
+    min-height:34px;
+    padding-left:24px;
+    color:#69778b;
+    font-size:11px;
+  }
+  .ezi-mobile-call {
+    min-height:54px;
+    margin:8px 14px max(12px,env(safe-area-inset-bottom));
+    padding:8px 15px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#ff9d00,#f47a00);
+    box-shadow:0 10px 24px rgba(244,122,0,.22);
+  }
+  .ezi-mobile-call>span {
+    display:grid;
+    gap:1px;
+    line-height:1.1;
+  }
+  .ezi-mobile-call small {
+    color:rgba(255,255,255,.78);
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+  }
+  .ezi-mobile-call strong {
+    font-size:14px;
+  }
+  body.ezi-mobile-menu-open .lcw-root,
+  body.ezi-mobile-menu-open .lcw-mobile-bar {
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+  html.has-admin-bar .ezi-mobile-drawer,
+  html.has-admin-bar .ezi-mobile-overlay {
+    top:38px;
+  }
+}
+@media (max-width:782px) {
+  html.has-admin-bar .ezi-mobile-drawer,
+  html.has-admin-bar .ezi-mobile-overlay {
+    top:44px;
+  }
+}
+@media (max-width:480px) {
+  .ezi-mobile-drawer { width:min(350px,92vw); }
+  .ezi-mobile-search,.ezi-mobile-bank,.ezi-mobile-call { margin-left:11px; margin-right:11px; }
+  .ezi-mobile-menu { padding-left:11px; padding-right:11px; }
+}
+
+/* Homepage mobile experience */
+@media (max-width:768px) {
+  .ezi-hero { padding-block:28px 34px; background-position:58% center; }
+  .ezi-hero:before { background:linear-gradient(180deg,rgba(7,27,63,.42),rgba(7,27,63,.62)); }
+  .ezi-heroin { gap:14px!important; padding-block:0!important; }
+  .ezi-hero-left { padding:24px 20px; border-radius:14px; box-shadow:0 12px 32px rgba(2,15,38,.18); }
+  .ezi-hero-left h1 { margin-bottom:16px; font-size:clamp(25px,7.5vw,32px); line-height:1.22; letter-spacing:-.025em; }
+  .ezi-hero-left ul { margin-bottom:18px; }
+  .ezi-hero-left li { margin-bottom:10px; padding-left:17px; font-size:13px; line-height:1.55; }
+  .ezi-hero-left-actions { grid-template-columns:1fr 1fr!important; }
+  .ezi-hero-left-actions .ezi-btn { min-width:0; padding-inline:10px; font-size:12px; }
+  .ezi-hero-right { padding:22px 16px!important; border-radius:14px; box-shadow:0 14px 35px rgba(2,15,38,.16); }
+  .ezi-hero-right-header { margin-bottom:16px; }
+  .ezi-hero-right-header h2 { font-size:16px; line-height:1.35; }
+  .ezi-form-group { gap:16px; }
+  .ezi-hero-input-wrapper { display:grid; grid-template-columns:1fr; gap:8px; overflow:visible; border:0; box-shadow:none; }
+  .ezi-hero-input-icon { left:14px; top:23px; }
+  .ezi-hero-input { width:100%; min-width:0; min-height:46px; padding:12px 14px 12px 40px; border:1.5px solid var(--blue); border-radius:9px; font-size:16px; }
+  .ezi-hero-btn { min-height:46px; border-radius:9px; }
+  .ezi-quick-links { grid-template-columns:1fr 1fr!important; gap:9px!important; }
+  .ezi-quick-box { min-height:106px; padding:14px 8px!important; border-radius:10px; }
+  .ezi-icon-circle { width:36px; height:36px; margin-bottom:8px; }
+  .ezi-quick-title { font-size:10px; line-height:1.35; }
+  .ezi-quick-sub { font-size:9px; line-height:1.35; }
+  .ezi-divider { margin-block:16px 12px; }
+  .ezi-hero-footer { align-items:flex-start; font-size:11px; line-height:1.5; text-align:left; }
+
+  .ezi-trustin { grid-template-columns:1fr 1fr; padding-block:4px; }
+  .ezi-stat { min-width:0; padding:15px 10px; gap:9px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .ezi-stat:nth-child(2n) { border-right:0; }
+  .ezi-stat:nth-last-child(-n+2) { border-bottom:0; }
+  .ezi-stat strong { font-size:12px; line-height:1.35; }
+  .ezi-stat span { font-size:10px; line-height:1.35; }
+  .ezi-stat-icon { width:19px; height:19px; }
+
+  .ezi-section,.ezi-split-section,.ezi-testimonials-section { padding-block:42px!important; }
+  .ezi-head,.ezi-head-center { margin-bottom:24px; }
+  .ezi-head h2,.ezi-head-center h2,.ezi-split-left h2,.ezi-split-right h2,.ezi-testimonials-left h2 { font-size:24px; line-height:1.3; letter-spacing:-.02em; }
+  .ezi-head-center { text-align:left; }
+  .ezi-head-center p,.ezi-split-left p,.ezi-split-right p,.ezi-testimonials-left p { font-size:14px; line-height:1.7; }
+  .ezi-head .ezi-service-link { min-height:44px; display:inline-flex; align-items:center; }
+
+  .ezi-split-grid,.ezi-split-grid.reverse { gap:24px; }
+  .ezi-split-grid.reverse .ezi-split-right { order:1; }
+  .ezi-split-grid.reverse .ezi-split-left { order:2; }
+  .ezi-split-actions { display:grid; grid-template-columns:1fr; gap:9px; margin-top:20px; }
+  .ezi-split-actions .ezi-btn { width:100%; min-height:46px; }
+  .ezi-mall-card,.ezi-warehouse-card { padding:20px 16px; border-radius:12px; }
+  .ezi-mall-grid { gap:8px; }
+  .ezi-mall-tag { min-width:0; padding:10px 7px; font-size:11px; overflow-wrap:anywhere; }
+  .ezi-warehouse-item { gap:8px; padding:12px; }
+  .ezi-warehouse-item strong { min-width:0; overflow-wrap:anywhere; }
+  .ezi-wh-status { flex:none; }
+
+  .ezi-why-container,.ezi-export-features,.ezi-export-process-grid { gap:12px; }
+  .ezi-why-card-item,.ezi-export-feat-card,.ezi-export-intro-card,.ezi-export-step-card { padding:20px 17px; border-radius:12px; }
+  .ezi-why-card-item { display:grid; grid-template-columns:44px 1fr; column-gap:13px; text-align:left; }
+  .ezi-why-card-icon { grid-row:1/3; width:44px; height:44px; margin:0; }
+  .ezi-why-card-item h3 { align-self:end; margin:0 0 4px; }
+  .ezi-why-card-item p { grid-column:2; }
+  .ezi-export-features { margin-bottom:28px; }
+  .ezi-export-feat-icon { width:40px; height:40px; margin-bottom:12px; }
+  .ezi-export-step-num-bg { right:10px; font-size:58px; }
+
+  .ezi-process-timeline-container { margin-top:26px; }
+  .ezi-timeline-wrapper { gap:0; }
+  .ezi-timeline-step { display:grid; grid-template-columns:48px 1fr; gap:2px 14px; padding:0 0 22px; text-align:left; }
+  .ezi-timeline-step:not(:last-child):before { content:""; position:absolute; left:23px; top:44px; bottom:2px; width:2px; background:var(--blue-border); }
+  .ezi-timeline-icon-box { grid-row:1/3; width:46px; height:46px; margin:0; }
+  .ezi-timeline-step h3 { align-self:end; margin:0 0 3px; padding:0; font-size:14px; }
+  .ezi-timeline-step p { grid-column:2; padding:0; font-size:12px; }
+  .ezi-countries { justify-content:flex-start; gap:8px; }
+  .ezi-chip { min-height:40px; padding:8px 13px; }
+
+  .ezi-testimonials-grid { gap:28px; }
+  .ezi-trust-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .ezi-stat-box { min-width:0; padding:14px; }
+  .ezi-stat-box h3 { font-size:21px; }
+  .ezi-testimonials-right { gap:12px; }
+  .ezi-feedback-card { padding:20px 17px; border-radius:12px; }
+  .ezi-feedback-card:hover { transform:none; }
+  .ezi-feedback-user { align-items:flex-start; flex-wrap:wrap; }
+  .ezi-user-meta { min-width:120px; }
+  .ezi-user-badge { margin-left:52px; }
+
+  .ezi-news-grid { gap:14px!important; }
+  .ezi-post-card { border-radius:12px; }
+  .ezi-post-img-container { height:auto; aspect-ratio:16/9; }
+  .ezi-post-content { padding:18px; }
+  .ezi-post-content h3 { height:auto; min-height:0; font-size:17px; }
+}
+
+@media (max-width:380px) {
+  .ezi-hero-left-actions { grid-template-columns:1fr!important; }
+  .ezi-quick-links { grid-template-columns:1fr 1fr!important; }
+  .ezi-trustin { grid-template-columns:1fr; }
+  .ezi-stat,.ezi-stat:nth-child(2n),.ezi-stat:nth-last-child(-n+2) { border-right:0; border-bottom:1px solid var(--line); }
+  .ezi-stat:last-child { border-bottom:0; }
+  .ezi-trust-stats { grid-template-columns:1fr; }
+}
