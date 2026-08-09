@@ -24,7 +24,10 @@
                     "validate:ezitrans-design":  "tsx scripts/audit-ezitrans-design-tokens.ts",
                     "audit:seo":  "tsx scripts/audit-seo-parity.ts",
                     "audit:branding":  "tsx scripts/audit-public-branding.ts",
-                    "audit:default-theme":  "tsx scripts/audit-default-theme.ts"
+                    "audit:default-theme":  "tsx scripts/audit-default-theme.ts",
+                    "deploy":  "node scripts/deploy-production.mjs",
+                    "deploy:dry-run":  "node scripts/deploy-production.mjs --dry-run",
+                    "deploy:status":  "node scripts/deploy-production.mjs --status"
                 },
     "dependencies":  {
                          "@craftjs/core":  "^0.2.12",

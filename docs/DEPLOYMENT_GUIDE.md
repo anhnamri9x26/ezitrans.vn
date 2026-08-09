@@ -1,48 +1,56 @@
-﻿# Hướng Dẫn Triển Khai (Deployment Guide) & Di Chuyển Domain
+# Hướng Dẫn Triển Khai (Deployment Guide) & Di Chuyển Domain
 
 Tài liệu này cung cấp các hướng dẫn tốt nhất để triển khai Lexi CMS hoặc chuyển dữ liệu sang một tên miền (domain) mới.
 
-## 1. Cài Mới (Fresh Install) Trên Server/Domain Mới
+## 1. Production Docker/GHCR
 
-Khuyến nghị cấu hình server:
-- Ubuntu VPS (hoặc Vercel)
-- Node.js 20+
-- PostgreSQL
-- Nginx & PM2
-- SSL (Let's Encrypt)
+Production Ezitrans chạy tại `/home/ezitrans.vn/next-cms` với:
 
-### Các Bước Thực Hiện:
+- `app`: image bất biến `ghcr.io/anhnamri9x26/ezitrans-cms:<version>`.
+- `db`: PostgreSQL 16 nội bộ, không public port.
+- Nginx proxy tới `127.0.0.1:3011`.
+- `content/`: media/plugin/theme persistent ngoài image.
 
-1. **Clone Source Code**
-   ```bash
-   git clone <repo_url> <project_name>
-   cd <project_name>
-   npm install
-   ```
+Không sửa code trực tiếp trong container và không dùng `prisma db push` trên production.
 
-2. **Cấu Hình `.env`**
-   Tạo file `.env` dựa trên `.env.example`:
-   ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/lexicms_db"
-   NEXT_PUBLIC_SITE_URL="https://yournewdomain.com"
-   ```
+### Cập nhật nội dung
 
-3. **Cài Đặt Database**
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   # Tuỳ chọn seed dữ liệu mặc định:
-   npm run db:seed-header
-   ```
+Bài viết, menu, media, SEO và cấu hình được sửa trong Admin, không cần deploy.
 
-4. **Build & Start Production**
-   ```bash
-   npm run build
-   pm2 start npm --name "lexicms-app" -- start
-   ```
+### Cập nhật code
 
-5. **Cấu Hình Nginx**
-   Sử dụng Nginx như một Reverse Proxy cho port 3000 và cấp chứng chỉ SSL bằng Certbot.
+Sau khi commit và push code:
+
+```powershell
+npm run deploy
+```
+
+Lệnh chạy release validation rồi dispatch workflow **Deploy Ezitrans Production**.
+Workflow build/push image Linux AMD64; VPS backup database, chạy migration, recreate riêng
+app, health-check và rollback image nếu lỗi.
+
+Xem trạng thái:
+
+```powershell
+npm run deploy:status
+```
+
+Kiểm tra trước mà không phát hành:
+
+```powershell
+npm run deploy:dry-run
+```
+
+GitHub Environment/secrets được mô tả trong `docs/production-secrets.md`.
+
+### Rollback code
+
+```bash
+cd /home/ezitrans.vn/next-cms
+ops/rollback-production.sh ghcr.io/anhnamri9x26/ezitrans-cms:<old-version>
+```
+
+Rollback mặc định chỉ đổi image, không tự restore database để tránh mất dữ liệu mới.
 
 ## 2. Chuyển Đổi Domain (Migrate Website)
 
