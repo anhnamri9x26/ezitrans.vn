@@ -1,5 +1,5 @@
 name: Deploy Ezitrans Production
-on:
+"on":
   workflow_dispatch:
     inputs:
       version: { description: Immutable release version, required: true, type: string }
