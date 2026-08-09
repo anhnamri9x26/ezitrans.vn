@@ -2,12 +2,21 @@ import Link from 'next/link';
 import { Headphones, Home, Package } from 'lucide-react';
 import Header from '@/themes/ezitrans/Header';
 import Footer from '@/themes/ezitrans/Footer';
+import { loadHydratedSettings } from '@/lib/navigation/settings';
 
-/** Segment-local synchronous 404 boundary for catch-all routes. */
-export default function CatchAllNotFound() {
+/** Segment-local 404 boundary for catch-all routes. */
+export default async function CatchAllNotFound() {
+  let settings: Record<string, string> = {};
+
+  try {
+    settings = await loadHydratedSettings();
+  } catch (error) {
+    console.error('Failed to load settings in catch-all NotFound:', error);
+  }
+
   return (
     <div className="ezi-theme min-h-screen flex flex-col justify-between" style={{ background: 'var(--paper)' }}>
-      <Header />
+      <Header settings={settings} />
       <main className="ezi-404-container">
         <div className="ezi-404-icon-wrapper">
           <Package className="ezi-404-icon" size={40} />
@@ -21,7 +30,7 @@ export default function CatchAllNotFound() {
           <Link href="/lien-he" className="ezi-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--surface)', border: '1px solid var(--line)', color: 'var(--navy)' }}><Headphones size={15} /> Liên Hệ Hỗ Trợ</Link>
         </div>
       </main>
-      <Footer />
+      <Footer settings={settings} />
     </div>
   );
 }
