@@ -366,19 +366,19 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
   const hasPermission = userProfile ? checkPathPermission() : false;
 
   return (
-    <div className="flex h-screen overflow-hidden text-slate-800 dark:text-slate-200 font-sans text-[13px] bg-slate-50 dark:bg-slate-950 transition-colors" suppressHydrationWarning>
+    <div className="admin-shell flex h-screen overflow-hidden font-sans text-[13px] transition-colors" data-admin-theme={theme} suppressHydrationWarning>
       
       {/* Mobile Backdrop */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 md:hidden"
+          className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-30 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* Sidebar - White glassmorphism style, Compact */}
-      <aside className={`w-56 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-r border-slate-200 dark:border-slate-800 flex flex-col fixed inset-y-0 left-0 md:relative z-40 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)] overflow-visible transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-        <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/50 h-14 shrink-0 transition-colors">
+      {/* Sidebar */}
+      <aside className={`admin-sidebar w-56 backdrop-blur-md flex flex-col fixed inset-y-0 left-0 md:relative z-40 overflow-visible transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <div className="admin-sidebar-brand px-5 py-4 flex items-center justify-between h-14 shrink-0 transition-colors">
           {siteLogo ? (
             <img src={siteLogo} alt="Logo" className="h-7 max-w-[140px] object-contain" />
           ) : (
@@ -515,8 +515,8 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-0 overflow-hidden relative dark:bg-slate-950">
-        <header className="h-12 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center px-4 md:px-6 justify-between shrink-0 z-20 transition-colors">
+      <main className="admin-main flex-1 flex flex-col min-h-0 overflow-hidden relative">
+        <header className="admin-topbar h-12 backdrop-blur-md flex items-center px-4 md:px-6 justify-between shrink-0 z-20 transition-colors">
           <div className="flex items-center gap-2">
             <button 
               className="md:hidden text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 mr-2"
@@ -590,7 +590,7 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
           </div>
 
         </header>
-        <div className="flex-1 min-h-0 p-3 sm:p-6 overflow-auto relative">
+        <div className="admin-content flex-1 min-h-0 p-3 sm:p-6 overflow-auto relative">
           {!userProfile ? (
             <div className="w-full min-h-[300px] flex flex-col justify-center items-center gap-3">
               <div className="w-8 h-8 border-2 border-indigo-600/25 border-t-indigo-600 rounded-full animate-spin" />

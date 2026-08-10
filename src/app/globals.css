@@ -1116,3 +1116,279 @@ input[type="range"].elementor-slider::-moz-range-thumb:hover {
 .page-builder-content sub { vertical-align: sub; font-size: smaller; }
 .page-builder-content sup { vertical-align: super; font-size: smaller; }
 
+
+/* ==========================================================================
+   Admin semantic design system
+   Scoped to .admin-shell so public themes and builder output are unaffected.
+   ========================================================================== */
+.admin-shell {
+  --admin-canvas: #f5f7fb;
+  --admin-shell: rgba(255, 255, 255, 0.88);
+  --admin-surface: #ffffff;
+  --admin-surface-raised: #f8fafc;
+  --admin-surface-muted: #f1f5f9;
+  --admin-border: #dbe3ef;
+  --admin-border-strong: #cbd5e1;
+  --admin-text: #172033;
+  --admin-text-muted: #64748b;
+  --admin-text-subtle: #94a3b8;
+  --admin-brand: #2b6fee;
+  --admin-brand-soft: #eff4fe;
+  --admin-shadow: 0 12px 32px -24px rgba(15, 23, 42, 0.28);
+  color: var(--admin-text);
+  background: var(--admin-canvas);
+  color-scheme: light;
+}
+
+.dark .admin-shell {
+  --admin-canvas: #070b16;
+  --admin-shell: rgba(11, 17, 32, 0.92);
+  --admin-surface: #101827;
+  --admin-surface-raised: #162033;
+  --admin-surface-muted: #1b263a;
+  --admin-border: #263349;
+  --admin-border-strong: #34445e;
+  --admin-text: #e8eef8;
+  --admin-text-muted: #94a3b8;
+  --admin-text-subtle: #6f809a;
+  --admin-brand: #4f86f7;
+  --admin-brand-soft: rgba(79, 134, 247, 0.14);
+  --admin-shadow: 0 20px 48px -30px rgba(0, 0, 0, 0.8);
+  color: var(--admin-text);
+  background: var(--admin-canvas);
+  color-scheme: dark;
+}
+
+.admin-sidebar {
+  background: var(--admin-shell);
+  border-right: 1px solid var(--admin-border);
+  box-shadow: 8px 0 32px -28px rgba(15, 23, 42, 0.5);
+}
+.admin-sidebar-brand,
+.admin-topbar { border-bottom: 1px solid var(--admin-border); }
+.admin-topbar { background: var(--admin-shell); }
+.admin-main,
+.admin-content { background: var(--admin-canvas); }
+
+.dark .admin-sidebar-nav::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); }
+.dark .admin-sidebar-nav::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.38); }
+
+/* Legacy utility compatibility. New Admin components should use semantic classes. */
+.dark .admin-shell .bg-white,
+.dark .admin-shell [class~="bg-white"] { background-color: var(--admin-surface) !important; }
+.dark .admin-shell [class*="bg-white/"] { background-color: rgba(16, 24, 39, 0.88) !important; }
+.dark .admin-shell .bg-slate-50 { background-color: var(--admin-surface-raised) !important; }
+.dark .admin-shell .bg-slate-100 { background-color: var(--admin-surface-muted) !important; }
+.dark .admin-shell .hover\:bg-slate-50:hover,
+.dark .admin-shell .hover\:bg-slate-100:hover { background-color: var(--admin-surface-muted) !important; }
+
+.dark .admin-shell .border-slate-100,
+.dark .admin-shell .border-slate-200,
+.dark .admin-shell .border-gray-100,
+.dark .admin-shell .border-gray-200 { border-color: var(--admin-border) !important; }
+.dark .admin-shell .hover\:border-slate-300:hover { border-color: var(--admin-border-strong) !important; }
+
+.dark .admin-shell .text-slate-900,
+.dark .admin-shell .text-slate-800,
+.dark .admin-shell .text-slate-700,
+.dark .admin-shell .text-gray-900,
+.dark .admin-shell .text-gray-800,
+.dark .admin-shell .text-gray-700 { color: var(--admin-text) !important; }
+.dark .admin-shell .text-slate-600,
+.dark .admin-shell .text-slate-500,
+.dark .admin-shell .text-gray-600,
+.dark .admin-shell .text-gray-500 { color: var(--admin-text-muted) !important; }
+.dark .admin-shell .text-slate-400,
+.dark .admin-shell .text-slate-300,
+.dark .admin-shell .text-gray-400 { color: var(--admin-text-subtle) !important; }
+
+/* Controls */
+.dark .admin-shell :where(input:not([type="checkbox"]):not([type="radio"]), textarea, select) {
+  color: var(--admin-text);
+  background-color: var(--admin-surface-raised);
+  border-color: var(--admin-border);
+  caret-color: var(--admin-brand);
+}
+.dark .admin-shell :where(input, textarea)::placeholder { color: var(--admin-text-subtle); opacity: 1; }
+.dark .admin-shell :where(input, textarea, select):focus {
+  border-color: var(--admin-brand) !important;
+  box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.14) !important;
+}
+.dark .admin-shell option { color: var(--admin-text); background: var(--admin-surface-raised); }
+.dark .admin-shell input[type="checkbox"],
+.dark .admin-shell input[type="radio"] { accent-color: var(--admin-brand); }
+.dark .admin-shell :disabled { opacity: 0.56; cursor: not-allowed; }
+
+/* Tables and data grids */
+.dark .admin-shell table { color: var(--admin-text); }
+.dark .admin-shell thead,
+.dark .admin-shell thead.bg-slate-50,
+.dark .admin-shell thead.bg-slate-100 { background: var(--admin-surface-raised) !important; }
+.dark .admin-shell tbody { background: var(--admin-surface); }
+.dark .admin-shell tr { border-color: var(--admin-border) !important; }
+.dark .admin-shell tbody tr:hover { background: rgba(79, 134, 247, 0.055) !important; }
+.dark .admin-shell th { color: var(--admin-text-muted) !important; }
+.dark .admin-shell td { color: inherit; }
+
+/* Cards, menus and overlays */
+.dark .admin-shell [class*="shadow-sm"],
+.dark .admin-shell [class*="shadow-md"],
+.dark .admin-shell [class*="shadow-lg"],
+.dark .admin-shell [class*="shadow-xl"] { box-shadow: var(--admin-shadow) !important; }
+.dark .admin-shell [role="dialog"],
+.dark .admin-shell [role="menu"],
+.dark .admin-shell [data-radix-popper-content-wrapper] > * {
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+}
+.dark .admin-shell hr { border-color: var(--admin-border); }
+.dark .admin-shell code,
+.dark .admin-shell pre { color: #c9d8ef; background: #0b1220; border-color: var(--admin-border); }
+
+/* Quill editor */
+.dark .admin-shell .ql-toolbar.ql-snow {
+  background: var(--admin-surface-raised) !important;
+  border-color: var(--admin-border) !important;
+}
+.dark .admin-shell .ql-toolbar.ql-snow .ql-formats,
+.dark .admin-shell .ql-toolbar.ql-snow .ql-picker-options,
+.dark .admin-shell .ql-container.ql-snow,
+.dark .admin-shell .ql-editor,
+.dark .admin-shell .ql-tooltip {
+  color: var(--admin-text) !important;
+  background: var(--admin-surface) !important;
+  border-color: var(--admin-border) !important;
+}
+.dark .admin-shell .ql-toolbar .ql-stroke,
+.dark .admin-shell .ql-container .ql-stroke { stroke: var(--admin-text-muted) !important; }
+.dark .admin-shell .ql-toolbar .ql-fill,
+.dark .admin-shell .ql-container .ql-fill { fill: var(--admin-text-muted) !important; }
+.dark .admin-shell .ql-toolbar.ql-snow button:hover,
+.dark .admin-shell .ql-toolbar.ql-snow button.ql-active,
+.dark .admin-shell .ql-toolbar.ql-snow .ql-picker-label:hover { background: var(--admin-brand-soft) !important; color: var(--admin-brand) !important; }
+.dark .admin-shell .ql-editor.ql-blank::before { color: var(--admin-text-subtle) !important; }
+
+/* Scrollable content */
+.admin-content { scrollbar-color: var(--admin-border-strong) transparent; }
+.admin-content::-webkit-scrollbar { width: 10px; height: 10px; }
+.admin-content::-webkit-scrollbar-track { background: transparent; }
+.admin-content::-webkit-scrollbar-thumb { background: var(--admin-border); border: 3px solid var(--admin-canvas); border-radius: 999px; }
+.admin-content::-webkit-scrollbar-thumb:hover { background: var(--admin-border-strong); }
+/* Media Library */
+.dark .admin-shell .admin-media-surface,
+.dark .admin-shell .admin-media-details { background: var(--admin-surface) !important; border-color: var(--admin-border) !important; }
+.dark .admin-shell .admin-media-card { background: #0c1321 !important; border-color: var(--admin-border) !important; }
+.dark .admin-shell .admin-media-card:hover { border-color: var(--admin-border-strong) !important; }
+.dark .admin-shell .admin-media-caption {
+  color: var(--admin-text-muted) !important;
+  background: rgba(11, 17, 32, 0.9) !important;
+  border-color: var(--admin-border) !important;
+  backdrop-filter: blur(8px);
+}
+.dark .admin-shell .admin-media-card:hover .admin-media-caption { color: var(--admin-brand) !important; }
+/* Comments */
+.dark .admin-shell .admin-comments-options,
+.dark .admin-shell .admin-comments-surface { background: var(--admin-surface) !important; border-color: var(--admin-border) !important; }
+.dark .admin-shell .admin-comments-toolbar { background: var(--admin-surface-raised) !important; border-color: var(--admin-border) !important; }
+.dark .admin-shell .admin-comments-table tbody { background: var(--admin-surface) !important; }
+.dark .admin-shell .admin-comments-table tbody tr.bg-amber-50\/25 { background: rgba(251, 191, 36, 0.06) !important; }
+.dark .admin-shell .admin-comments-table tbody tr.bg-amber-50\/25:hover { background: rgba(251, 191, 36, 0.1) !important; }
+.dark .admin-shell .bg-amber-50 { background-color: rgba(251, 191, 36, 0.11) !important; }
+.dark .admin-shell .bg-emerald-50 { background-color: rgba(52, 211, 153, 0.11) !important; }
+.dark .admin-shell .bg-rose-50,
+.dark .admin-shell .bg-red-50 { background-color: rgba(251, 113, 133, 0.11) !important; }
+.dark .admin-shell .text-amber-600 { color: #fbbf24 !important; }
+.dark .admin-shell .text-emerald-600 { color: #34d399 !important; }
+.dark .admin-shell .text-rose-600,
+.dark .admin-shell .text-red-600 { color: #fb7185 !important; }
+/* Semantic accent normalization for legacy Admin utilities */
+.dark .admin-shell .bg-indigo-50,
+.dark .admin-shell .bg-blue-50,
+.dark .admin-shell .bg-brand-50 { background-color: rgba(79, 134, 247, 0.12) !important; }
+.dark .admin-shell .bg-violet-50,
+.dark .admin-shell .bg-purple-50 { background-color: rgba(139, 92, 246, 0.12) !important; }
+.dark .admin-shell .bg-yellow-50 { background-color: rgba(251, 191, 36, 0.1) !important; }
+.dark .admin-shell .bg-red-100,
+.dark .admin-shell .bg-rose-100 { background-color: rgba(251, 113, 133, 0.16) !important; }
+.dark .admin-shell .bg-emerald-100 { background-color: rgba(52, 211, 153, 0.16) !important; }
+.dark .admin-shell .text-indigo-600,
+.dark .admin-shell .text-indigo-700,
+.dark .admin-shell .text-blue-600,
+.dark .admin-shell .text-blue-700,
+.dark .admin-shell .text-brand-600 { color: var(--admin-brand) !important; }
+.dark .admin-shell .text-violet-600,
+.dark .admin-shell .text-violet-700,
+.dark .admin-shell .text-purple-600,
+.dark .admin-shell .text-purple-700 { color: #a78bfa !important; }
+.dark .admin-shell .text-yellow-600,
+.dark .admin-shell .text-yellow-700 { color: #fbbf24 !important; }
+.dark .admin-shell .text-red-700,
+.dark .admin-shell .text-red-800,
+.dark .admin-shell .text-red-900,
+.dark .admin-shell .text-rose-700,
+.dark .admin-shell .text-rose-800 { color: #fda4af !important; }
+.dark .admin-shell .text-emerald-700,
+.dark .admin-shell .text-emerald-800 { color: #6ee7b7 !important; }
+.dark .admin-shell .border-indigo-100,
+.dark .admin-shell .border-indigo-200,
+.dark .admin-shell .border-blue-100,
+.dark .admin-shell .border-blue-200 { border-color: rgba(79, 134, 247, 0.28) !important; }
+.dark .admin-shell .border-violet-100,
+.dark .admin-shell .border-violet-200,
+.dark .admin-shell .border-purple-100,
+.dark .admin-shell .border-purple-200 { border-color: rgba(167, 139, 250, 0.28) !important; }
+.dark .admin-shell .border-emerald-100,
+.dark .admin-shell .border-emerald-200 { border-color: rgba(52, 211, 153, 0.28) !important; }
+.dark .admin-shell .border-amber-100,
+.dark .admin-shell .border-amber-200,
+.dark .admin-shell .border-yellow-100,
+.dark .admin-shell .border-yellow-200 { border-color: rgba(251, 191, 36, 0.28) !important; }
+.dark .admin-shell .border-red-100,
+.dark .admin-shell .border-red-200,
+.dark .admin-shell .border-rose-100,
+.dark .admin-shell .border-rose-200 { border-color: rgba(251, 113, 133, 0.28) !important; }
+.dark .admin-shell [class*="divide-slate-"] > :not(:last-child),
+.dark .admin-shell [class*="divide-gray-"] > :not(:last-child) { border-color: var(--admin-border) !important; }
+
+/* Extension / theme / plugin cards */
+.dark .admin-shell .admin-extension-card,
+.dark .admin-shell .admin-theme-card,
+.dark .admin-shell .admin-plugin-card { background: var(--admin-surface) !important; border-color: var(--admin-border) !important; }
+.dark .admin-shell .admin-extension-card:hover,
+.dark .admin-shell .admin-theme-card:hover,
+.dark .admin-shell .admin-plugin-card:hover { border-color: var(--admin-border-strong) !important; }
+/* Deep compatibility for Settings, Templates, Tools and plugin-owned Admin UI */
+.dark .admin-shell .bg-slate-200,
+.dark .admin-shell .bg-gray-50,
+.dark .admin-shell .bg-gray-100,
+.dark .admin-shell .bg-gray-200 { background-color: var(--admin-surface-muted) !important; }
+.dark .admin-shell .border-slate-300,
+.dark .admin-shell .border-gray-300 { border-color: var(--admin-border-strong) !important; }
+.dark .admin-shell .text-black { color: var(--admin-text) !important; }
+.dark .admin-shell .hover\:text-slate-700:hover,
+.dark .admin-shell .hover\:text-slate-800:hover,
+.dark .admin-shell .hover\:text-slate-900:hover { color: var(--admin-text) !important; }
+.dark .admin-shell .hover\:bg-white:hover { background-color: var(--admin-surface-raised) !important; }
+.dark .admin-shell [class*="from-slate-50"],
+.dark .admin-shell [class*="from-gray-50"] { --tw-gradient-from: var(--admin-surface-raised) var(--tw-gradient-from-position) !important; }
+.dark .admin-shell [class*="to-slate-100"],
+.dark .admin-shell [class*="to-slate-200"],
+.dark .admin-shell [class*="to-gray-100"] { --tw-gradient-to: var(--admin-surface-muted) var(--tw-gradient-to-position) !important; }
+.dark .admin-shell .backdrop-blur-xl.bg-white\/95,
+.dark .admin-shell .backdrop-blur-md.bg-white\/90,
+.dark .admin-shell .backdrop-blur-sm.bg-white\/80 { background-color: rgba(16, 24, 39, 0.94) !important; }
+.dark .admin-shell .ring-slate-200,
+.dark .admin-shell .ring-gray-200 { --tw-ring-color: var(--admin-border) !important; }
+.dark .admin-shell :where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--admin-brand);
+  outline-offset: 2px;
+}
+
+/* Admin plugin panels. Google/SERP preview canvases may opt out with .admin-preserve-light. */
+.dark .admin-shell :where(.admin-plugin-panel, .admin-settings-panel, .admin-template-panel, .admin-tool-panel):not(.admin-preserve-light) {
+  color: var(--admin-text);
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+}
+.dark .admin-shell .admin-preserve-light,
+.dark .admin-shell .admin-preserve-light * { color-scheme: light; }

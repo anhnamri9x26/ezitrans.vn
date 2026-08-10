@@ -423,7 +423,7 @@ export default function CommentsAdminPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-            <MessageSquare size={24} className="text-indigo-600 animate-pulse" /> Bình luận bài viết
+            <MessageSquare size={24} className="text-brand-500" /> Bình luận bài viết
           </h1>
           <p className="text-xs text-slate-500 mt-1">Duyệt, phản hồi và dọn dẹp các tương tác từ người đọc ngoài trang web</p>
         </div>
@@ -439,7 +439,7 @@ export default function CommentsAdminPage() {
 
       {/* Screen Options Panel */}
       {isScreenOptionsOpen && (
-        <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6 shadow-sm animate-fade-in font-semibold text-slate-650 text-xs">
+        <div className="admin-comments-options bg-white border border-slate-200 rounded-xl p-4 mb-6 shadow-sm animate-fade-in font-semibold text-slate-650 text-xs">
           <h3 className="font-bold text-slate-800 text-xs mb-3 uppercase tracking-wider">Tùy chọn hiển thị</h3>
           <div className="space-y-4">
             {/* Columns Toggle */}
@@ -566,9 +566,9 @@ export default function CommentsAdminPage() {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="admin-comments-surface bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         {/* Multi-layered Filters Toolbar */}
-        <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="admin-comments-toolbar p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col md:flex-row items-center justify-between gap-4">
           
           {/* Bulk Actions */}
           <div className="flex items-center gap-2 w-full md:w-auto">
@@ -615,7 +615,7 @@ export default function CommentsAdminPage() {
 
         {/* Comments Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-slate-600 min-w-[950px]">
+          <table className="admin-comments-table w-full text-left text-slate-600 min-w-[950px]">
             <thead className="bg-slate-50/80 text-slate-500 text-xs uppercase tracking-wide border-b border-slate-200">
               <tr>
                 <th className="px-4 py-3 w-10 text-center font-semibold">

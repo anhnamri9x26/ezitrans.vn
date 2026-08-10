@@ -239,7 +239,7 @@ export default function ExtensionsPage() {
         </div>
 
         {/* Plugins */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="admin-extension-card bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Plugins</span>
             <Package size={14} className="text-violet-500" />
@@ -254,7 +254,7 @@ export default function ExtensionsPage() {
         </div>
 
         {/* Themes */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div className="admin-extension-card bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Themes</span>
             <Palette size={14} className="text-indigo-500" />
@@ -269,7 +269,7 @@ export default function ExtensionsPage() {
         </div>
 
         {/* Hooks */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm group hover:border-amber-300 hover:shadow-md transition-all relative">
+        <div className="admin-extension-card bg-white rounded-2xl border border-slate-200 p-4 shadow-sm group hover:border-amber-300 hover:shadow-md transition-all relative">
           <div className="flex items-center justify-between mb-3">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-amber-600 transition-colors">Hooks</span>
             <Zap size={14} className="text-amber-500" />
@@ -378,7 +378,7 @@ function OverviewTab({ plugins, themes, health }: {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Active Plugins */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="admin-extension-card bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
           <h3 className="font-bold text-slate-800 text-xs flex items-center gap-2">
             <Package size={14} className="text-violet-500" /> Plugins ({plugins.length})
@@ -422,7 +422,7 @@ function OverviewTab({ plugins, themes, health }: {
       </div>
 
       {/* Themes */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="admin-extension-card bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
           <h3 className="font-bold text-slate-800 text-xs flex items-center gap-2">
             <Palette size={14} className="text-indigo-500" /> Themes ({themes.length})
@@ -464,7 +464,7 @@ function OverviewTab({ plugins, themes, health }: {
       </div>
 
       {/* Storage Info */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 lg:col-span-2">
+      <div className="admin-extension-card bg-white rounded-2xl border border-slate-200 shadow-sm p-5 lg:col-span-2">
         <h3 className="font-bold text-slate-800 text-xs flex items-center gap-2 mb-4">
           <HardDrive size={14} className="text-slate-500" /> Lưu trữ
         </h3>
@@ -497,7 +497,7 @@ function HookExplorerTab({ hooks: hookData }: { hooks: SystemHealth['hooks'] }) 
     : hookData.registeredHooks.filters;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="admin-extension-card bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
         <h3 className="font-bold text-slate-800 text-xs flex items-center gap-2">
           <Zap size={14} className="text-amber-500" />
@@ -579,7 +579,7 @@ function PermissionsTab({ plugins, health }: { plugins: PluginInfo[]; health: Sy
         const permissions = permData?.permissions || plugin.permissions || [];
 
         return (
-          <div key={plugin.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div key={plugin.id} className="admin-extension-card bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="px-5 py-4 flex items-center gap-4">
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
@@ -653,7 +653,7 @@ function ErrorsTab({ errors }: { errors: HookError[] }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="admin-extension-card bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
         <AlertTriangle size={14} className="text-red-500" />
         <h3 className="font-bold text-slate-800 text-xs">Lỗi gần đây ({errors.length})</h3>

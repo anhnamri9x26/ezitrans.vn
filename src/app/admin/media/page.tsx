@@ -219,7 +219,7 @@ export default function AdminMediaPage() {
         </div>
         <button 
           onClick={() => setIsUploadOpen(!isUploadOpen)}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-all hover:shadow-lg hover:shadow-indigo-500/20 active:scale-[0.98] cursor-pointer text-xs"
+          className="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-all hover:shadow-lg hover:shadow-brand-500/20 active:scale-[0.98] cursor-pointer text-xs"
         >
           <Upload size={16} /> {isUploadOpen ? 'Đóng tải lên' : 'Tải tập tin lên'}
         </button>
@@ -269,10 +269,10 @@ export default function AdminMediaPage() {
       )}
 
       {/* Main Content: Grid left, details sidebar right */}
-      <div className="flex flex-col lg:flex-row gap-6 items-start">
+      <div className="admin-media-layout flex flex-col lg:flex-row gap-6 items-start">
         
         {/* Left Side: Media grid with filters */}
-        <div className="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-5 w-full">
+        <div className="admin-media-surface flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-5 w-full">
           {/* Filters Toolbar */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
             <div className="flex flex-wrap gap-2.5 w-full sm:w-auto">
@@ -335,9 +335,9 @@ export default function AdminMediaPage() {
                   <div 
                     key={item.id}
                     onClick={() => setSelectedMedia(item)}
-                    className={`group relative aspect-square bg-slate-50 rounded-xl border overflow-hidden cursor-pointer transition-all hover:shadow-md ${
+                    className={`admin-media-card group relative aspect-square bg-slate-50 rounded-xl border overflow-hidden cursor-pointer transition-all hover:shadow-md ${
                       isSelected 
-                        ? 'border-indigo-600 ring-2 ring-indigo-500/20 shadow-sm scale-[0.98]' 
+                        ? 'border-brand-500 ring-2 ring-brand-500/20 shadow-sm scale-[0.98]'
                         : 'border-slate-200 hover:border-slate-300'
                     }`}
                   >
@@ -361,7 +361,7 @@ export default function AdminMediaPage() {
                     )}
                     
                     {/* Bottom overlay filename bar */}
-                    <div className="absolute inset-x-0 bottom-0 bg-white/90 px-2 py-1.5 border-t border-slate-100 text-[10px] truncate font-semibold text-slate-700 select-none group-hover:text-indigo-600 transition-colors">
+                    <div className="admin-media-caption absolute inset-x-0 bottom-0 bg-white/90 px-2 py-1.5 border-t border-slate-100 text-[10px] truncate font-semibold text-slate-700 select-none group-hover:text-brand-500 transition-colors">
                       {item.filename}
                     </div>
                   </div>
@@ -373,7 +373,7 @@ export default function AdminMediaPage() {
 
         {/* Right Side: WordPress-style details panel drawer */}
         {selectedMedia && (
-          <div className="w-full lg:w-80 lg:sticky lg:top-6 bg-white border border-slate-200 rounded-xl shadow-sm p-5 space-y-5 animate-fade-in shrink-0 relative">
+          <div className="admin-media-details w-full lg:w-80 lg:sticky lg:top-6 bg-white border border-slate-200 rounded-xl shadow-sm p-5 space-y-5 animate-fade-in shrink-0 relative">
             
             {/* Close Button */}
             <button 

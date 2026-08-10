@@ -222,7 +222,7 @@ export default function PluginsPage() {
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-bold text-[11px] shadow-lg shadow-violet-500/20 hover:shadow-xl hover:shadow-violet-500/30 transition-all active:scale-95 disabled:opacity-50 cursor-pointer border-none"
+          className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-[11px] shadow-lg shadow-brand-500/20 hover:shadow-xl hover:shadow-brand-500/30 transition-all active:scale-95 disabled:opacity-50 cursor-pointer border-none"
         >
           <Upload size={14} />
           {isUploading ? 'Đang cài đặt...' : 'Tải lên Plugin (.zip)'}
@@ -381,7 +381,7 @@ function PluginCard({
 
   return (
     <div
-      className={`bg-white rounded-2xl border overflow-hidden transition-all duration-300 hover:shadow-lg group ${
+      className={`admin-plugin-card bg-white rounded-2xl border overflow-hidden transition-all duration-300 hover:shadow-lg group ${
         plugin.isActive
           ? 'border-emerald-200/80 shadow-sm shadow-emerald-500/5'
           : 'border-slate-200 shadow-sm'

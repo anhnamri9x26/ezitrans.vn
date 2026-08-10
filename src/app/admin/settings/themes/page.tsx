@@ -245,7 +245,7 @@ export default function AdminThemesPage() {
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold text-[11px] shadow-lg shadow-indigo-500/20 hover:shadow-xl hover:shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-50 cursor-pointer border-none"
+          className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-[11px] shadow-lg shadow-brand-500/20 hover:shadow-xl hover:shadow-brand-500/30 transition-all active:scale-95 disabled:opacity-50 cursor-pointer border-none"
         >
           <Upload size={14} />
           {isUploading ? 'Đang cài đặt...' : 'Tải lên Theme (.zip)'}
@@ -369,9 +369,9 @@ function ThemeCard({
 }) {
   return (
     <div
-      className={`bg-white rounded-2xl border overflow-hidden shadow-sm flex flex-col justify-between transition-all duration-300 group ${
+      className={`admin-theme-card bg-white rounded-2xl border overflow-hidden shadow-sm flex flex-col justify-between transition-all duration-300 group ${
         theme.isActive
-          ? 'border-indigo-500 ring-2 ring-indigo-500/20 shadow-lg shadow-indigo-500/10'
+          ? 'border-brand-500 ring-2 ring-brand-500/20 shadow-lg shadow-brand-500/10'
           : 'border-slate-200 hover:shadow-lg hover:border-slate-300'
       }`}
     >

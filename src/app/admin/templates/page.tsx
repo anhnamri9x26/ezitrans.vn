@@ -517,6 +517,7 @@ export default function AdminTemplatesPage() {
 
   return (
     <CapabilityGuard capability="manage_templates">
+      <div className="admin-template-panel contents">
       <div className="p-6 bg-slate-50 min-h-screen text-slate-800 font-sans">
       {/* Alert Component */}
       {alert && (
@@ -1300,6 +1301,7 @@ export default function AdminTemplatesPage() {
           }}
         />
       )}
+      </div>
       </div>
     </CapabilityGuard>
   );

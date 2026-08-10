@@ -311,7 +311,7 @@ export default function AdminSettingsClient({ extraPanels = [] }: AdminSettingsC
 
   return (
     <CapabilityGuard capability="manage_settings">
-      <form onSubmit={handleSaveSettings} className="max-w-4xl mx-auto font-sans pb-12 text-xs">
+      <form onSubmit={handleSaveSettings} className="admin-settings-panel max-w-4xl mx-auto font-sans pb-12 text-xs">
       {/* Header */}
       <div className="flex items-center justify-between mb-8 border-b border-slate-100 pb-5">
         <div>
