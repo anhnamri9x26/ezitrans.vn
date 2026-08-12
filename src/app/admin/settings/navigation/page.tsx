@@ -39,6 +39,12 @@ interface MenuItem {
   icon?: string; // dành cho cấp con/cháu
 }
 
+interface MenuAssignment { themeId: string; locationKey: string; }
+interface ManagedMenu { id: number; name: string; items: MenuItem[]; updatedAt: string; itemCount?: number; assignments?: MenuAssignment[]; }
+interface MenuLocation { key: string; label: string; description?: string; }
+interface ContentLinkRecord { type: string; status: string; title: string; slug: string; }
+interface CategoryLinkRecord { name: string; slug: string; }
+
 const iconList = [
   { name: 'ShoppingBag', label: 'Mua sắm', component: ShoppingBag },
   { name: 'Package', label: 'Hàng hóa', component: Package },
@@ -62,12 +68,12 @@ export default function AdminNavigationMenusPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [workspaceTab, setWorkspaceTab] = useState<'edit' | 'locations'>('edit');
-  const [menus, setMenus] = useState<any[]>([]);
+  const [menus, setMenus] = useState<ManagedMenu[]>([]);
   const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
   const [menuName, setMenuName] = useState('');
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [expectedUpdatedAt, setExpectedUpdatedAt] = useState('');
-  const [locations, setLocations] = useState<any[]>([]);
+  const [locations, setLocations] = useState<MenuLocation[]>([]);
   const [assignments, setAssignments] = useState<Record<string, number | null>>({});
   const [themeId, setThemeId] = useState('default');
   const [isDirty, setIsDirty] = useState(false);
@@ -75,7 +81,13 @@ export default function AdminNavigationMenusPage() {
 
   const [newLabel, setNewLabel] = useState('');
   const [newUrl, setNewUrl] = useState('');
+  const [inlineAddItemId, setInlineAddItemId] = useState<string | null>(null);
+  const [inlineAddMode, setInlineAddMode] = useState<'sibling' | 'child'>('sibling');
+  const [inlineLabel, setInlineLabel] = useState('');
+  const [inlineUrl, setInlineUrl] = useState('');
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [highlightedItemId, setHighlightedItemId] = useState<string | null>(null);
+  const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Dynamic link selector states
   const [searchTab, setSearchTab] = useState<'quick' | 'page' | 'post' | 'category'>('quick');
@@ -102,12 +114,13 @@ export default function AdminNavigationMenusPage() {
     return `menu_item_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
   };
 
-  const selectMenu = (menu: any) => {
+  const selectMenu = (menu: ManagedMenu) => {
     setSelectedMenuId(menu.id);
     setMenuName(menu.name);
     setMenuItems(Array.isArray(menu.items) ? menu.items : []);
     setExpectedUpdatedAt(new Date(menu.updatedAt).toISOString());
     setEditingItemId(null);
+    setInlineAddItemId(null);
     setIsDirty(false);
   };
 
@@ -124,8 +137,9 @@ export default function AdminNavigationMenusPage() {
     setLocations(locationsData.locations || []);
     setAssignments(locationsData.assignments || {});
     setThemeId(locationsData.themeId || 'default');
-    const next = (menusData.menus || []).find((menu: any) => menu.id === preferredMenuId)
-      || (menusData.menus || [])[0];
+    const availableMenus = (menusData.menus || []) as ManagedMenu[];
+    const next = availableMenus.find((menu) => menu.id === preferredMenuId)
+      || availableMenus[0];
     if (next) selectMenu(next);
     else {
       setSelectedMenuId(null);
@@ -137,10 +151,14 @@ export default function AdminNavigationMenusPage() {
   };
 
   useEffect(() => {
-    loadWorkspace().catch((error) => {
+    // Initial remote workspace hydration; state changes happen after promises resolve.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadWorkspace().catch((error: unknown) => {
       console.error('Failed to load navigation workspace:', error);
-      setNotice({ type: 'error', message: error.message });
+      setNotice({ type: 'error', message: error instanceof Error ? error.message : 'Không thể tải cấu hình menu.' });
     }).finally(() => setIsLoading(false));
+    // The workspace loader is intentionally called once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -162,16 +180,16 @@ export default function AdminNavigationMenusPage() {
           const rawPosts = postsData.posts;
           
           const pages = rawPosts
-            .filter((p: any) => p.type === 'PAGE' && p.status === 'PUBLISHED')
-            .map((p: any) => ({
+            .filter((p: ContentLinkRecord) => p.type === 'PAGE' && p.status === 'PUBLISHED')
+            .map((p: ContentLinkRecord) => ({
               label: p.title,
               url: `/${p.slug}.html`
             }));
           setPagesList(pages);
 
           const posts = rawPosts
-            .filter((p: any) => p.type === 'POST' && p.status === 'PUBLISHED')
-            .map((p: any) => ({
+            .filter((p: ContentLinkRecord) => p.type === 'POST' && p.status === 'PUBLISHED')
+            .map((p: ContentLinkRecord) => ({
               label: p.title,
               url: `/${p.slug}.html`
             }));
@@ -181,7 +199,7 @@ export default function AdminNavigationMenusPage() {
         const catsRes = await fetch('/api/categories');
         const catsData = await catsRes.json();
         if (catsData.success && Array.isArray(catsData.categories)) {
-          const cats = catsData.categories.map((c: any) => ({
+          const cats = catsData.categories.map((c: CategoryLinkRecord) => ({
             label: c.name,
             url: `/category/${c.slug}`
           }));
@@ -210,20 +228,44 @@ export default function AdminNavigationMenusPage() {
     );
   };
 
-  const handleAddQuickLinkDirectly = (label: string, url: string) => {
-    const updated = [
-      ...getActiveMenu(),
-      {
-        id: generateId(),
-        label: label.trim(),
-        url: url.trim(),
-        indent: 0,
-        isMega: false,
-        description: '',
-        icon: ''
+  const insertMenuItem = (
+    label: string,
+    url: string,
+    placement: { type: 'start' | 'end' | 'sibling' | 'child'; anchorId?: string }
+  ) => {
+    const current = [...menuItems];
+    let insertIndex = placement.type === 'start' ? 0 : current.length;
+    let indent = 0;
+    if ((placement.type === 'sibling' || placement.type === 'child') && placement.anchorId) {
+      const anchorIndex = current.findIndex(item => item.id === placement.anchorId);
+      if (anchorIndex >= 0) {
+        const anchorIndent = current[anchorIndex].indent;
+        indent = placement.type === 'child' ? Math.min(2, anchorIndent + 1) : anchorIndent;
+        insertIndex = anchorIndex + 1;
+        while (insertIndex < current.length && current[insertIndex].indent > anchorIndent) insertIndex++;
       }
-    ];
-    setActiveMenu(updated);
+    }
+    const newItem: MenuItem = {
+      id: generateId(),
+      label: label.trim(),
+      url: url.trim(),
+      indent,
+      isMega: false,
+      description: '',
+      icon: ''
+    };
+    current.splice(insertIndex, 0, newItem);
+    setMenuItems(current);
+    setIsDirty(true);
+    setEditingItemId(newItem.id);
+    setInlineAddItemId(null);
+    setHighlightedItemId(newItem.id);
+    window.setTimeout(() => itemRefs.current[newItem.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+    window.setTimeout(() => setHighlightedItemId(currentId => currentId === newItem.id ? null : currentId), 1800);
+  };
+
+  const handleAddQuickLinkDirectly = (label: string, url: string) => {
+    insertMenuItem(label, url, { type: 'end' });
   };
   const getActiveMenu = () => menuItems;
 
@@ -239,21 +281,25 @@ export default function AdminNavigationMenusPage() {
       alert('Vui lòng điền đầy đủ Nhãn hiển thị và Liên kết URL!');
       return;
     }
-    const updated = [
-      ...getActiveMenu(), 
-      { 
-        id: generateId(),
-        label: newLabel.trim(), 
-        url: newUrl.trim(),
-        indent: 0,
-        isMega: false,
-        description: '',
-        icon: ''
-      }
-    ];
-    setActiveMenu(updated);
+    insertMenuItem(newLabel, newUrl, { type: 'start' });
     setNewLabel('');
     setNewUrl('');
+  };
+
+  const openInlineAdd = (item: MenuItem) => {
+    setInlineAddItemId(item.id);
+    setInlineAddMode(item.indent < 2 ? 'child' : 'sibling');
+    setInlineLabel('');
+    setInlineUrl('');
+    setEditingItemId(null);
+  };
+
+  const handleInlineAdd = (event: React.FormEvent, item: MenuItem) => {
+    event.preventDefault();
+    if (!inlineLabel.trim() || !inlineUrl.trim()) return;
+    insertMenuItem(inlineLabel, inlineUrl, { type: inlineAddMode, anchorId: item.id });
+    setInlineLabel('');
+    setInlineUrl('');
   };
 
   const handleQuickSelect = (label: string, url: string) => {
@@ -381,8 +427,8 @@ export default function AdminNavigationMenusPage() {
       if (!res.ok || !data.success) throw new Error(data.error || 'Không thể lưu menu');
       await loadWorkspace(selectedMenuId);
       setNotice({ type: 'success', message: 'Đã lưu menu và cập nhật các vị trí đang sử dụng.' });
-    } catch (error: any) {
-      setNotice({ type: 'error', message: error.message || 'Lỗi kết nối máy chủ' });
+    } catch (error: unknown) {
+      setNotice({ type: 'error', message: error instanceof Error ? error.message : 'Lỗi kết nối máy chủ' });
     } finally {
       setIsSaving(false);
     }
@@ -414,7 +460,7 @@ export default function AdminNavigationMenusPage() {
   const handleDeleteMenu = async () => {
     if (!selectedMenuId) return;
     const selected = menus.find((menu) => menu.id === selectedMenuId);
-    const usedAt = selected?.assignments?.map((assignment: any) => `${assignment.themeId}: ${assignment.locationKey}`).join('\n');
+    const usedAt = selected?.assignments?.map((assignment) => `${assignment.themeId}: ${assignment.locationKey}`).join('\n');
     if (!window.confirm(`Xóa menu “${menuName}”?${usedAt ? `\n\nCác vị trí sẽ được gỡ:\n${usedAt}` : ''}`)) return;
     const response = await fetch(`/api/navigation/menus/${selectedMenuId}`, { method: 'DELETE' });
     const data = await response.json();
@@ -556,12 +602,15 @@ export default function AdminNavigationMenusPage() {
                   return (
                     <div 
                       key={item.id}
+                      ref={(element) => { itemRefs.current[item.id] = element; }}
                       draggable="true"
                       onDragStart={(e) => handleDragStart(e, index)}
                       onDragOver={(e) => handleDragOver(e, index)}
                       onDragEnd={handleDragEnd}
                       onDrop={(e) => handleDrop(e, index)}
-                      className={`border rounded-xl transition-all duration-200 ${
+                      className={`border rounded-xl transition-all duration-300 ${
+                        highlightedItemId === item.id ? 'ring-2 ring-emerald-400 border-emerald-400 bg-emerald-50 shadow-lg shadow-emerald-500/10' : ''
+                      } ${
                         isDragged ? 'opacity-30 border-dashed border-indigo-400 bg-slate-100' : ''
                       } ${
                         isOver ? 'border-t-4 border-t-indigo-600 bg-indigo-50/20' : ''
@@ -605,7 +654,7 @@ export default function AdminNavigationMenusPage() {
                             </div>
                             <span className="text-[10px] text-slate-400 block mt-0.5 font-mono truncate">{item.url}</span>
                             {item.indent > 0 && item.description && (
-                              <span className="text-[9px] text-slate-500 block truncate mt-0.5 italic">"{item.description}"</span>
+                              <span className="text-[9px] text-slate-500 block truncate mt-0.5 italic">&ldquo;{item.description}&rdquo;</span>
                             )}
                           </div>
                         </div>
@@ -653,6 +702,21 @@ export default function AdminNavigationMenusPage() {
                             <ChevronDown size={13} />
                           </button>
 
+                          {/* Add Item Here */}
+                          <button
+                            type="button"
+                            onClick={() => inlineAddItemId === item.id ? setInlineAddItemId(null) : openInlineAdd(item)}
+                            className={`p-1 rounded border cursor-pointer flex items-center justify-center transition-colors ${
+                              inlineAddItemId === item.id
+                                ? 'bg-emerald-500 border-emerald-500 text-white'
+                                : 'bg-white hover:bg-emerald-50 text-emerald-600 border-emerald-200 hover:border-emerald-400'
+                            }`}
+                            title={`Thêm mục ngay sau ${item.label}`}
+                            aria-label={`Thêm mục ngay sau ${item.label}`}
+                          >
+                            <Plus size={13} />
+                          </button>
+
                           {/* Edit Details */}
                           <button
                             type="button"
@@ -678,6 +742,42 @@ export default function AdminNavigationMenusPage() {
                           </button>
                         </div>
                       </div>
+
+                      {/* Contextual Add Form */}
+                      {inlineAddItemId === item.id && (
+                        <form onSubmit={(event) => handleInlineAdd(event, item)} className="border-t border-emerald-100 bg-emerald-50/70 p-3.5 rounded-b-xl">
+                          <div className="flex items-center justify-between gap-3 mb-3">
+                            <div>
+                              <span className="block text-[11px] font-extrabold text-emerald-800">Thêm ngay tại “{item.label}”</span>
+                              <span className="block text-[9px] text-emerald-600 mt-0.5">Không cần kéo mục mới từ cuối danh sách.</span>
+                            </div>
+                            <button type="button" onClick={() => setInlineAddItemId(null)} className="p-1 text-emerald-500 hover:text-emerald-700" aria-label="Đóng form thêm mục"><X size={14} /></button>
+                          </div>
+                          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_auto] gap-2">
+                            <input
+                              id={`inline-menu-label-${item.id}`}
+                              autoFocus
+                              value={inlineLabel}
+                              onChange={(event) => setInlineLabel(event.target.value)}
+                              placeholder="Tên mục menu"
+                              className="min-w-0 px-3 py-2 border border-emerald-200 rounded-lg bg-white outline-none focus:border-emerald-500 text-xs text-slate-700"
+                            />
+                            <input
+                              id={`inline-menu-url-${item.id}`}
+                              value={inlineUrl}
+                              onChange={(event) => setInlineUrl(event.target.value)}
+                              placeholder="/duong-dan"
+                              className="min-w-0 px-3 py-2 border border-emerald-200 rounded-lg bg-white outline-none focus:border-emerald-500 text-xs text-slate-700 font-mono"
+                            />
+                            <button type="submit" disabled={!inlineLabel.trim() || !inlineUrl.trim()} className="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] disabled:opacity-40 whitespace-nowrap">Thêm mục</button>
+                          </div>
+                          <div className="flex items-center gap-1 mt-2.5">
+                            <span className="text-[9px] font-bold text-slate-500 mr-1">Vị trí:</span>
+                            <button type="button" onClick={() => setInlineAddMode('sibling')} className={`px-2.5 py-1 rounded-md text-[9px] font-extrabold border ${inlineAddMode === 'sibling' ? 'bg-slate-800 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-500'}`}>Cùng cấp, phía sau</button>
+                            {item.indent < 2 && <button type="button" onClick={() => setInlineAddMode('child')} className={`px-2.5 py-1 rounded-md text-[9px] font-extrabold border ${inlineAddMode === 'child' ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-200 text-emerald-600'}`}>Làm mục con</button>}
+                          </div>
+                        </form>
+                      )}
 
                       {/* Expandable Edit Details Form */}
                       {isEditing && (
@@ -817,6 +917,10 @@ export default function AdminNavigationMenusPage() {
                   placeholder="Ví dụ: /mua-ho, /ship-ho"
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-slate-700 bg-white font-mono"
                 />
+              </div>
+
+              <div className="rounded-lg border border-indigo-100 bg-indigo-50/70 px-3 py-2.5 text-[10px] leading-relaxed text-indigo-700">
+                Mục này sẽ được thêm vào <strong>đầu menu</strong>. Để chèn chính xác, bấm nút <span className="inline-flex align-middle mx-0.5 rounded border border-emerald-300 bg-white p-0.5 text-emerald-600"><Plus size={10} /></span> ngay trên mục mong muốn.
               </div>
 
               <button
