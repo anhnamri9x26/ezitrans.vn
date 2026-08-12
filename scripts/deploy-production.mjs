@@ -10,7 +10,13 @@ if (dirty && !args.has('--allow-dirty') && !args.has('--dry-run')) {
   throw new Error('Working tree has uncommitted changes. Commit them before production deploy.');
 }
 if (dirty && args.has('--dry-run')) console.warn('DRY RUN NOTICE: working tree has uncommitted changes.');
-if (!args.has('--skip-validation')) run('npm.cmd', ['run','release:validate']);
+if (!args.has('--skip-validation')) {
+  if (process.platform === 'win32') {
+    run(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', 'npm run release:validate']);
+  } else {
+    run('npm', ['run', 'release:validate']);
+  }
+}
 const date = new Date().toISOString().slice(0,10).replaceAll('-','.');
 const sha = capture('git',['rev-parse','--short=8','HEAD']);
 const versionArg = process.argv.find(v=>v.startsWith('--version='));
