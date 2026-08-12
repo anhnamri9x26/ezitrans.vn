@@ -47,6 +47,7 @@ next-env.d.ts
 
 # WordPress import SQL dumps
 *.sql
+!prisma/migrations/**/migration.sql
 *.dump
 *.backup
 /database_cu.sql

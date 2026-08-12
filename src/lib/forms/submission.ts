@@ -99,15 +99,32 @@ export async function collectFormSubmission(input: SubmissionInput, context: { i
   });
   if (recentCount >= RATE_MAX) throw new SubmissionError('Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.', 429);
 
-  return prisma.formSubmission.create({
-    data: {
-      formId,
-      formName: definition?.name || cleanText(input.formName || 'Form website', 160),
-      pageUrl: normalizePageUrl(input.pageUrl),
-      ipAddress,
-      userAgent: context.userAgent.slice(0, 1000),
-      data: JSON.stringify(fields),
-    },
-    select: { id: true, createdAt: true },
+  const formName = definition?.name || cleanText(input.formName || 'Form website', 160);
+  const pageUrl = normalizePageUrl(input.pageUrl);
+  return prisma.$transaction(async tx => {
+    const submission = await tx.formSubmission.create({
+      data: {
+        formId,
+        formName,
+        pageUrl,
+        ipAddress,
+        userAgent: context.userAgent.slice(0, 1000),
+        data: JSON.stringify(fields),
+      },
+      select: { id: true, createdAt: true },
+    });
+
+    await tx.adminNotification.create({
+      data: {
+        type: 'form_submission',
+        title: 'Có phản hồi form mới',
+        message: `Bạn vừa nhận được một phản hồi từ ${formName}.`,
+        href: `/admin/submissions?submission=${submission.id}`,
+        referenceId: String(submission.id),
+        metadata: JSON.stringify({ formId, formName, pageUrl }),
+      },
+    });
+
+    return submission;
   });
 }

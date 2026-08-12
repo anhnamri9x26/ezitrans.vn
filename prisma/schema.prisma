@@ -438,9 +438,28 @@ model FormSubmission {
   ipAddress   String?  // Địa chỉ IP
   userAgent   String?  // Trình duyệt
   data        String   @db.Text // Dữ liệu form dưới dạng JSON String
+  isRead      Boolean  @default(false)
+  readAt      DateTime?
   createdAt   DateTime @default(now())
+
+  @@index([isRead, createdAt])
 }
 
+model AdminNotification {
+  id          Int      @id @default(autoincrement())
+  type        String
+  title       String
+  message     String   @db.Text
+  href        String?
+  referenceId String?
+  metadata    String?  @db.Text
+  isRead      Boolean  @default(false)
+  readAt      DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([isRead, createdAt])
+  @@index([type, referenceId])
+}
 
 model SecurityEvent {
   id        Int      @id @default(autoincrement())

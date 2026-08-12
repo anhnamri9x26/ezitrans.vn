@@ -20,14 +20,40 @@ export async function GET(req: Request) {
       ...(formId ? { formId } : {}),
       ...(search ? { OR: [{ formName: { contains: search } }, { data: { contains: search } }, { pageUrl: { contains: search } }] } : {}),
     };
-    const [submissions, total] = await prisma.$transaction([
+    const [submissions, total, unreadCount] = await prisma.$transaction([
       prisma.formSubmission.findMany({ where, orderBy: { createdAt: 'desc' }, skip: (page - 1) * perPage, take: perPage }),
       prisma.formSubmission.count({ where }),
+      prisma.formSubmission.count({ where: { isRead: false } }),
     ]);
-    return NextResponse.json({ success: true, submissions, pagination: { page, perPage, total, totalPages: Math.max(1, Math.ceil(total / perPage)) } });
+    return NextResponse.json({ success: true, submissions, unreadCount, pagination: { page, perPage, total, totalPages: Math.max(1, Math.ceil(total / perPage)) } });
   } catch (error) {
     console.error('GET form submissions error', error);
     return NextResponse.json({ success: false, error: 'Không thể tải phản hồi.' }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    if (!await authorize()) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    const body = await req.json().catch(() => ({}));
+    const now = new Date();
+    if (body.all === true) {
+      await prisma.$transaction([
+        prisma.formSubmission.updateMany({ where: { isRead: false }, data: { isRead: true, readAt: now } }),
+        prisma.adminNotification.updateMany({ where: { type: 'form_submission', isRead: false }, data: { isRead: true, readAt: now } }),
+      ]);
+      return NextResponse.json({ success: true });
+    }
+    const id = Number(body.id);
+    if (!Number.isInteger(id) || id < 1) return NextResponse.json({ success: false, error: 'ID không hợp lệ.' }, { status: 400 });
+    await prisma.$transaction([
+      prisma.formSubmission.updateMany({ where: { id }, data: { isRead: true, readAt: now } }),
+      prisma.adminNotification.updateMany({ where: { type: 'form_submission', referenceId: String(id) }, data: { isRead: true, readAt: now } }),
+    ]);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('PATCH form submission error', error);
+    return NextResponse.json({ success: false, error: 'Không thể cập nhật phản hồi.' }, { status: 500 });
   }
 }
 
@@ -36,7 +62,10 @@ export async function DELETE(req: Request) {
     if (!await authorize()) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     const rawId = new URL(req.url).searchParams.get('id') || '';
     if (!/^\d+$/.test(rawId) || Number(rawId) < 1) return NextResponse.json({ success: false, error: 'ID không hợp lệ.' }, { status: 400 });
-    await prisma.formSubmission.delete({ where: { id: Number(rawId) } });
+    await prisma.$transaction([
+      prisma.formSubmission.delete({ where: { id: Number(rawId) } }),
+      prisma.adminNotification.deleteMany({ where: { type: 'form_submission', referenceId: rawId } }),
+    ]);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('DELETE form submission error', error);

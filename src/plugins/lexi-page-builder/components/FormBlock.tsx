@@ -833,7 +833,7 @@ export const FormBlock = (rawProps: FormBlockProps) => {
         {/* Success/Error alert box for builder preview */}
         {enabled && (
           <div className="mt-4 text-[10px] text-slate-400 italic text-center border-t border-slate-100 pt-3">
-            Hành động: Lưu vào Phản hồi Form
+            Hành động: Lưu vào Hộp thư Form
           </div>
         )}
       </div>

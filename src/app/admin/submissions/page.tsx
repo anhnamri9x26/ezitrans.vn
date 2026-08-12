@@ -12,6 +12,8 @@ interface Submission {
   ipAddress: string;
   userAgent: string;
   data: string;
+  isRead: boolean;
+  readAt?: string | null;
   createdAt: string;
 }
 
@@ -20,23 +22,43 @@ export default function SubmissionsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedSub, setSelectedSub] = useState<Submission | null>(null);
-
-  useEffect(() => {
-    fetchSubmissions();
-  }, []);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchSubmissions = async () => {
     try {
       const res = await fetch('/api/forms/submissions');
-      const data = await res.json();
-      if (data.success) {
-        setSubmissions(data.submissions);
+      const result = await res.json();
+      if (result.success) {
+        setSubmissions(result.submissions);
+        setUnreadCount(result.unreadCount || 0);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    // Data state is updated only after the asynchronous request resolves.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchSubmissions();
+  }, []);
+
+  const openSubmission = async (submission: Submission) => {
+    setSelectedSub({ ...submission, isRead: true, readAt: submission.readAt || new Date().toISOString() });
+    if (submission.isRead) return;
+    setSubmissions(current => current.map(item => item.id === submission.id ? { ...item, isRead: true, readAt: new Date().toISOString() } : item));
+    setUnreadCount(current => Math.max(0, current - 1));
+    await fetch('/api/forms/submissions', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: submission.id }) });
+    window.dispatchEvent(new Event('admin-notifications-changed'));
+  };
+
+  const markAllRead = async () => {
+    setSubmissions(current => current.map(item => ({ ...item, isRead: true, readAt: item.readAt || new Date().toISOString() })));
+    setUnreadCount(0);
+    await fetch('/api/forms/submissions', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ all: true }) });
+    window.dispatchEvent(new Event('admin-notifications-changed'));
   };
 
   const deleteSubmission = async (id: number) => {
@@ -57,12 +79,12 @@ export default function SubmissionsPage() {
     // Extract all unique headers from all submissions
     const headersSet = new Set<string>(['ID', 'Form Name', 'Page URL', 'Date', 'IP']);
     const parsedData = submissions.map(sub => {
-      let fields: any = {};
+      let fields: Record<string, unknown> = {};
       try {
-        fields = JSON.parse(sub.data);
-      } catch (e) {}
+        fields = JSON.parse(sub.data) as Record<string, unknown>;
+      } catch {}
       
-      const row: any = {
+      const row: Record<string, unknown> = {
         'ID': sub.id,
         'Form Name': sub.formName,
         'Page URL': sub.pageUrl,
@@ -126,18 +148,22 @@ export default function SubmissionsPage() {
             <Database size={24} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Phản hồi Form</h1>
-            <p className="text-sm text-slate-500">Quản lý dữ liệu người dùng gửi từ website</p>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Hộp thư Form</h1>
+            <p className="text-sm text-slate-500">Quản lý yêu cầu và dữ liệu khách hàng gửi từ website</p>
           </div>
         </div>
         
-        <button
-          onClick={exportCsv}
-          className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-        >
-          <Download size={16} />
-          <span>Xuất CSV</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {unreadCount > 0 && <button id="form-submissions-read-all" onClick={markAllRead} className="px-4 py-2 rounded-lg text-sm font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 dark:bg-brand-500/10 dark:text-brand-400 transition-colors">Đánh dấu tất cả đã đọc</button>}
+          <button
+            id="form-submissions-export"
+            onClick={exportCsv}
+            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            <Download size={16} />
+            <span>Xuất CSV</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -159,6 +185,7 @@ export default function SubmissionsPage() {
             <thead className="bg-slate-50 text-slate-500 font-medium border-b border-slate-200">
               <tr>
                 <th className="px-6 py-4">ID</th>
+                <th className="px-6 py-4">Trạng thái</th>
                 <th className="px-6 py-4">Tên Form</th>
                 <th className="px-6 py-4">Nội dung chính</th>
                 <th className="px-6 py-4">Trang gửi</th>
@@ -169,26 +196,27 @@ export default function SubmissionsPage() {
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-400">Đang tải dữ liệu...</td>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-400">Đang tải dữ liệu...</td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-400">Không có phản hồi nào.</td>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-400">Không có phản hồi nào.</td>
                 </tr>
               ) : (
                 filtered.map((sub) => {
-                  let fields: any = {};
+                  let fields: Record<string, unknown> = {};
                   try {
-                    fields = JSON.parse(sub.data);
-                  } catch(e) {}
+                    fields = JSON.parse(sub.data) as Record<string, unknown>;
+                  } catch {}
                   
                   // Extract first few fields to show as preview
                   const previewEntries = Object.entries(fields).filter(([k]) => k !== '_metadata').slice(0, 2);
                   const previewText = previewEntries.map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join(' | ');
 
                   return (
-                    <tr key={sub.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4 font-medium text-slate-900">#{sub.id}</td>
+                    <tr key={sub.id} className={`transition-colors ${sub.isRead ? 'hover:bg-slate-50/50 dark:hover:bg-slate-800/40' : 'bg-indigo-50/55 hover:bg-indigo-50 dark:bg-indigo-500/5 dark:hover:bg-indigo-500/10'}`}>
+                      <td className={`px-6 py-4 ${sub.isRead ? 'font-medium text-slate-900 dark:text-slate-200' : 'font-extrabold text-brand-700 dark:text-brand-400'}`}>#{sub.id}</td>
+                      <td className="px-6 py-4">{sub.isRead ? <span className="text-[10px] font-semibold text-slate-400">Đã đọc</span> : <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold text-brand-600 dark:text-brand-400"><span className="h-2 w-2 rounded-full bg-brand-500 ring-4 ring-brand-100 dark:ring-brand-500/20" /> Mới</span>}</td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium">
                           {sub.formName}
@@ -205,7 +233,7 @@ export default function SubmissionsPage() {
                       </td>
                       <td className="px-6 py-4 text-right space-x-2">
                         <button
-                          onClick={() => setSelectedSub(sub)}
+                          onClick={() => void openSubmission(sub)}
                           className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors inline-flex"
                           title="Xem chi tiết"
                         >
@@ -266,8 +294,8 @@ export default function SubmissionsPage() {
               <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Nội dung chi tiết</h4>
               <div className="space-y-4">
                 {(() => {
-                  let fields: any = {};
-                  try { fields = JSON.parse(selectedSub.data); } catch(e) {}
+                  let fields: Record<string, unknown> = {};
+                  try { fields = JSON.parse(selectedSub.data) as Record<string, unknown>; } catch {}
                   return Object.entries(fields).filter(([k]) => k !== '_metadata').map(([key, val]) => (
                     <div key={key} className="bg-slate-50 border border-slate-100 p-3 rounded-lg">
                       <div className="text-xs font-bold text-slate-400 mb-1 uppercase">{key}</div>

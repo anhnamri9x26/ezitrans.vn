@@ -58,7 +58,7 @@ export const ALL_CAPABILITIES: CapabilityMeta[] = [
 
   // SEO & Form
   { key: 'manage_seo', label: 'Quản lý SEO', group: CAPABILITY_GROUPS.SEO_FORM },
-  { key: 'view_form_submissions', label: 'Xem phản hồi form', group: CAPABILITY_GROUPS.SEO_FORM },
+  { key: 'view_form_submissions', label: 'Xem Hộp thư Form', group: CAPABILITY_GROUPS.SEO_FORM },
 
   // Giao diện
   { key: 'manage_templates', label: 'Quản lý templates (Page Builder)', group: CAPABILITY_GROUPS.TEMPLATES },

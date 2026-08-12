@@ -1,11 +1,13 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect -- This shell hydrates browser preferences and remote bootstrap state after mount. */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import AccessDenied from '@/components/AccessDenied';
+import NotificationCenter, { type AdminNotificationItem } from '@/components/admin/NotificationCenter';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n/AdminI18nProvider';
-import { LayoutDashboard, FileText, Files, Image as ImageIcon, MessageSquare, Users, Settings, Database, ChevronDown, LogOut, Palette, Puzzle, Wrench, Sparkles, Cpu, Wand2, Shield, ShoppingBag, CloudDownload, Sun, Moon, Languages, ExternalLink, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, Files, Image as ImageIcon, MessageSquare, Users, Settings, Database, ChevronDown, LogOut, Palette, Puzzle, Wrench, Sparkles, Cpu, Wand2, Shield, ShoppingBag, CloudDownload, Sun, Moon, Languages, ExternalLink, Menu, X, Inbox } from 'lucide-react';
 
 interface SubMenuItem {
   name: string;
@@ -53,6 +55,9 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
   const [isTocActive, setIsTocActive] = useState<boolean>(true);
   const [activeThemeName, setActiveThemeName] = useState<string>('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [notifications, setNotifications] = useState<AdminNotificationItem[]>([]);
+  const [notificationLoading, setNotificationLoading] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const setTheme = (nextTheme: 'light' | 'dark') => {
     setThemeState(nextTheme);
@@ -118,6 +123,51 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
     };
     fetchProfileAndSettings();
   }, []);
+
+  const fetchNotifications = useCallback(async (showLoading = false) => {
+    if (showLoading) setNotificationLoading(true);
+    try {
+      const data = await fetchJson('/api/admin/notifications?limit=12');
+      if (data.success) {
+        setNotifications(data.notifications);
+        setUnreadCount(data.unreadCount);
+      }
+    } catch (error) {
+      console.error('Failed to load admin notifications:', error);
+    } finally {
+      if (showLoading) setNotificationLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const canViewFormInbox = userProfile?.role === 'ADMIN' || userProfile?.capabilities?.includes('view_form_submissions');
+    if (!userProfile || !canViewFormInbox) return;
+    void fetchNotifications(true);
+    const timer = window.setInterval(() => void fetchNotifications(), 60000);
+    const refreshWhenVisible = () => { if (document.visibilityState === 'visible') void fetchNotifications(); };
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    window.addEventListener('admin-notifications-changed', refreshWhenVisible);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+      window.removeEventListener('admin-notifications-changed', refreshWhenVisible);
+    };
+  }, [userProfile, fetchNotifications]);
+
+  const markNotificationRead = async (id: number) => {
+    const item = notifications.find(notification => notification.id === id);
+    if (!item || item.isRead) return;
+    setNotifications(current => current.map(notification => notification.id === id ? { ...notification, isRead: true } : notification));
+    setUnreadCount(current => Math.max(0, current - 1));
+    await fetch('/api/admin/notifications', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+  };
+
+  const markAllNotificationsRead = async () => {
+    setNotifications(current => current.map(notification => ({ ...notification, isRead: true })));
+    setUnreadCount(0);
+    await fetch('/api/admin/notifications', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ all: true }) });
+    window.dispatchEvent(new Event('admin-notifications-changed'));
+  };
 
   const handleLogout = async () => {
     try {
@@ -187,10 +237,16 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
       icon: <Wand2 size={16} />,
       submenu: [
         { name: 'Theme Builder', path: '/admin/templates' },
-        { name: 'Phản hồi Form', path: '/admin/submissions' },
         { name: 'Cấu hình AI', path: '/admin/settings/page-builder' },
       ],
     }] : []),
+    {
+      name: 'Hộp thư Form',
+      path: '/admin/submissions',
+      icon: <Inbox size={16} />,
+      badge: unreadCount > 0 ? (unreadCount > 99 ? '99+' : String(unreadCount)) : undefined,
+      requiredCapability: 'view_form_submissions',
+    },
     {
       name: 'Giao diện',
       path: '/admin/settings/themes',
@@ -288,7 +344,7 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
 
   const filteredMenuItems = menuItems.filter(item => {
     if (item.name === 'Tổng quan') return userCan('view_dashboard');
-    if ((item as any).requiredCapability) return userCan((item as any).requiredCapability);
+    if (item.requiredCapability) return userCan(item.requiredCapability);
     
     if (item.name === 'Bài viết') return userCan('edit_posts');
     if (item.name === 'Trang') return userCan('edit_pages');
@@ -310,7 +366,6 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
         if (sub.name === 'Hồ sơ') return userCan('edit_profile');
         if (sub.name === 'Danh mục') return userCan('manage_categories');
         if (sub.name === 'Thẻ') return userCan('manage_tags');
-        if (sub.name === 'Phản hồi Form') return userCan('view_form_submissions');
         if (sub.name === 'Phân quyền') return userCan('manage_roles');
         if (sub.name === 'Tổng quan' && item.name === 'Cài đặt') return userCan('manage_settings');
         if (sub.name === 'Đường dẫn tĩnh') return userCan('manage_settings');
@@ -421,7 +476,7 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
             })();
 
             // Define categories dynamically
-            const contentGroup = ['Bài viết', 'Trang', 'Thư viện', 'Bình luận'];
+            const contentGroup = ['Bài viết', 'Trang', 'Thư viện', 'Bình luận', 'Hộp thư Form'];
             const designGroup = ['Page Builder', 'Giao diện'];
             
             let headerText = '';
@@ -464,9 +519,9 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      {item.icon}
-                      <span>{t(item.name)}</span>
-                      {item.badge && (
+                       {item.icon}
+                       <span>{t(item.name)}</span>
+                       {item.badge && (
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none ${
                           isActive
                             ? 'bg-white/20 text-white'
@@ -555,6 +610,7 @@ export default function AdminLayoutClient({ children, extraSidebarItems = [] }: 
                 {locale}
               </button>
               
+              <NotificationCenter notifications={notifications} unreadCount={unreadCount} loading={notificationLoading} onRefresh={() => void fetchNotifications(true)} onRead={markNotificationRead} onReadAll={markAllNotificationsRead} />
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                 title={t('Đổi giao diện')}

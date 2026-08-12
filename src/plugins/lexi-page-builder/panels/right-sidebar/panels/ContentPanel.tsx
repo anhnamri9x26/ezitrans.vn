@@ -5584,7 +5584,7 @@ export function ContentPanel({ ctx }: { ctx: Record<string, any> }) {
         {renderAccordionSection('form_actions', 'Hành động sau khi gửi', (
           <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
             <p className="text-xs font-bold text-emerald-800">Lưu trong website</p>
-            <p className="mt-1 text-[10px] leading-relaxed text-emerald-700">Dữ liệu được lưu tại Admin → Phản hồi Form. Email, webhook và chuyển hướng chưa được kích hoạt.</p>
+            <p className="mt-1 text-[10px] leading-relaxed text-emerald-700">Dữ liệu được lưu tại Admin → Hộp thư Form. Email, webhook và chuyển hướng chưa được kích hoạt.</p>
           </div>
         ))}
 
