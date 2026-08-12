@@ -18,7 +18,7 @@ awk -v image="$TARGET_IMAGE" 'BEGIN{a=0;c=0}/^  app:[[:space:]]*$/{a=1;print;nex
 cp "$dir/target.yml" "$COMPOSE_FILE.tmp";docker compose -f "$COMPOSE_FILE.tmp" config --quiet;mv "$COMPOSE_FILE.tmp" "$COMPOSE_FILE"
 rollback(){ echo "ROLLBACK IMAGE $old";cp -a "$dir/docker-compose.before.yml" "$COMPOSE_FILE";compose up -d --no-deps --force-recreate app||true; }
 trap 'r=$?;((r==0))||rollback;exit $r' EXIT
-compose run --rm app npx prisma migrate status;compose run --rm app npm run migrate:deploy;compose up -d --no-deps --force-recreate app
+compose run --rm app npm run migrate:deploy;compose run --rm app npx prisma migrate status;compose up -d --no-deps --force-recreate app
 ok=false;for _ in {1..36};do s="$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' ezitransvn-app-1 2>/dev/null||true)";if [[ "$s" == healthy ]]&&curl -fsS http://127.0.0.1:3011/api/health/live >/dev/null;then ok=true;break;fi;sleep 5;done;$ok||exit 1
 for x in /api/health/live / /login /sitemap.xml;do curl -fsS -o /dev/null "$PUBLIC_URL$x";done
 trap - EXIT;printf '%s\n' "$TARGET_IMAGE" >"$dir/image.txt";printf '%s\n' "$old" >"$dir/previous-image.txt";echo "SUCCESS $(date -Is)"|tee "$dir/status.txt";echo "DEPLOYMENT SUCCESSFUL"
