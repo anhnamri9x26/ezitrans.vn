@@ -60,7 +60,7 @@ jobs:
       - name: Upload deployment scripts
         run: scp -P "${{ secrets.EZITRANS_VPS_PORT }}" ops/deploy-production.sh ops/rollback-production.sh "${{ secrets.EZITRANS_VPS_USER }}@${{ secrets.EZITRANS_VPS_HOST }}:/home/ezitrans.vn/next-cms/ops/"
       - name: Deploy immutable image
-        run: ssh -p "${{ secrets.EZITRANS_VPS_PORT }}" "${{ secrets.EZITRANS_VPS_USER }}@${{ secrets.EZITRANS_VPS_HOST }}" "chmod 700 /home/ezitrans.vn/next-cms/ops/*.sh && /home/ezitrans.vn/next-cms/ops/deploy-production.sh '${{ env.IMAGE }}:${{ inputs.version }}'"
+        run: ssh -p "${{ secrets.EZITRANS_VPS_PORT }}" "${{ secrets.EZITRANS_VPS_USER }}@${{ secrets.EZITRANS_VPS_HOST }}" "echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin && chmod 700 /home/ezitrans.vn/next-cms/ops/*.sh && /home/ezitrans.vn/next-cms/ops/deploy-production.sh '${{ env.IMAGE }}:${{ inputs.version }}'"
       - name: Release summary
         run: |
           echo "## Ezitrans deployment" >> "$GITHUB_STEP_SUMMARY"
