@@ -6,10 +6,6 @@ name: Deploy Ezitrans Production
         description: Immutable release version
         required: true
         type: string
-      revision:
-        description: Full Git commit SHA
-        required: true
-        type: string
 permissions:
   contents: read
   packages: write
@@ -24,8 +20,6 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.revision }}
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -51,7 +45,7 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: true
           labels: |
-            org.opencontainers.image.revision=${{ inputs.revision }}
+            org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.version=${{ inputs.version }}
       - name: Install SSH key
         env:
@@ -71,5 +65,5 @@ jobs:
         run: |
           echo "## Ezitrans deployment" >> "$GITHUB_STEP_SUMMARY"
           echo "- Version: ${{ inputs.version }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Revision: ${{ inputs.revision }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Revision: ${{ github.sha }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- Digest: ${{ steps.build.outputs.digest }}" >> "$GITHUB_STEP_SUMMARY"
