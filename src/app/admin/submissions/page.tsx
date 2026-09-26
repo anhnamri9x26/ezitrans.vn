@@ -23,6 +23,12 @@ export default function SubmissionsPage() {
   const [search, setSearch] = useState('');
   const [selectedSub, setSelectedSub] = useState<Submission | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   const fetchSubmissions = async () => {
     try {
@@ -111,9 +117,9 @@ export default function SubmissionsPage() {
       ...parsedData.map(row =>
         headers.map(h => `"${safeCsv(row[h]).replace(/"/g, '""')}"`).join(',')
       )
-    ].join('\\n');
+    ].join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
@@ -129,6 +135,9 @@ export default function SubmissionsPage() {
     const term = search.toLowerCase();
     return s.formName.toLowerCase().includes(term) || s.data.toLowerCase().includes(term);
   });
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedData = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   if (isLoading) {
     return (
@@ -198,12 +207,12 @@ export default function SubmissionsPage() {
                 <tr>
                   <td colSpan={7} className="px-6 py-8 text-center text-slate-400">Đang tải dữ liệu...</td>
                 </tr>
-              ) : filtered.length === 0 ? (
+              ) : paginatedData.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-8 text-center text-slate-400">Không có phản hồi nào.</td>
                 </tr>
               ) : (
-                filtered.map((sub) => {
+                paginatedData.map((sub) => {
                   let fields: Record<string, unknown> = {};
                   try {
                     fields = JSON.parse(sub.data) as Record<string, unknown>;
@@ -254,6 +263,39 @@ export default function SubmissionsPage() {
             </tbody>
           </table>
         </div>
+        
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between bg-slate-50">
+            <div className="text-sm text-slate-500">
+              Hiển thị <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> đến <span className="font-medium">{Math.min(currentPage * itemsPerPage, filtered.length)}</span> trong số <span className="font-medium">{filtered.length}</span> kết quả
+            </div>
+            <div className="flex gap-1">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg hover:bg-white disabled:opacity-50 disabled:hover:bg-transparent"
+              >
+                Trước
+              </button>
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`px-3 py-1.5 text-sm border rounded-lg ${currentPage === i + 1 ? 'bg-blue-600 text-white border-blue-600' : 'border-slate-200 hover:bg-white'}`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg hover:bg-white disabled:opacity-50 disabled:hover:bg-transparent"
+              >
+                Sau
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Detail Modal */}
